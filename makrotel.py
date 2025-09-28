@@ -7,6 +7,7 @@ import copy
 WIDTH = 40
 HEIGHT = 4
 CHAR_BG = "_"
+REFRESH_TIME = 0.20 # seconds
 
 
 class MyLogger:
@@ -99,6 +100,61 @@ class ScreenCurses:
                 self.screen[y][x].Set(self.bg_char)
 
 
+class PageComponent:
+    def __init__(self, screen, x, y, h, w, bitmap=None):
+        self.screen = screen
+        self.x = x
+        self.y = y
+        self.h = h
+        self.w = w
+        self.bitmap = bitmap
+
+    def tick(self):
+        pass
+
+
+class PageComponentClock(PageComponent):
+    def __init__(self, screen, x, y):
+        super().__init__(screen, x, y, 1, 8)
+
+
+    def tick(self):
+        t = time.localtime()
+        timestr = time.strftime("%H:%M:%S", t)
+
+        self.screen.screen_lock.acquire()
+        for i, c in enumerate(timestr):
+            self.screen.set_char(self.x + i, self.y, c)
+        self.screen.screen_lock.release()
+
+
+class PageComponentMover(PageComponent):
+    def __init__(self, screen, x, y):
+        super().__init__(screen, x, y, 1, 1)
+        self.dx = 1
+
+
+    def tick(self):
+        self.x += self.dx
+        if self.x >= WIDTH or self.x < 0:
+            self.dx *= -1
+            self.x += self.dx  # Bounce back
+        self.screen.set_char(self.x, self.y, '@')
+
+
+class PageComponentText(PageComponent):
+    def __init__(self, screen, x, y, text):
+        super().__init__(screen, x, y, 1, len(text))
+        self.text = text
+
+
+    def tick(self):
+        self.screen.screen_lock.acquire()
+        for i, c in enumerate(self.text):
+            self.screen.set_char(self.x + i, self.y, c)
+        self.screen.screen_lock.release()
+
+
 class Page:
     def __init__(self, screen):
         self.components = []
@@ -107,6 +163,10 @@ class Page:
         self.dx = 1
         self.screen = screen
 
+        self.components.append(PageComponentClock(screen, 1, 0))
+        self.components.append(PageComponentText(screen, 10, 1, "MakroTel"))
+        self.components.append(PageComponentMover(screen, 1, 2))
+
 
     def initial(self):
         self.screen.clear_buffer()
@@ -114,14 +174,10 @@ class Page:
 
 
     def tick(self):
-        # make the operation atomic
-        self.screen.screen_lock.acquire()
-
         self.screen.clear_buffer()
-        self.screen.set_char(1, 1, self.x % 10 + ord('0'))
-        self.screen.set_char(self.x, self.y, '@')
 
-        self.screen.screen_lock.release()
+        for component in self.components:
+            component.tick()
 
         # Handle input
         key = self.screen.stdscr.getch()
@@ -131,12 +187,6 @@ class Page:
             self.y -= 1
         elif key == curses.KEY_DOWN and self.y < HEIGHT - 1:
             self.y += 1
-
-        # Move sprite horizontally
-        self.x += self.dx
-        if self.x >= WIDTH or self.x < 0:
-            self.dx *= -1
-            self.x += self.dx  # Bounce back
 
 
 def main(stdscr):
@@ -153,7 +203,7 @@ def main(stdscr):
 
     while True:
         page.tick()
-        time.sleep(0.20)
+        time.sleep(REFRESH_TIME)
 
 
 # Run curses application
