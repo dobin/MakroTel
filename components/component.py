@@ -1,8 +1,8 @@
 
 
 class Component:
-    def __init__(self, screen, x: int, y: int, h: int, w: int, bitmap=None):
-        self.screen = screen
+    def __init__(self, terminal, x: int, y: int, h: int, w: int, bitmap=None):
+        self.terminal = terminal
         self.x: int = x
         self.y: int = y
         self.h: int = h

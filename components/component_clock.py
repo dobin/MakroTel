@@ -4,8 +4,8 @@ from components.component import Component
 
 
 class ComponentClock(Component):
-    def __init__(self, screen, x: int, y: int):
-        super().__init__(screen, x, y, 1, 8)
+    def __init__(self, terminal, x: int, y: int):
+        super().__init__(terminal, x, y, 1, 8)
 
 
     def Initial(self):
@@ -16,10 +16,10 @@ class ComponentClock(Component):
         t = time.localtime()
         timestr = time.strftime("%H:%M:%S", t)
 
-        self.screen.screen_lock.acquire()
+        self.terminal.screen_lock.acquire()
         for i, c in enumerate(timestr):
-            self.screen.set_char(self.x + i, self.y, c)
-        self.screen.screen_lock.release()
+            self.terminal.set_char(self.x + i, self.y, c)
+        self.terminal.screen_lock.release()
 
 
     def KeyPressed(self, key: int):

@@ -4,13 +4,13 @@ from components.component import Component
 
 
 class ComponentMover(Component):
-    def __init__(self, screen, x: int, y: int):
-        super().__init__(screen, x, y, 1, 1)
+    def __init__(self, terminal, x: int, y: int):
+        super().__init__(terminal, x, y, 1, 1)
         self.dx: int = 1
 
 
     def Initial(self):
-        self.screen.set_char(self.x, self.y, '@')
+        self.terminal.set_char(self.x, self.y, '@')
 
 
     def Tick(self):
@@ -18,7 +18,7 @@ class ComponentMover(Component):
         if self.x >= WIDTH or self.x < 0:
             self.dx *= -1
             self.x += self.dx  # Bounce back
-        self.screen.set_char(self.x, self.y, '@')
+        self.terminal.set_char(self.x, self.y, '@')
 
 
     def KeyPressed(self, key: int):
