@@ -109,7 +109,10 @@ class PageComponent:
         self.w = w
         self.bitmap = bitmap
 
-    def tick(self):
+    def Tick(self):
+        pass
+
+    def KeyPressed(self, key):
         pass
 
 
@@ -118,7 +121,7 @@ class PageComponentClock(PageComponent):
         super().__init__(screen, x, y, 1, 8)
 
 
-    def tick(self):
+    def Tick(self):
         t = time.localtime()
         timestr = time.strftime("%H:%M:%S", t)
 
@@ -127,6 +130,9 @@ class PageComponentClock(PageComponent):
             self.screen.set_char(self.x + i, self.y, c)
         self.screen.screen_lock.release()
 
+    def KeyPressed(self, key):
+        pass
+
 
 class PageComponentMover(PageComponent):
     def __init__(self, screen, x, y):
@@ -134,12 +140,19 @@ class PageComponentMover(PageComponent):
         self.dx = 1
 
 
-    def tick(self):
+    def Tick(self):
         self.x += self.dx
         if self.x >= WIDTH or self.x < 0:
             self.dx *= -1
             self.x += self.dx  # Bounce back
         self.screen.set_char(self.x, self.y, '@')
+
+
+    def KeyPressed(self, key):
+        if key == curses.KEY_UP and self.y > 0:
+            self.y -= 1
+        elif key == curses.KEY_DOWN and self.y < HEIGHT - 1:
+            self.y += 1
 
 
 class PageComponentText(PageComponent):
@@ -148,7 +161,7 @@ class PageComponentText(PageComponent):
         self.text = text
 
 
-    def tick(self):
+    def Tick(self):
         self.screen.screen_lock.acquire()
         for i, c in enumerate(self.text):
             self.screen.set_char(self.x + i, self.y, c)
@@ -173,20 +186,15 @@ class Page:
         self.screen.set_char(self.x, self.y, '@')
 
 
-    def tick(self):
+    def Tick(self):
         self.screen.clear_buffer()
 
         for component in self.components:
-            component.tick()
+            component.Tick()
 
-        # Handle input
-        key = self.screen.stdscr.getch()
-        if key == ord('q'):
-            return
-        elif key == curses.KEY_UP and self.y > 0:
-            self.y -= 1
-        elif key == curses.KEY_DOWN and self.y < HEIGHT - 1:
-            self.y += 1
+    def KeyPressed(self, key):
+        for component in self.components:
+            component.KeyPressed(key)
 
 
 def main(stdscr):
@@ -202,7 +210,15 @@ def main(stdscr):
     page.initial()
 
     while True:
-        page.tick()
+        page.Tick()
+
+        # Handle input
+        key = screen.stdscr.getch()
+        if key == ord('q'):
+            return
+        if key != -1:
+            page.KeyPressed(key)
+
         time.sleep(REFRESH_TIME)
 
 
