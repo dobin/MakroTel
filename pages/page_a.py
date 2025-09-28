@@ -7,27 +7,27 @@ from components.component_mover import ComponentMover
 
 
 class PageA(Page):
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, terminal):
+        super().__init__(terminal)
         self.components = []
         self.x = 0
         self.y = HEIGHT // 2
         self.dx = 1
 
-        self.components.append(ComponentClock(screen, 1, 0))
-        self.components.append(ComponentText(screen, 10, 1, "MakroTel"))
-        self.components.append(ComponentMover(screen, 1, 2))
+        self.components.append(ComponentClock(terminal, 1, 0))
+        self.components.append(ComponentText(terminal, 10, 1, "MakroTel"))
+        self.components.append(ComponentMover(terminal, 1, 2))
 
 
     def initial(self):
-        self.screen.clear_buffer()
+        self.terminal.clear_buffer()
 
         for component in self.components:
             component.Initial()
 
 
     def Tick(self):
-        self.screen.clear_buffer()
+        self.terminal.clear_buffer()
 
         for component in self.components:
             component.Tick()

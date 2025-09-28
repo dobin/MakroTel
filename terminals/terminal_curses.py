@@ -5,6 +5,8 @@ import curses
 import copy
 from mylogger import myLogger
 
+from terminals.terminal import Terminal
+
 
 class Cell:
     def __init__(self):
@@ -24,7 +26,7 @@ class Cell:
         self.b_type = type
         
 
-class ScreenCurses:
+class TerminalCurses(Terminal):
     def __init__(self, stdscr):
         self.width = WIDTH
         self.height = HEIGHT

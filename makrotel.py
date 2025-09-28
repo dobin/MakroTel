@@ -5,27 +5,27 @@ import copy
 
 from config import *
 from mylogger import myLogger
-from screen import ScreenCurses
+from terminals.terminal_curses import TerminalCurses
 from pages.page_a import PageA
 
 
 def main(stdscr):
-    screen = ScreenCurses(stdscr)
+    terminal = TerminalCurses(stdscr)
 
     def draw_loop():
         while True:
-            screen.draw_buffer()
+            terminal.draw_buffer()
             time.sleep(0.1)
     threading.Thread(target=draw_loop, daemon=True).start()
 
-    page = PageA(screen)
+    page = PageA(terminal)
     page.initial()
 
     while True:
         page.Tick()
 
         # Handle input
-        key = screen.stdscr.getch()
+        key = terminal.stdscr.getch()
         if key == ord('q'):
             return
         if key != -1:
