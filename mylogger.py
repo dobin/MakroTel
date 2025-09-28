@@ -3,7 +3,7 @@ import time
 
 class MyLogger:
     def __init__(self):
-        self.file = open("makrotel.log", "a")
+        self.file = open("makrotel.log", "w")
 
     def log(self, message):
         self.file.write(f"{time.ctime()}: {message}\n")
