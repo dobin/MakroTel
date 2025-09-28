@@ -4,9 +4,9 @@ from components.component import Component
 
 
 class ComponentMover(Component):
-    def __init__(self, screen, x, y):
+    def __init__(self, screen, x: int, y: int):
         super().__init__(screen, x, y, 1, 1)
-        self.dx = 1
+        self.dx: int = 1
 
 
     def Initial(self):
@@ -21,7 +21,7 @@ class ComponentMover(Component):
         self.screen.set_char(self.x, self.y, '@')
 
 
-    def KeyPressed(self, key):
+    def KeyPressed(self, key: int):
         if key == curses.KEY_UP and self.y > 0:
             self.y -= 1
         elif key == curses.KEY_DOWN and self.y < HEIGHT - 1:

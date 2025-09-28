@@ -7,7 +7,7 @@ class Terminal:
     def draw_buffer(self):
         pass
 
-    def set_char(self, x, y, char):
+    def set_char(self, x: int, y: int, char: str):
         pass
 
     def clear_buffer(self):

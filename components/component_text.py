@@ -2,12 +2,14 @@ from components.component import Component
 
 
 class ComponentText(Component):
-    def __init__(self, screen, x, y, text):
+    def __init__(self, screen, x: int, y: int, text: str):
         super().__init__(screen, x, y, 1, len(text))
         self.text = text
 
+
     def Initial(self):
         pass
+
 
     def Tick(self):
         self.screen.screen_lock.acquire()

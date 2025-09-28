@@ -1,10 +1,11 @@
 
 
 from config import HEIGHT
+from terminals.terminal import Terminal
 
 
 class Page:
-    def __init__(self, terminal):
+    def __init__(self, terminal: Terminal):
         self.terminal = terminal
 
 
@@ -16,5 +17,5 @@ class Page:
         pass
 
 
-    def KeyPressed(self, key):
+    def KeyPressed(self, key: int):
         pass

@@ -4,11 +4,13 @@ from components.component import Component
 
 
 class ComponentClock(Component):
-    def __init__(self, screen, x, y):
+    def __init__(self, screen, x: int, y: int):
         super().__init__(screen, x, y, 1, 8)
+
 
     def Initial(self):
         pass
+
 
     def Tick(self):
         t = time.localtime()
@@ -19,5 +21,6 @@ class ComponentClock(Component):
             self.screen.set_char(self.x + i, self.y, c)
         self.screen.screen_lock.release()
 
-    def KeyPressed(self, key):
+
+    def KeyPressed(self, key: int):
         pass

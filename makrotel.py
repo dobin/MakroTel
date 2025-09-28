@@ -6,11 +6,13 @@ import copy
 from config import *
 from mylogger import myLogger
 from terminals.terminal_curses import TerminalCurses
+from terminals.terminal import Terminal
+from pages.page import Page
 from pages.page_a import PageA
 
 
 def main(stdscr):
-    terminal = TerminalCurses(stdscr)
+    terminal: Terminal = TerminalCurses(stdscr)
 
     def draw_loop():
         while True:
@@ -18,7 +20,7 @@ def main(stdscr):
             time.sleep(0.1)
     threading.Thread(target=draw_loop, daemon=True).start()
 
-    page = PageA(terminal)
+    page: Page = PageA(terminal)
     page.initial()
 
     while True:
