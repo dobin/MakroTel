@@ -9,6 +9,10 @@ class ComponentMover(Component):
         self.dx = 1
 
 
+    def Initial(self):
+        self.screen.set_char(self.x, self.y, '@')
+
+
     def Tick(self):
         self.x += self.dx
         if self.x >= WIDTH or self.x < 0:

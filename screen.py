@@ -5,6 +5,7 @@ import curses
 import copy
 from mylogger import myLogger
 
+
 class Cell:
     def __init__(self):
         # current, drawn
@@ -67,7 +68,7 @@ class ScreenCurses:
                 self.screen[y][x].a_color = char.b_color
         self.screen_lock.release()
 
-        myLogger.log(f"Redrew {n} chars")
+        #myLogger.log(f"Redrew {n} chars")
         self.stdscr.refresh()
 
 

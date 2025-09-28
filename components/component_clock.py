@@ -7,6 +7,8 @@ class ComponentClock(Component):
     def __init__(self, screen, x, y):
         super().__init__(screen, x, y, 1, 8)
 
+    def Initial(self):
+        pass
 
     def Tick(self):
         t = time.localtime()

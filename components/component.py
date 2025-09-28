@@ -9,6 +9,9 @@ class Component:
         self.w = w
         self.bitmap = bitmap
 
+    def Initial(self):
+        pass
+
     def Tick(self):
         pass
 

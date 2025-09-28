@@ -21,7 +21,9 @@ class PageA(Page):
 
     def initial(self):
         self.screen.clear_buffer()
-        self.screen.set_char(self.x, self.y, '@')
+
+        for component in self.components:
+            component.Initial()
 
 
     def Tick(self):
