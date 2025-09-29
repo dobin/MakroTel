@@ -6,6 +6,10 @@
 from serial import Serial      # Physical link with the Minitel
 from threading import Thread   # Threads for sending/receiving
 from queue import Queue, Empty # Character queues for sending/receiving
+import copy
+
+from mylogger import myLogger
+from terminals.terminal import Terminal
 
 # Based on: https://github.com/Zigazou/PyMinitel/blob/master/minitel/Minitel.py
 # Translated and adapted by Claude for this project
@@ -50,7 +54,7 @@ def normalize_color(color):
 
     return None
 
-class Minitel:
+class Minitel(Terminal):
     """A class for controlling the Minitel via a serial port
 
     Introduction
@@ -123,6 +127,8 @@ class Minitel:
         """
         assert isinstance(device, str)
 
+        super().__init__()
+
         # Initializes the Minitel's state
         self.mode = 'VIDEOTEX'
         self.speed = 1200
@@ -164,6 +170,46 @@ class Minitel:
                 thread.start()
             except (KeyboardInterrupt, SystemExit):
                 self.close()
+
+
+    def draw_buffer(self):
+        n = 0
+
+        # Stream current screen to the terminal
+        # NOTE: We copy it for now
+        # NOTE: Lock it so we have a clean copy
+        self.screen_lock.acquire()
+        screen_copy = copy.deepcopy(self.screen)
+        self.screen_lock.release()
+        
+        current_row = -1
+        current_col = -1
+        
+        for y, row in enumerate(screen_copy):
+            for x, char in enumerate(row):
+                if char.a_char != char.b_char:
+                    # Only call position() if we need to move to a new position
+                    if current_row != y or current_col != x:
+                        self.position(x+1, y+1)  # Minitel uses 1-based coordinates
+                        current_row = y
+                        current_col = x
+                    
+                    # send to minitel
+                    self.send(char.b_char)
+                    current_col += 1  # Update our tracking of current column
+                    n += 1
+
+        # NOTE: update the screen, indicate what we have written
+        # NOTE: Lock probably not needed here
+        self.screen_lock.acquire()
+        for y, row in enumerate(screen_copy):
+            for x, char in enumerate(row):
+                self.screen[y][x].a_char = char.b_char
+                self.screen[y][x].a_color = char.b_color
+        self.screen_lock.release()
+
+        myLogger.log(f"Redrew {n} chars")
+
 
     def close(self):
         """Closes the connection with the Minitel
@@ -618,7 +664,7 @@ class Minitel:
         speeds = {300: B300, 1200: B1200, 4800: B4800, 9600: B9600}
 
         # Tests the validity of the requested speed
-        if speed not in speeds or speed > self.capabilities['vitesse']:
+        if speed not in speeds or speed > self.capabilities['speed']:
             return False
 
         # Sends a protocol command for speed programming
