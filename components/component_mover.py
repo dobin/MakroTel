@@ -1,7 +1,15 @@
 from config import *
-import curses
 from components.component import Component
 
+from config import MODE
+if MODE == "minitel":
+    from terminals.minitel_constants import UP, DOWN
+    KEY_UP = UP
+    KEY_DOWN = DOWN
+else:
+    import curses
+    KEY_UP = curses.KEY_UP
+    KEY_DOWN = curses.KEY_DOWN
 
 class ComponentMover(Component):
     def __init__(self, terminal, x: int, y: int):
@@ -22,7 +30,7 @@ class ComponentMover(Component):
 
 
     def KeyPressed(self, key: int):
-        if key == curses.KEY_UP and self.y > 0:
+        if key == KEY_UP and self.y > 0:
             self.y -= 1
-        elif key == curses.KEY_DOWN and self.y < HEIGHT - 1:
+        elif key == KEY_DOWN and self.y < HEIGHT - 1:
             self.y += 1

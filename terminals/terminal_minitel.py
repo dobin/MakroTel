@@ -207,8 +207,7 @@ class Minitel(Terminal):
                 self.screen[y][x].a_char = char.b_char
                 self.screen[y][x].a_color = char.b_color
         self.screen_lock.release()
-
-        myLogger.log(f"Redrew {n} chars")
+        #myLogger.log(f"Redrew {n} chars")
 
 
     def close(self):

@@ -4,8 +4,10 @@
 import time
 import threading
 
-from terminals.terminal_minitel import Minitel
 from config import *
+config_set_mode("minitel")
+
+from terminals.terminal_minitel import Minitel
 from mylogger import myLogger
 from terminals.terminal import Terminal
 from pages.page import Page
@@ -46,4 +48,3 @@ def main():
 
 if __name__ == "__main__":
   main()
-  

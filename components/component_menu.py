@@ -4,11 +4,16 @@
 
 from components.component import Component
 from components.sequence import Sequence
-import curses
 
-# Define arrow key constants
-UP_KEY = curses.KEY_UP
-DOWN_KEY = curses.KEY_DOWN
+from config import MODE
+if MODE == "minitel":
+    from terminals.minitel_constants import UP, DOWN
+    KEY_UP = UP
+    KEY_DOWN = DOWN
+else:
+    import curses
+    KEY_UP = curses.KEY_UP
+    KEY_DOWN = curses.KEY_DOWN
 
 # From: https://github.com/Zigazou/PyMinitel/blob/master/minitel/ui/UI.py
 # Translated and adapted by Claude for this project
@@ -123,13 +128,13 @@ class ComponentMenu(Component):
 
     def KeyPressed(self, key: int):
         """Handle key presses for menu navigation"""
-        if key == UP_KEY:
+        if key == KEY_UP:
             selection = self.previous_option(self.selection)
             if selection is not None:
                 self.selection = selection
             # Could add beep here if selection is None
-            
-        elif key == DOWN_KEY:
+
+        elif key == KEY_DOWN:
             selection = self.next_option(self.selection)
             if selection is not None:
                 self.selection = selection

@@ -1,17 +1,15 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""Text field management class"""
-
-import curses
 from components.component import Component
 
-# from: https://github.com/Zigazou/PyMinitel/blob/master/minitel/ui/ChampTexte.py
-# Translated and adapted by Claude for this project
+from config import MODE
+if MODE == "minitel":
+    from terminals.minitel_constants import LEFT, RIGHT, CORRECTION
+else:
+    import curses
+    LEFT = curses.KEY_LEFT
+    RIGHT = curses.KEY_RIGHT
+    CORRECTION = curses.KEY_BACKSPACE  # or 127 for DEL
 
 
-LEFT = curses.KEY_LEFT
-RIGHT = curses.KEY_RIGHT
-CORRECTION = curses.KEY_BACKSPACE  # or 127 for DEL
 ACCENT_ACUTE = ord('´')  # Dead key for acute accent
 ACCENT_GRAVE = ord('`')  # Dead key for grave accent  
 ACCENT_CIRCUMFLEX = ord('^')  # Dead key for circumflex
@@ -25,6 +23,10 @@ MINITEL_CHARACTERS = (
     ' *$!:;,?./&(-_)=+\'@#' +
     '0123456789'
 )
+
+# from: https://github.com/Zigazou/PyMinitel/blob/master/minitel/ui/ChampTexte.py
+# Translated and adapted by Claude for this project
+
 
 class ComponentTextField(Component):
     """Text field management class

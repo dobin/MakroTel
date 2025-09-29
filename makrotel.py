@@ -4,6 +4,8 @@ import threading
 import copy
 
 from config import *
+config_set_mode("curses")
+
 from mylogger import myLogger
 from terminals.terminal_curses import TerminalCurses
 from terminals.terminal import Terminal
