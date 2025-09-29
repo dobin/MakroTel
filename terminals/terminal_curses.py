@@ -123,10 +123,6 @@ class TerminalCurses(Terminal):
         data = char * count
         self.send(data)
 
-    def repeter(self, char, count):
-        """French alias for repeat method"""
-        self.repeat(char, count)
-
     def color(self, character=None, background=None):
         """Set text color"""
         # For now, we'll just track the color but not apply it in curses
