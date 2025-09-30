@@ -7,6 +7,7 @@ from serial import Serial      # Physical link with the Minitel
 from threading import Thread   # Threads for sending/receiving
 from queue import Queue, Empty # Character queues for sending/receiving
 import copy
+import time
 
 from mylogger import myLogger
 from terminals.terminal import Terminal
@@ -171,8 +172,6 @@ class Minitel(Terminal):
 
 
     def draw_buffer(self):
-        n = 0
-
         # Stream current screen to the terminal
         # NOTE: We copy it for now
         # NOTE: Lock it so we have a clean copy
@@ -182,7 +181,10 @@ class Minitel(Terminal):
 
         current_row = -1
         current_col = -1
+        n = 0
         
+        # measure redraw time
+        start_time = time.perf_counter()
         for y, row in enumerate(screen_copy):
             for x, char in enumerate(row):
                 if char.a_char != char.b_char:
@@ -196,6 +198,10 @@ class Minitel(Terminal):
                     self.send(char.b_char)
                     current_col += 1  # Update our tracking of current column
                     n += 1
+        if n > 0:
+            end_time = time.perf_counter()
+            elapsed_time = end_time - start_time
+            myLogger.log(f"Redrew {n} chars in {elapsed_time:.6f} seconds")
 
         # NOTE: update the screen, indicate what we have written
         # NOTE: Lock probably not needed here
@@ -284,7 +290,6 @@ class Minitel(Terminal):
         if MODE_DIRECT:
             # write the characters one by one directly to the minitel
             # bypassing the output queue
-            # this makes us blocking
             for value in content.valeurs:
                 self._minitel.write(chr(value).encode())
         else:

@@ -30,6 +30,8 @@ class Terminal:
                 self.draw_buffer()
                 self.framebuffer.draw_event.clear()  # Reset the event after drawing
 
+
+    # draw the framebuffer to the terminal (hardware or curses)
     def draw_buffer(self):
         pass
 
