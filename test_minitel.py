@@ -34,17 +34,12 @@ def main():
   terminal.clear()
   terminal.cursor(False)
 
-  def draw_loop():
-      while True:
-          terminal.draw_buffer()
-          time.sleep(0.1)
-  threading.Thread(target=draw_loop, daemon=True).start()
-
   page: Page = PageA(terminal)
   page.initial()
 
   while True:
       page.Tick()
+      terminal.draw_event.set()
       try:
         sequence = terminal.receive_sequence(blocking=False)
         myLogger.log(f"Got char: {sequence}")

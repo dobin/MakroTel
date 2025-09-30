@@ -17,17 +17,13 @@ from components.sequence import Sequence
 def main(stdscr):
     terminal: Terminal = TerminalCurses(stdscr)
 
-    def draw_loop():
-        while True:
-            terminal.draw_buffer()
-            time.sleep(0.1)
-    threading.Thread(target=draw_loop, daemon=True).start()
-
     page: Page = PageA(terminal)
     page.initial()
 
     while True:
         page.Tick()
+        # Signal that drawing is needed after sending data
+        terminal.draw_event.set()
 
         # Handle input
         key = terminal.stdscr.getch()

@@ -29,7 +29,20 @@ class Terminal:
         self.bg_char: str = CHAR_BG
         self.screen: list[list[Cell]] = [[Cell() for _ in range(self.width)] for _ in range(self.height)]
         self.screen_lock = threading.Lock()
+        self.draw_event = threading.Event()  # Event to signal when drawing is needed
+        self.running = True  # Flag to control the draw loop
 
+        threading.Thread(target=self.draw_loop, daemon=True).start()
+
+
+    def draw_loop(self):
+        while self.running:
+            # Wait for the event to be set, with a timeout for periodic refresh
+            self.draw_event.wait(timeout=1.0)  # 1 second timeout as fallback
+            
+            if self.running:  # Check if we should still be running
+                self.draw_buffer()
+                self.draw_event.clear()  # Reset the event after drawing
 
     def draw_buffer(self):
         pass
@@ -44,7 +57,6 @@ class Terminal:
         for y in range(self.height):
             for x in range(self.width):
                 self.screen[y][x].Set(self.bg_char)
-
 
 
     def position(self, x, y):
@@ -79,7 +91,7 @@ class Terminal:
                     # Single byte value
                     if 0 <= data <= 255:
                         char = chr(data) if data >= 32 and data < 127 else '?'
-                        self._put_char_at_cursor(char)
+                        self._put_char_at_cursor(char)                
             except Exception as e:
                 myLogger.log(f"Error in send: {e}")
 
@@ -124,3 +136,7 @@ class Terminal:
     def beep(self):
         """Make a beep sound"""
         myLogger.log("Beep not available")
+
+    def stop(self):
+        """Stop the drawing loop gracefully"""
+        self.running = False
