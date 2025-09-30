@@ -14,16 +14,12 @@ from terminals.terminal import Terminal
 # Based on: https://github.com/Zigazou/PyMinitel/blob/master/minitel/Minitel.py
 # Translated and adapted by Claude for this project
 
+MODE_DIRECT = False
 
 from components.sequence import Sequence # Manages character sequences
 
-from terminals.minitel_constants import (SS2, SEP, ESC, CSI, PRO1, PRO2, PRO3, MIXED1,
-    MIXED2, TELINFO, ENQROM, SOH, EOT, TYPE_MINITELS, OPERATING_STATUS,
-    PRO2_LENGTH, TERMINAL_STATUS, PROG, START, STOP, PRO3_LENGTH,
-    RECV_KEYBOARD, EXTENDED, C0, LOWERCASE, RS, US, VT, LF, BS, TAB, CON, COF,
-    ROUTING_ON, ROUTING_OFF, RECV_SCREEN, SEND_MODEM, FF, CAN, BEL, CR,
-    SO, SI, B300, B1200, B4800, B9600, REP, MINITEL_COLORS,
-    BASIC_CAPABILITIES, MANUFACTURERS)
+from terminals.minitel_constants import *
+from terminals.minitel_model import *
 
 def normalize_color(color):
     """Returns the Minitel color number.
@@ -278,13 +274,21 @@ class Minitel(Terminal):
             a Sequence object, a string or unicode, a list,
             an integer
         """
+
         # Converts any input to a Sequence object
         if not isinstance(content, Sequence):
             content = Sequence(content)
 
-        # Adds the characters one by one to the send queue
-        for value in content.valeurs:
-            self.output_queue.put(chr(value))
+        if MODE_DIRECT:
+            # write the characters one by one directly to the minitel
+            # bypassing the output queue
+            # this makes us blocking
+            for value in content.valeurs:
+                self._minitel.write(value.encode())
+        else:
+            # Adds the characters one by one to the send queue
+            for value in content.valeurs:
+                self.output_queue.put(chr(value))
 
     def receive(self, blocking = False, wait = None):
         """Reads a character from the Minitel
@@ -380,6 +384,7 @@ class Minitel(Terminal):
                 # If no character has occurred after 1/10s, we continue
                 pass
 
+        myLogger.log(f"Received sequence: {sequence}")
         return sequence
 
     def call(self, content, wait):

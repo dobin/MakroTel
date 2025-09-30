@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """Minitel universal constants definitions"""
 
+
 # ASCII control codes
 NUL = 0x00 # null
 SOH = 0x01 # start of heading
@@ -158,130 +159,6 @@ CORRECTION = [DC3, 0x47]
 NEXT       = [DC3, 0x48]
 CONNECTION_KEY  = [DC3, 0x49]
 
-# Minitel types
-TYPE_MINITELS = {
-    'b': {
-        'name': 'Minitel 1',
-        'returnable': False,
-        'keyboard': 'ABCD',
-        'speed': 1200,
-        '80columns': False,
-        'characters': False
-    },
-    'c': {
-        'name': 'Minitel 1',
-        'returnable': False,
-        'keyboard': 'Azerty',
-        'speed': 1200,
-        '80columns': False,
-        'characters': False 
-    },
-    'd': {
-        'name': 'Minitel 10',
-        'returnable': False,
-        'keyboard': 'Azerty',
-        'speed': 1200,
-        '80columns': False,
-        'characters': False
-    },
-    'e': {
-        'name': 'Minitel 1 color',
-        'returnable': False,
-        'keyboard': 'Azerty',
-        'speed': 1200,
-        '80columns': False,
-        'characters': False
-    },
-    'f': {
-        'name': 'Minitel 10',
-        'returnable': True,
-        'keyboard': 'Azerty',
-        'speed': 1200,
-        '80columns': False,
-        'characters': False
-    },
-    'g': {
-        'name': 'Emulator',
-        'returnable': True,
-        'keyboard': 'Azerty',
-        'speed': 9600,
-        '80columns': True,
-        'characters': True
-    },
-    'j': {
-        'name': 'Printer',
-        'returnable': False,
-        'keyboard': None,
-        'speed': 1200,
-        '80columns': False,
-        'characters': False
-    },
-    'r': {
-        'name': 'Minitel 1',
-        'returnable': True,
-        'keyboard': 'Azerty',
-        'speed': 1200,
-        '80columns': False,
-        'characters': False
-    },
-    's': {
-        'name': 'Minitel 1 color',
-        'returnable': True,
-        'keyboard': 'Azerty',
-        'speed': 1200,
-        '80columns': False,
-        'characters': False 
-    },
-    't': {
-        'name': 'Terminatel 252',
-        'returnable': False,
-        'keyboard': None,
-        'speed': 1200,
-        '80columns': False,
-        'characters': False
-    },
-    'u': {
-        'name': 'Minitel 1B',
-        'returnable': True,
-        'keyboard': 'Azerty',
-        'speed': 4800,
-        '80columns': True,
-        'characters': False
-    },
-    'v': {
-        'name': 'Minitel 2',
-        'returnable': True,
-        'keyboard': 'Azerty',
-        'speed': 9600,
-        '80columns': True,
-        'characters': True
-    },
-    'w': {
-        'name': 'Minitel 10B',
-        'returnable': True,
-        'keyboard': 'Azerty',
-        'speed': 4800,
-        '80columns': True,
-        'characters': False
-    },
-    'y': {
-        'name': 'Minitel 5',
-        'returnable': True,
-        'keyboard': 'Azerty',
-        'speed': 9600,
-        '80columns': True,
-        'characters': True
-    },
-    'z': {
-        'name': 'Minitel 12',
-        'returnable': True,
-        'keyboard': 'Azerty',
-        'speed': 9600,
-        '80columns': True,
-        'characters': True
-    },
-}
-
 # The gray levels are staggered as follows:
 # black, blue, red, magenta, green, cyan, yellow, white
 MINITEL_COLORS = {
@@ -291,32 +168,4 @@ MINITEL_COLORS = {
     '4': 2, '5': 6, '6': 3, '7': 7,
     0: 0, 1: 4, 2: 1, 3: 5,
     4: 2, 5: 6, 6: 3, 7: 7
-}
-
-# Basic Minitel capabilities
-BASIC_CAPABILITIES = {
-    'name': 'Unknown Minitel',
-    'returnable': False,
-    'keyboard': 'ABCD',
-    'speed': 1200,
-    'manufacturer': 'Unknown',
-    '80columns': False,
-    'characters': False,
-    'version': None
-}
-
-# Manufacturer identification codes
-MANUFACTURERS = {
-    'A': 'Matra',
-    'B': 'RTIC',
-    'C': 'Telic-Alcatel',
-    'D': 'Thomson',
-    'E': 'CCS',
-    'F': 'Fiet',
-    'G': 'Fime',
-    'H': 'Unitel',
-    'I': 'Option',
-    'J': 'Bull',
-    'K': 'Télématique',
-    'L': 'Desmet'
 }
