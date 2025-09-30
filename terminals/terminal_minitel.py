@@ -14,7 +14,7 @@ from terminals.terminal import Terminal
 # Based on: https://github.com/Zigazou/PyMinitel/blob/master/minitel/Minitel.py
 # Translated and adapted by Claude for this project
 
-MODE_DIRECT = False
+MODE_DIRECT = True
 
 from components.sequence import Sequence # Manages character sequences
 
@@ -284,7 +284,7 @@ class Minitel(Terminal):
             # bypassing the output queue
             # this makes us blocking
             for value in content.valeurs:
-                self._minitel.write(value.encode())
+                self._minitel.write(chr(value).encode())
         else:
             # Adds the characters one by one to the send queue
             for value in content.valeurs:

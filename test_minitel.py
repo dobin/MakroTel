@@ -3,6 +3,7 @@
 
 import time
 import threading
+import sys
 
 from config import *
 config_set_mode("minitel")
@@ -18,9 +19,12 @@ from components.component_text import ComponentText
 from components.component_textfield import ComponentTextField
 
 
-
 def main():
-  terminal = Minitel(device="COM3")
+  dev = "COM3"
+  if len(sys.argv) > 1:
+     dev = sys.argv[1]
+
+  terminal = Minitel(device=dev)
   terminal.guess_speed()
   terminal.identify()
   terminal.set_speed(1200)
