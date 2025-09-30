@@ -11,6 +11,7 @@ from terminals.terminal_curses import TerminalCurses
 from terminals.terminal import Terminal
 from pages.page import Page
 from pages.page_a import PageA
+from components.sequence import Sequence
 
 
 def main(stdscr):
@@ -33,7 +34,9 @@ def main(stdscr):
         if key == ord('q'):
             return
         if key != -1:
-            page.KeyPressed(key)
+            # Convert single key to Sequence
+            key_sequence = Sequence(key)
+            page.KeyPressed(key_sequence)
 
         time.sleep(REFRESH_TIME)
 

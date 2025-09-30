@@ -2,6 +2,7 @@
 
 from config import HEIGHT
 from terminals.terminal import Terminal
+from components.sequence import Sequence
 
 
 class Page:
@@ -17,5 +18,5 @@ class Page:
         pass
 
 
-    def KeyPressed(self, key: int):
+    def KeyPressed(self, keys: Sequence):
         pass

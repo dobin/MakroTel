@@ -1,5 +1,6 @@
 from config import *
 from components.component import Component
+from components.sequence import Sequence
 
 from config import MODE
 if MODE == "minitel":
@@ -29,8 +30,8 @@ class ComponentMover(Component):
         self.terminal.set_char(self.x, self.y, '@')
 
 
-    def KeyPressed(self, key: int):
-        if key == KEY_UP and self.y > 0:
+    def KeyPressed(self, keys: Sequence):
+        if keys.egale(KEY_UP) and self.y > 0:
             self.y -= 1
-        elif key == KEY_DOWN and self.y < HEIGHT - 1:
+        elif keys.egale(KEY_DOWN) and self.y < HEIGHT - 1:
             self.y += 1

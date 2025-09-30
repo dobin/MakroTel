@@ -48,7 +48,7 @@ def main():
       try:
         sequence = terminal.receive_sequence(blocking=False)
         myLogger.log(f"Got char: {sequence}")
-        page.KeyPressed(0x41)
+        page.KeyPressed(sequence)
       except:
         pass
       time.sleep(REFRESH_TIME)

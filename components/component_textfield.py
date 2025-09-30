@@ -1,4 +1,5 @@
 from components.component import Component
+from components.sequence import Sequence
 
 from config import MODE
 if MODE == "minitel":
@@ -74,7 +75,7 @@ class ComponentTextField(Component):
         self.hidden_field = hidden_field
         self.color = color
 
-    def KeyPressed(self, key: int):
+    def KeyPressed(self, keys: Sequence):
         """Key handling
 
         This method is automatically called by the main loop when a key is pressed.
@@ -87,52 +88,57 @@ class ComponentTextField(Component):
         - ACCENT_CEDILLA,
         - ASCII characters that can be typed on a keyboard.
 
-        :param key:
-            The key code received from the terminal.
-        :type key:
-            an integer
+        :param keys:
+            The key sequence received from the terminal.
+        :type keys:
+            a Sequence object
         """
-        if key == LEFT:
+        if keys.egale(LEFT):
             self.accent = None
             self.cursor_left()   
-        elif key == RIGHT:
+        elif keys.egale(RIGHT):
             self.accent = None
             self.cursor_right()        
-        elif key == CORRECTION or key == 127:  # Backspace or DEL
+        elif keys.egale(CORRECTION) or keys.egale(127):  # Backspace or DEL
             self.accent = None
             if self.cursor_left():
                 self.value = (self.value[0:self.cursor_x] +
                                self.value[self.cursor_x + 1:])
                 self.display()
-        elif key in [ACCENT_ACUTE, ACCENT_GRAVE, ACCENT_CIRCUMFLEX, ACCENT_DIAERESIS]:
+        elif keys.egale(ACCENT_ACUTE) or keys.egale(ACCENT_GRAVE) or keys.egale(ACCENT_CIRCUMFLEX) or keys.egale(ACCENT_DIAERESIS):
+            key = keys.valeurs[0] if keys.valeurs else 0
             self.accent = key
-        elif key == ord('c') and self.accent == ACCENT_CEDILLA:
+        elif keys.egale(ord('c')) and self.accent == ACCENT_CEDILLA:
             self.accent = None
             self.value = (self.value[0:self.cursor_x] +
                            'ç' +
                            self.value[self.cursor_x:])
             self.cursor_right()
             self.display()
-        elif 32 <= key <= 126 and chr(key) in MINITEL_CHARACTERS:
-            character = chr(key)
-            if self.accent is not None:
-                if character in 'aeiouAEIOU':
-                    if self.accent == ACCENT_ACUTE:
-                        character = 'áéíóúÁÉÍÓÚ'['aeiouAEIOU'.index(character)]
-                    elif self.accent == ACCENT_GRAVE:
-                        character = 'àèìòùÀÈÌÒÙ'['aeiouAEIOU'.index(character)]
-                    elif self.accent == ACCENT_CIRCUMFLEX:
-                        character = 'âêîôûÂÊÎÔÛ'['aeiouAEIOU'.index(character)]
-                    elif self.accent == ACCENT_DIAERESIS:
-                        character = 'äëïöüÄËÏÖÜ'['aeiouAEIOU'.index(character)]
+        else:
+            # Handle regular ASCII characters
+            #             caractere = '' + chr(sequence.valeurs[0])
+            key = keys.valeurs[0] if keys.valeurs else 0
+            if 32 <= key <= 126 and chr(key) in MINITEL_CHARACTERS:
+                character = chr(key)
+                if self.accent is not None:
+                    if character in 'aeiouAEIOU':
+                        if self.accent == ACCENT_ACUTE:
+                            character = 'áéíóúÁÉÍÓÚ'['aeiouAEIOU'.index(character)]
+                        elif self.accent == ACCENT_GRAVE:
+                            character = 'àèìòùÀÈÌÒÙ'['aeiouAEIOU'.index(character)]
+                        elif self.accent == ACCENT_CIRCUMFLEX:
+                            character = 'âêîôûÂÊÎÔÛ'['aeiouAEIOU'.index(character)]
+                        elif self.accent == ACCENT_DIAERESIS:
+                            character = 'äëïöüÄËÏÖÜ'['aeiouAEIOU'.index(character)]
 
-                self.accent = None
+                    self.accent = None
 
-            self.value = (self.value[0:self.cursor_x] +
-                           character +
-                           self.value[self.cursor_x:])
-            self.cursor_right()
-            self.display()
+                self.value = (self.value[0:self.cursor_x] +
+                               character +
+                               self.value[self.cursor_x:])
+                self.cursor_right()
+                self.display()
 
     def cursor_left(self):
         """Move the cursor one character to the left

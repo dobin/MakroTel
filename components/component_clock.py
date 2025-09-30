@@ -1,6 +1,7 @@
 
 import time
 from components.component import Component
+from components.sequence import Sequence
 
 
 class ComponentClock(Component):
@@ -22,5 +23,5 @@ class ComponentClock(Component):
         self.terminal.screen_lock.release()
 
 
-    def KeyPressed(self, key: int):
+    def KeyPressed(self, keys: Sequence):
         pass

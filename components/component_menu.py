@@ -126,15 +126,15 @@ class ComponentMenu(Component):
             char = '_' if i > 0 and i < self.w - 1 else '+'
             self.terminal.set_char(self.x + i, self.y + self.h - 1, char)
 
-    def KeyPressed(self, key: int):
+    def KeyPressed(self, keys: Sequence):
         """Handle key presses for menu navigation"""
-        if key == KEY_UP:
+        if keys.egale(KEY_UP):
             selection = self.previous_option(self.selection)
             if selection is not None:
                 self.selection = selection
             # Could add beep here if selection is None
 
-        elif key == KEY_DOWN:
+        elif keys.egale(KEY_DOWN):
             selection = self.next_option(self.selection)
             if selection is not None:
                 self.selection = selection

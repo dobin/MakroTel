@@ -1,5 +1,6 @@
 from config import HEIGHT
 from pages.page import Page
+from components.sequence import Sequence
 
 from terminals.terminal import Terminal
 from components.component_clock import ComponentClock
@@ -37,8 +38,8 @@ class PageA(Page):
             component.Tick()
 
 
-    def KeyPressed(self, key: int):
+    def KeyPressed(self, keys: Sequence):
         for component in self.components:
-            component.KeyPressed(key)
+            component.KeyPressed(keys)
 
             
