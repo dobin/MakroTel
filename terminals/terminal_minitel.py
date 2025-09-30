@@ -155,7 +155,9 @@ class Minitel(Terminal):
         # Creates the two read/write threads
         self._threads = []
         self._threads.append(Thread(None, self._manage_input, None, ()))
-        self._threads.append(Thread(None, self._manage_output, None, ()))
+
+        if not MODE_DIRECT:
+            self._threads.append(Thread(None, self._manage_output, None, ()))
 
         # Starts the two read/write threads
         for thread in self._threads:
