@@ -34,7 +34,7 @@ def main():
   terminal.clear()
   terminal.cursor(False)
 
-  page: Page = PageA(terminal)
+  page: Page = PageA(terminal.framebuffer)
   page.initial()
 
   while True:
