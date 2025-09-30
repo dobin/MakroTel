@@ -227,8 +227,7 @@ class ComponentTextField(Component):
         This method is called whenever we want to display the element.
         """
         # Get a lock on the terminal for thread safety
-        if hasattr(self.terminal, 'screen_lock'):
-            self.terminal.screen_lock.acquire()
+        self.terminal.framebuffer.screen_lock.acquire()
         
         try:
             if not self.hidden_field:
@@ -254,8 +253,7 @@ class ComponentTextField(Component):
                     self.terminal.set_char(self.x + i, self.y, char)
                     
         finally:
-            if hasattr(self.terminal, 'screen_lock'):
-                self.terminal.screen_lock.release()
+            self.terminal.framebuffer.screen_lock.release()
 
     def Tick(self):
         """Update the text field display each tick"""

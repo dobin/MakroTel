@@ -176,10 +176,10 @@ class Minitel(Terminal):
         # Stream current screen to the terminal
         # NOTE: We copy it for now
         # NOTE: Lock it so we have a clean copy
-        self.screen_lock.acquire()
-        screen_copy = copy.deepcopy(self.screen)
-        self.screen_lock.release()
-        
+        self.framebuffer.screen_lock.acquire()
+        screen_copy = copy.deepcopy(self.framebuffer.screen)
+        self.framebuffer.screen_lock.release()
+
         current_row = -1
         current_col = -1
         
@@ -199,12 +199,12 @@ class Minitel(Terminal):
 
         # NOTE: update the screen, indicate what we have written
         # NOTE: Lock probably not needed here
-        self.screen_lock.acquire()
+        self.framebuffer.screen_lock.acquire()
         for y, row in enumerate(screen_copy):
             for x, char in enumerate(row):
-                self.screen[y][x].a_char = char.b_char
-                self.screen[y][x].a_color = char.b_color
-        self.screen_lock.release()
+                self.framebuffer.screen[y][x].a_char = char.b_char
+                self.framebuffer.screen[y][x].a_color = char.b_color
+        self.framebuffer.screen_lock.release()
         #myLogger.log(f"Redrew {n} chars")
 
 

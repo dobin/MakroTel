@@ -17,10 +17,10 @@ class ComponentClock(Component):
         t = time.localtime()
         timestr = time.strftime("%H:%M:%S", t)
 
-        self.terminal.screen_lock.acquire()
+        self.terminal.framebuffer.screen_lock.acquire()
         for i, c in enumerate(timestr):
             self.terminal.set_char(self.x + i, self.y, c)
-        self.terminal.screen_lock.release()
+        self.terminal.framebuffer.screen_lock.release()
 
 
     def KeyPressed(self, keys: Sequence):

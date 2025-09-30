@@ -12,7 +12,7 @@ class ComponentText(Component):
 
 
     def Tick(self):
-        self.terminal.screen_lock.acquire()
+        self.terminal.framebuffer.screen_lock.acquire()
         for i, c in enumerate(self.text):
             self.terminal.set_char(self.x + i, self.y, c)
-        self.terminal.screen_lock.release()
+        self.terminal.framebuffer.screen_lock.release()

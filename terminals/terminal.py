@@ -4,32 +4,18 @@ import threading
 import time
 
 
-class Cell:
-    def __init__(self):
-        # current, drawn
-        self.a_char: str = ' '
-        self.a_color = 0
+from framebuffer import FrameBuffer, Cell
 
-        # new, to draw
-        self.b_char: str = ' '
-        self.b_color = 0
-        self.b_type = 0
-
-
-    def Set(self, char: str, color=0, type=0):
-        self.b_char = char
-        self.b_color = color
-        self.b_type = type
-        
 
 class Terminal:
     def __init__(self):
         self.width: int = WIDTH
         self.height: int = HEIGHT
         self.bg_char: str = CHAR_BG
-        self.screen: list[list[Cell]] = [[Cell() for _ in range(self.width)] for _ in range(self.height)]
-        self.screen_lock = threading.Lock()
-        self.draw_event = threading.Event()  # Event to signal when drawing is needed
+        #self.screen: list[list[Cell]] = [[Cell() for _ in range(self.width)] for _ in range(self.height)]
+        #self.screen_lock = threading.Lock()
+        #self.draw_event = threading.Event()  # Event to signal when drawing is needed
+        self.framebuffer = FrameBuffer()
         self.running = True  # Flag to control the draw loop
 
         threading.Thread(target=self.draw_loop, daemon=True).start()
@@ -38,11 +24,11 @@ class Terminal:
     def draw_loop(self):
         while self.running:
             # Wait for the event to be set, with a timeout for periodic refresh
-            self.draw_event.wait(timeout=1.0)  # 1 second timeout as fallback
+            self.framebuffer.draw_event.wait(timeout=1.0)  # 1 second timeout as fallback
             
             if self.running:  # Check if we should still be running
                 self.draw_buffer()
-                self.draw_event.clear()  # Reset the event after drawing
+                self.framebuffer.draw_event.clear()  # Reset the event after drawing
 
     def draw_buffer(self):
         pass
@@ -50,13 +36,13 @@ class Terminal:
 
     def set_char(self, x: int, y: int, char: str):
         if 0 <= x < self.width and 0 <= y < self.height:
-            self.screen[y][x].Set(char)
+            self.framebuffer.screen[y][x].Set(char)
 
 
     def clear_buffer(self):
         for y in range(self.height):
             for x in range(self.width):
-                self.screen[y][x].Set(self.bg_char)
+                self.framebuffer.screen[y][x].Set(self.bg_char)
 
 
     def position(self, x, y):
@@ -69,7 +55,7 @@ class Terminal:
 
     def send(self, data):
         """Send data to the terminal at current cursor position"""
-        with self.screen_lock:
+        with self.framebuffer.screen_lock:
             try:
                 # Handle different data types
                 if isinstance(data, str):
@@ -98,7 +84,7 @@ class Terminal:
     def _put_char_at_cursor(self, char):
         """Internal method to put a character at current cursor position"""
         if 0 <= self.cursor_x - 1 < self.width and 0 <= self.cursor_y - 1 < self.height:
-            self.screen[self.cursor_y - 1][self.cursor_x - 1].Set(char)
+            self.framebuffer.screen[self.cursor_y - 1][self.cursor_x - 1].Set(char)
             self.cursor_x += 1
             if self.cursor_x > self.width:
                 self.cursor_x = 1

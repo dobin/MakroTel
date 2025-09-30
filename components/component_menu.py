@@ -79,12 +79,12 @@ class ComponentMenu(Component):
 
     def Tick(self):
         """Update the menu display each tick"""
-        self.terminal.screen_lock.acquire()
+        self.terminal.framebuffer.screen_lock.acquire()
         try:
             # Draw the menu using the terminal's character-based system
             self._draw_menu()
         finally:
-            self.terminal.screen_lock.release()
+            self.terminal.framebuffer.screen_lock.release()
 
     def _draw_menu(self):
         """Internal method to draw the complete menu"""
