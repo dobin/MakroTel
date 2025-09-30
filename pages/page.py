@@ -1,13 +1,11 @@
-
-
-from config import HEIGHT
-from terminals.terminal import Terminal
 from components.sequence import Sequence
+from framebuffer import FrameBuffer
+from config import HEIGHT
 
 
 class Page:
-    def __init__(self, terminal: Terminal):
-        self.terminal = terminal
+    def __init__(self, framebuffer: FrameBuffer):
+        self.framebuffer = framebuffer
 
 
     def initial(self):

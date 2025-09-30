@@ -34,17 +34,6 @@ class Terminal:
         pass
 
 
-    def set_char(self, x: int, y: int, char: str):
-        if 0 <= x < self.width and 0 <= y < self.height:
-            self.framebuffer.screen[y][x].Set(char)
-
-
-    def clear_buffer(self):
-        for y in range(self.height):
-            for x in range(self.width):
-                self.framebuffer.screen[y][x].Set(self.bg_char)
-
-
     def position(self, x, y):
         """Set cursor position (1-based coordinates like Minitel)"""
         # Convert from 1-based to 0-based coordinates

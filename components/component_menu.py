@@ -54,7 +54,7 @@ class ComponentMenu(Component):
     There cannot be two identical entries in the options list.
 
     """
-    def __init__(self, terminal, options, posx, posy, selection=0):
+    def __init__(self, framebuffer, options, posx, posy, selection=0):
         self.options = options
         self.selection = selection
 
@@ -67,7 +67,7 @@ class ComponentMenu(Component):
         width = self.line_width + 2
         height = len(self.options) + 2
 
-        super().__init__(terminal, posx, posy, height, width)
+        super().__init__(framebuffer, posx, posy, height, width)
 
     def Initial(self):
         """Initialize the menu component"""
@@ -79,32 +79,32 @@ class ComponentMenu(Component):
 
     def Tick(self):
         """Update the menu display each tick"""
-        self.terminal.framebuffer.screen_lock.acquire()
+        self.framebuffer.screen_lock.acquire()
         try:
-            # Draw the menu using the terminal's character-based system
+            # Draw the menu using the framebuffer's character-based system
             self._draw_menu()
         finally:
-            self.terminal.framebuffer.screen_lock.release()
+            self.framebuffer.screen_lock.release()
 
     def _draw_menu(self):
         """Internal method to draw the complete menu"""
         # Draw the top border
         for i in range(self.w):
             char = '_' if i > 0 and i < self.w - 1 else '+'
-            self.terminal.set_char(self.x + i, self.y, char)
+            self.framebuffer.set_char(self.x + i, self.y, char)
 
         # Draw the menu options
         for i, option in enumerate(self.options):
             y_pos = self.y + 1 + i
             
             # Draw left border
-            self.terminal.set_char(self.x, y_pos, '|')
+            self.framebuffer.set_char(self.x, y_pos, '|')
             
             # Draw the option content
             if option == '-':
                 # Draw separator
                 for j in range(1, self.w - 1):
-                    self.terminal.set_char(self.x + j, y_pos, '-')
+                    self.framebuffer.set_char(self.x + j, y_pos, '-')
             else:
                 # Draw regular option
                 display_text = option.ljust(self.line_width)
@@ -116,15 +116,15 @@ class ComponentMenu(Component):
                 
                 for j, char in enumerate(display_text):
                     if j < self.line_width:
-                        self.terminal.set_char(self.x + 1 + j, y_pos, char)
+                        self.framebuffer.set_char(self.x + 1 + j, y_pos, char)
             
             # Draw right border
-            self.terminal.set_char(self.x + self.w - 1, y_pos, '|')
+            self.framebuffer.set_char(self.x + self.w - 1, y_pos, '|')
 
         # Draw the bottom border
         for i in range(self.w):
             char = '_' if i > 0 and i < self.w - 1 else '+'
-            self.terminal.set_char(self.x + i, self.y + self.h - 1, char)
+            self.framebuffer.set_char(self.x + i, self.y + self.h - 1, char)
 
     def KeyPressed(self, keys: Sequence):
         """Handle key presses for menu navigation"""

@@ -49,7 +49,7 @@ class ComponentTextField(Component):
     - hidden_field: characters are not displayed on minitel, they are
                     replaced by '*' (used for passwords for example)
     """
-    def __init__(self, terminal, x, y, visible_length,
+    def __init__(self, framebuffer, x, y, visible_length,
                  total_length = None, value = '', color = None, hidden_field=False):
         assert isinstance(x, int)
         assert isinstance(y, int)
@@ -62,7 +62,7 @@ class ComponentTextField(Component):
             total_length = visible_length
         assert visible_length <= total_length
 
-        super().__init__(terminal, x, y, 1, visible_length)
+        super().__init__(framebuffer, x, y, 1, visible_length)
 
         # Initialize the field
         self.visible_length = visible_length
@@ -89,7 +89,7 @@ class ComponentTextField(Component):
         - ASCII characters that can be typed on a keyboard.
 
         :param keys:
-            The key sequence received from the terminal.
+            The key sequence received from the framebuffer.
         :type keys:
             a Sequence object
         """
@@ -154,8 +154,8 @@ class ComponentTextField(Component):
         # We cannot move the cursor left if it is already on the first
         # character
         if self.cursor_x == 0:
-            if hasattr(self.terminal, 'beep'):
-                self.terminal.beep()
+            if hasattr(self.framebuffer, 'beep'):
+                self.framebuffer.beep()
             return False
 
         self.cursor_x = self.cursor_x - 1
@@ -184,8 +184,8 @@ class ComponentTextField(Component):
         # We cannot move the cursor right if it is already on the last
         # character or at max length
         if self.cursor_x == min(len(self.value), self.total_length):
-            if hasattr(self.terminal, 'beep'):
-                self.terminal.beep()
+            if hasattr(self.framebuffer, 'beep'):
+                self.framebuffer.beep()
             return False
     
         self.cursor_x = self.cursor_x + 1
@@ -205,7 +205,7 @@ class ComponentTextField(Component):
 
         The method positions the cursor and makes it visible.
         """
-        # TODO: Position cursor visually when terminal supports it
+        # TODO: Position cursor visually when framebuffer supports it
         pass
 
     def handle_departure(self):
@@ -214,7 +214,7 @@ class ComponentTextField(Component):
         The method cancels any accent beginning and makes the cursor invisible.
         """
         self.accent = None
-        # TODO: Hide cursor when terminal supports it
+        # TODO: Hide cursor when framebuffer supports it
 
     def display(self):
         """Display the text field
@@ -226,8 +226,8 @@ class ComponentTextField(Component):
 
         This method is called whenever we want to display the element.
         """
-        # Get a lock on the terminal for thread safety
-        self.terminal.framebuffer.screen_lock.acquire()
+        # Get a lock on the framebuffer for thread safety
+        self.framebuffer.screen_lock.acquire()
         
         try:
             if not self.hidden_field:
@@ -247,13 +247,13 @@ class ComponentTextField(Component):
                     self.offset + self.visible_length
                 ]
 
-            # Display the content using terminal buffer
+            # Display the content using framebuffer buffer
             for i, char in enumerate(display_text):
                 if i < self.visible_length:
-                    self.terminal.set_char(self.x + i, self.y, char)
+                    self.framebuffer.set_char(self.x + i, self.y, char)
                     
         finally:
-            self.terminal.framebuffer.screen_lock.release()
+            self.framebuffer.screen_lock.release()
 
     def Tick(self):
         """Update the text field display each tick"""

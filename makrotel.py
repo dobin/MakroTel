@@ -16,8 +16,7 @@ from components.sequence import Sequence
 
 def main(stdscr):
     terminal: Terminal = TerminalCurses(stdscr)
-
-    page: Page = PageA(terminal)
+    page: Page = PageA(terminal.framebuffer)
     page.initial()
 
     while True:

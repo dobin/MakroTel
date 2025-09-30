@@ -20,7 +20,8 @@ class Cell:
         self.b_char = char
         self.b_color = color
         self.b_type = type
-        
+
+
 
 class FrameBuffer():
     def __init__(self): 
@@ -28,4 +29,14 @@ class FrameBuffer():
         self.screen_lock = threading.Lock()
         self.draw_event = threading.Event()  # Event to signal when drawing is needed
 
+
+    def set_char(self, x: int, y: int, char: str):
+        if 0 <= x < WIDTH and 0 <= y < HEIGHT:
+            self.screen[y][x].Set(char)
+
+
+    def clear_buffer(self):
+        for y in range(HEIGHT):
+            for x in range(WIDTH):
+                self.screen[y][x].Set(CHAR_BG)
 

@@ -2,8 +2,8 @@ from components.component import Component
 
 
 class ComponentText(Component):
-    def __init__(self, terminal, x: int, y: int, text: str):
-        super().__init__(terminal, x, y, 1, len(text))
+    def __init__(self, framebuffer, x: int, y: int, text: str):
+        super().__init__(framebuffer, x, y, 1, len(text))
         self.text = text
 
 
@@ -12,7 +12,7 @@ class ComponentText(Component):
 
 
     def Tick(self):
-        self.terminal.framebuffer.screen_lock.acquire()
+        self.framebuffer.screen_lock.acquire()
         for i, c in enumerate(self.text):
-            self.terminal.set_char(self.x + i, self.y, c)
-        self.terminal.framebuffer.screen_lock.release()
+            self.framebuffer.set_char(self.x + i, self.y, c)
+        self.framebuffer.screen_lock.release()
