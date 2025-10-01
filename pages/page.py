@@ -17,12 +17,18 @@ class Page:
         for component in self.components:
             component.Initial()
 
+        # Signal that drawing may needed
+        self.framebuffer.draw_event.set()
+
 
     def Tick(self):
         self.framebuffer.clear_buffer()
 
         for component in self.components:
             component.Tick()
+        
+        # Signal that drawing may needed
+        self.framebuffer.draw_event.set()
 
 
     def KeyPressed(self, keys: Sequence):

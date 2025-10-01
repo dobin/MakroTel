@@ -39,7 +39,7 @@ def main():
 
   while True:
       page.Tick()
-      terminal.framebuffer.draw_event.set()
+      
       try:
         sequence = terminal.receive_sequence(blocking=False)
         myLogger.log(f"Got char: {sequence}")

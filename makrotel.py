@@ -21,8 +21,6 @@ def main(stdscr):
 
     while True:
         page.Tick()
-        # Signal that drawing is needed after sending data
-        terminal.framebuffer.draw_event.set()
 
         # Handle input
         key = terminal.stdscr.getch()
