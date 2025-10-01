@@ -32,13 +32,10 @@ def main():
     terminal.cursor(False)
 
     page: Page = PageA(terminal.framebuffer)
-    page.initial()
+    terminal.SetPage(page)
 
     while True:
-        page.Tick()
-        keySequence = terminal.get_input_key()
-        if keySequence is not None:
-            page.KeyPressed(keySequence)
+        terminal.Tick()
         time.sleep(REFRESH_TIME)
 
     terminal.close() 

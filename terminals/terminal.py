@@ -5,6 +5,7 @@ import time
 from abc import ABC, abstractmethod
 from components.sequence import Sequence
 from framebuffer import FrameBuffer, Cell
+from pages.page import Page
 
 
 class Terminal:
@@ -14,8 +15,23 @@ class Terminal:
         self.bg_char: str = CHAR_BG
         self.framebuffer = FrameBuffer()
         self.running = True  # Flag to control the draw loop
+        self.page: Page|None = None
 
         threading.Thread(target=self.draw_loop, daemon=True).start()
+
+
+    def SetPage(self, page: Page):
+        self.page = page
+        self.page.initial()
+
+
+    def Tick(self):
+        if self.page is None:
+            return
+        self.page.Tick()
+        keySequence = self.get_input_key()
+        if keySequence is not None:
+            self.page.KeyPressed(keySequence)
 
 
     def draw_loop(self):
