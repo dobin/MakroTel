@@ -10,7 +10,7 @@ class Page:
         self.x: int = 0
         self.y: int = HEIGHT // 2
 
-
+    
     def initial(self):
         self.framebuffer.clear_buffer()
 
@@ -27,7 +27,9 @@ class Page:
         for component in self.components:
             component.Tick()
         
-        # Signal that drawing may needed
+        # Signal that drawing may be required
+        # We finished the rendered page
+        # There may or may not be changes to the framebuffer
         self.framebuffer.draw_event.set()
 
 

@@ -13,7 +13,6 @@ from components.component_textfield import ComponentTextField
 class PageA(Page):
     def __init__(self, framebuffer: FrameBuffer):
         super().__init__(framebuffer)
-
         self.dx: int = 1
 
         self.components.append(ComponentClock(framebuffer, 1, 0))
