@@ -9,31 +9,44 @@ from pages.page import Page
 from terminals.terminal import Terminal
 
 
+class PageManager():
+    def __init__(self):
+        self.current_page: Page
+        self.pages = {}
+
+    def add_page(self, name: str, page: Page):
+        self.pages[name] = page
+
+    def set_current_page(self, name: str):
+        if name not in self.pages:
+            myLogger.log(f"Page '{name}' not found in PageManager.")
+            return
+        self.current_page = self.pages[name]
+        self.current_page.initial()
+
+    def get_current_page(self) -> Page|None:
+        return self.current_page
+
+
 class Engine:
     def __init__(self, framebuffer: FrameBuffer, terminal: Terminal):
-        self.width: int = WIDTH
-        self.height: int = HEIGHT
-        self.bg_char: str = CHAR_BG
         self.framebuffer = framebuffer
         self.running = True  # Flag to control the draw loop
         self.terminal = terminal
-        self.page: Page|None = None
-
+        self.pageManager = PageManager()
         threading.Thread(target=self.draw_loop, daemon=True).start()
 
 
-    def SetPage(self, page: Page):
-        self.page = page
-        self.page.initial()
-
-
     def Tick(self):
-        if self.page is None:
+        current_page = self.pageManager.get_current_page()
+        if current_page is None:
             return
-        self.page.Tick()
+        
+        current_page.Tick()
+
         keySequence = self.terminal.get_input_key()
         if keySequence is not None:
-            self.page.KeyPressed(keySequence)
+            current_page.KeyPressed(keySequence)
 
 
     def draw_loop(self):
@@ -44,3 +57,8 @@ class Engine:
             if self.running:  # Check if we should still be running
                 self.terminal.draw_buffer()
                 self.framebuffer.draw_event.clear()  # Reset the event after drawing
+
+
+    def stop(self):
+        """Stop the drawing loop gracefully"""
+        self.running = False

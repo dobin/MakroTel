@@ -14,6 +14,8 @@ from terminals.terminal import Terminal
 from pages.page import Page
 from pages.page_a import PageA
 from components.sequence import Sequence
+from engine import Engine
+from framebuffer import FrameBuffer
 
 
 def main():
@@ -21,7 +23,8 @@ def main():
     if len(sys.argv) > 1:
         dev = sys.argv[1]
 
-    terminal = Minitel(device=dev)
+    framebuffer = FrameBuffer()
+    terminal = Minitel(framebuffer, device=dev)
     terminal.guess_speed()
     terminal.identify()
     terminal.set_speed(1200)
@@ -30,12 +33,14 @@ def main():
     terminal.echo(False)
     terminal.clear()
     terminal.cursor(False)
+    engine = Engine(framebuffer, terminal)
 
-    page: Page = PageA(terminal.framebuffer)
-    terminal.SetPage(page)
+    page: Page = PageA(framebuffer)
+    engine.pageManager.add_page("page_a", page)
+    engine.pageManager.set_current_page("page_a")
 
     while True:
-        terminal.Tick()
+        engine.Tick()
         time.sleep(REFRESH_TIME)
 
     terminal.close() 

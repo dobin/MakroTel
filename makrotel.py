@@ -17,9 +17,11 @@ def main(stdscr):
     framebuffer = FrameBuffer()
     terminal: Terminal = TerminalCurses(framebuffer, stdscr)
     engine = Engine(framebuffer, terminal)
-    page: Page = PageA(framebuffer)
 
-    engine.SetPage(page)
+    page: Page = PageA(framebuffer)
+    engine.pageManager.add_page("page_a", page)
+    engine.pageManager.set_current_page("page_a")
+
     while True:
         engine.Tick()
         time.sleep(REFRESH_TIME)

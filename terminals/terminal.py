@@ -9,39 +9,10 @@ from pages.page import Page
 
 
 class Terminal:
-    def __init__(self):
+    def __init__(self, framebuffer: FrameBuffer):
         self.width: int = WIDTH
         self.height: int = HEIGHT
-        self.bg_char: str = CHAR_BG
-        self.framebuffer = FrameBuffer()
-        self.running = True  # Flag to control the draw loop
-        self.page: Page|None = None
-
-        threading.Thread(target=self.draw_loop, daemon=True).start()
-
-
-    def SetPage(self, page: Page):
-        self.page = page
-        self.page.initial()
-
-
-    def Tick(self):
-        if self.page is None:
-            return
-        self.page.Tick()
-        keySequence = self.get_input_key()
-        if keySequence is not None:
-            self.page.KeyPressed(keySequence)
-
-
-    def draw_loop(self):
-        while self.running:
-            # Wait for the event to be set, with a timeout for periodic refresh
-            self.framebuffer.draw_event.wait(timeout=1.0)  # 1 second timeout as fallback
-            
-            if self.running:  # Check if we should still be running
-                self.draw_buffer()
-                self.framebuffer.draw_event.clear()  # Reset the event after drawing
+        self.framebuffer = framebuffer
 
 
     @abstractmethod
@@ -63,6 +34,7 @@ class Terminal:
         self.cursor_y = max(1, min(y, self.height))
         # Note: We don't move the actual cursor here, just track position
         # The actual positioning happens in send() method
+
 
     def send(self, data):
         """Send data to the terminal at current cursor position"""
@@ -133,7 +105,3 @@ class Terminal:
     def beep(self):
         """Make a beep sound"""
         myLogger.log("Beep not available")
-
-    def stop(self):
-        """Stop the drawing loop gracefully"""
-        self.running = False
