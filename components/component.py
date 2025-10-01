@@ -1,5 +1,4 @@
-
-
+from pages.page import PageManager
 from components.sequence import Sequence
 
 
@@ -11,6 +10,7 @@ class Component:
         self.h: int = h
         self.w: int = w
         self.bitmap = bitmap
+        self.pageManager: PageManager|None = None
 
     def Initial(self):
         pass
@@ -20,3 +20,6 @@ class Component:
 
     def KeyPressed(self, keys: Sequence):
         pass
+
+    def set_page_manager(self, pageManager: PageManager):
+        self.pageManager = pageManager

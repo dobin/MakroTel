@@ -5,27 +5,8 @@ import time
 from abc import ABC, abstractmethod
 from components.sequence import Sequence
 from framebuffer import FrameBuffer, Cell
-from pages.page import Page
+from pages.page import Page, PageManager
 from terminals.terminal import Terminal
-
-
-class PageManager():
-    def __init__(self):
-        self.current_page: Page
-        self.pages = {}
-
-    def add_page(self, name: str, page: Page):
-        self.pages[name] = page
-
-    def set_current_page(self, name: str):
-        if name not in self.pages:
-            myLogger.log(f"Page '{name}' not found in PageManager.")
-            return
-        self.current_page = self.pages[name]
-        self.current_page.initial()
-
-    def get_current_page(self) -> Page|None:
-        return self.current_page
 
 
 class Engine:

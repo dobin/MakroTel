@@ -9,6 +9,8 @@ from terminals.terminal_curses import TerminalCurses
 from terminals.terminal import Terminal
 from pages.page import Page
 from pages.page_a import PageA
+from pages.page_b import PageB
+from components.sequence import Sequence
 from engine import Engine
 from framebuffer import FrameBuffer
 
@@ -18,9 +20,11 @@ def main(stdscr):
     terminal: Terminal = TerminalCurses(framebuffer, stdscr)
     engine = Engine(framebuffer, terminal)
 
-    page: Page = PageA(framebuffer)
-    engine.pageManager.add_page("page_a", page)
-    engine.pageManager.set_current_page("page_a")
+    pagea: Page = PageA(framebuffer)
+    pageb: Page = PageB(framebuffer)
+    engine.pageManager.add_page("PageA", pagea)
+    engine.pageManager.add_page("PageB", pageb)
+    engine.pageManager.set_current_page("PageB")
 
     while True:
         engine.Tick()
