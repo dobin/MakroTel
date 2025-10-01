@@ -1,7 +1,5 @@
 import curses
 import time
-import threading
-import copy
 
 from config import *
 config_set_mode("curses")
@@ -11,16 +9,19 @@ from terminals.terminal_curses import TerminalCurses
 from terminals.terminal import Terminal
 from pages.page import Page
 from pages.page_a import PageA
-from components.sequence import Sequence
+from engine import Engine
+from framebuffer import FrameBuffer
 
 
 def main(stdscr):
-    terminal: Terminal = TerminalCurses(stdscr)
-    page: Page = PageA(terminal.framebuffer)
-    terminal.SetPage(page)
+    framebuffer = FrameBuffer()
+    terminal: Terminal = TerminalCurses(framebuffer, stdscr)
+    engine = Engine(framebuffer, terminal)
+    page: Page = PageA(framebuffer)
 
+    engine.SetPage(page)
     while True:
-        terminal.Tick()
+        engine.Tick()
         time.sleep(REFRESH_TIME)
 
 # Run curses application

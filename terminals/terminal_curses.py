@@ -5,13 +5,14 @@ import curses
 import copy
 from mylogger import myLogger
 
+from framebuffer import FrameBuffer
 from terminals.terminal import Terminal
 from components.sequence import Sequence
 
 
 class TerminalCurses(Terminal):
-    def __init__(self, stdscr):
-        super().__init__()
+    def __init__(self, framebuffer: FrameBuffer, stdscr):
+        super().__init__(framebuffer)
         self.stdscr = stdscr
         self.cursor_x = 1
         self.cursor_y = 1

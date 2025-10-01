@@ -8,6 +8,7 @@ from threading import Thread   # Threads for sending/receiving
 from queue import Queue, Empty # Character queues for sending/receiving
 import copy
 import time
+from framebuffer import FrameBuffer
 
 from mylogger import myLogger
 from terminals.terminal import Terminal
@@ -104,7 +105,7 @@ class Minitel(Terminal):
         minitel.close()
 
     """
-    def __init__(self, device = '/dev/ttyUSB0'):
+    def __init__(self, framebuffer: FrameBuffer, device = '/dev/ttyUSB0'):
         """Minitel constructor
 
         The serial connection is established according to the Minitel's basic standard.
@@ -124,7 +125,7 @@ class Minitel(Terminal):
         """
         assert isinstance(device, str)
 
-        super().__init__()
+        super().__init__(framebuffer)
 
         # Initializes the Minitel's state
         self.mode = 'VIDEOTEX'
