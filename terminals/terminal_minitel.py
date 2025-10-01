@@ -183,8 +183,6 @@ class Minitel(Terminal):
         current_col = -1
         n = 0
         
-        # measure redraw time
-        start_time = time.perf_counter()
         for y, row in enumerate(screen_copy):
             for x, char in enumerate(row):
                 if char.a_char != char.b_char:
@@ -198,10 +196,6 @@ class Minitel(Terminal):
                     self.send(char.b_char)
                     current_col += 1  # Update our tracking of current column
                     n += 1
-        if n > 0:
-            end_time = time.perf_counter()
-            elapsed_time = end_time - start_time
-            myLogger.log(f"Redrew {n} chars in {elapsed_time:.6f} seconds")
 
         # NOTE: update the screen, indicate what we have written
         # NOTE: Lock probably not needed here
