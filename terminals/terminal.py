@@ -2,8 +2,8 @@ from config import *
 from mylogger import myLogger
 import threading
 import time
-
-
+from abc import ABC, abstractmethod
+from components.sequence import Sequence
 from framebuffer import FrameBuffer, Cell
 
 
@@ -12,9 +12,6 @@ class Terminal:
         self.width: int = WIDTH
         self.height: int = HEIGHT
         self.bg_char: str = CHAR_BG
-        #self.screen: list[list[Cell]] = [[Cell() for _ in range(self.width)] for _ in range(self.height)]
-        #self.screen_lock = threading.Lock()
-        #self.draw_event = threading.Event()  # Event to signal when drawing is needed
         self.framebuffer = FrameBuffer()
         self.running = True  # Flag to control the draw loop
 
@@ -31,8 +28,15 @@ class Terminal:
                 self.framebuffer.draw_event.clear()  # Reset the event after drawing
 
 
-    # draw the framebuffer to the terminal (hardware or curses)
+    @abstractmethod
     def draw_buffer(self):
+        # draw the framebuffer to the terminal (hardware or curses)
+        pass
+
+
+    @abstractmethod
+    def get_input_key(self) -> Sequence|None:
+        # read a key from the terminal and return it as a Sequence
         pass
 
 

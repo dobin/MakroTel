@@ -171,6 +171,15 @@ class Minitel(Terminal):
                 self.close()
 
 
+    def get_input_key(self) -> Sequence|None:
+        try:
+            sequence = self.receive_sequence(blocking=False)
+            myLogger.log(f"Got char: {sequence}")
+            return sequence
+        except:
+            return None
+
+
     def draw_buffer(self):
         # Stream current screen to the terminal
         # NOTE: We copy it for now

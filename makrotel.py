@@ -21,15 +21,9 @@ def main(stdscr):
 
     while True:
         page.Tick()
-
-        # Handle input
-        key = terminal.stdscr.getch()
-        if key == ord('q'):
-            return
-        if key != -1:
-            # Convert single key to Sequence
-            key_sequence = Sequence(key)
-            page.KeyPressed(key_sequence)
+        keySequence = terminal.get_input_key()
+        if keySequence is not None:
+            page.KeyPressed(keySequence)
 
         time.sleep(REFRESH_TIME)
 

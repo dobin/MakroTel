@@ -31,6 +31,16 @@ class TerminalCurses(Terminal):
                 curses.init_pair(i, i, -1)
 
 
+    def get_input_key(self) -> Sequence|None:
+        key = self.stdscr.getch()
+        if key != -1:
+            # Convert single key to Sequence
+            key_sequence = Sequence(key)
+            return key_sequence
+        else:
+            return None
+
+
     def draw_buffer(self):
         n = 0
 
