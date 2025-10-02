@@ -1,14 +1,6 @@
 from components.component import Component
 from components.sequence import Sequence
-
-from config import MODE
-if MODE == "minitel":
-    from terminals.minitel_constants import LEFT, RIGHT, CORRECTION
-else:
-    import curses
-    LEFT = curses.KEY_LEFT
-    RIGHT = curses.KEY_RIGHT
-    CORRECTION = curses.KEY_BACKSPACE  # or 127 for DEL
+from constants.keys import KEY_LEFT, KEY_RIGHT, KEY_CORRECTION
 
 
 ACCENT_ACUTE = ord('´')  # Dead key for acute accent
@@ -93,13 +85,13 @@ class ComponentTextField(Component):
         :type keys:
             a Sequence object
         """
-        if keys.egale(LEFT):
+        if keys.egale(KEY_LEFT):
             self.accent = None
             self.cursor_left()   
-        elif keys.egale(RIGHT):
+        elif keys.egale(KEY_RIGHT):
             self.accent = None
             self.cursor_right()        
-        elif keys.egale(CORRECTION) or keys.egale(127):  # Backspace or DEL
+        elif keys.egale(KEY_CORRECTION) or keys.egale(127):  # Backspace or DEL
             self.accent = None
             if self.cursor_left():
                 self.value = (self.value[0:self.cursor_x] +

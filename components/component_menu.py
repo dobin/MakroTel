@@ -4,16 +4,7 @@
 
 from components.component import Component
 from components.sequence import Sequence
-
-from config import MODE
-if MODE == "minitel":
-    from terminals.minitel_constants import UP, DOWN
-    KEY_UP = UP
-    KEY_DOWN = DOWN
-else:
-    import curses
-    KEY_UP = curses.KEY_UP
-    KEY_DOWN = curses.KEY_DOWN
+from constants.keys import KEY_UP, KEY_DOWN
 
 # From: https://github.com/Zigazou/PyMinitel/blob/master/minitel/ui/UI.py
 # Translated and adapted by Claude for this project

@@ -1,16 +1,7 @@
 from config import *
 from components.component import Component
 from components.sequence import Sequence
-
-from config import MODE
-if MODE == "minitel":
-    from terminals.minitel_constants import UP, DOWN
-    KEY_UP = UP
-    KEY_DOWN = DOWN
-else:
-    import curses
-    KEY_UP = curses.KEY_UP
-    KEY_DOWN = curses.KEY_DOWN
+from constants.keys import KEY_UP, KEY_DOWN
 
 class ComponentMover(Component):
     def __init__(self, framebuffer, x: int, y: int):
