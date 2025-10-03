@@ -5,7 +5,7 @@ import curses
 import copy
 from mylogger import myLogger
 
-from framebuffer import FrameBuffer
+from framebuffer import FrameBuffer, MINITEL_COLOR
 from terminals.terminal import Terminal
 from components.sequence import Sequence
 
@@ -27,9 +27,19 @@ class TerminalCurses(Terminal):
         if curses.has_colors():
             curses.start_color()
             curses.use_default_colors()
-            # Define color pairs (foreground, background)
-            for i in range(1, min(curses.COLORS, 8)):
-                curses.init_pair(i, i, -1)
+
+            self.color_pairs = {}
+            pair_number = 1
+
+            colors = [MINITEL_COLOR.WHITE, MINITEL_COLOR.GREY_1, MINITEL_COLOR.GREY_2, MINITEL_COLOR.GREY_3, MINITEL_COLOR.GREY_4, MINITEL_COLOR.GREY_5, MINITEL_COLOR.GREY_6, MINITEL_COLOR.BLACK]
+            curses_colors = [curses.COLOR_WHITE, 240, 242, 244, 246, 248, 250, curses.COLOR_BLACK]
+            
+            for idx_fg, fg in enumerate(colors):
+                for idx_bg, bg in enumerate(colors):
+                    curses.init_pair(pair_number, curses_colors[idx_fg], curses_colors[idx_bg])
+                    self.color_pairs[(fg, bg)] = pair_number
+                    pair_number += 1
+            myLogger.log(f"Initialized {pair_number-1} color pairs for curses terminal.")
 
 
     def get_input_key(self) -> Sequence|None:
@@ -52,10 +62,24 @@ class TerminalCurses(Terminal):
         screen_copy = copy.deepcopy(self.framebuffer.screen)
         self.framebuffer.screen_lock.release()
         for y, row in enumerate(screen_copy):
-            for x, char in enumerate(row):
-                if char.a_char != char.b_char:
+            for x, cell in enumerate(row):
+                if cell.a_char != cell.b_char:
+                    # grab color pre-defined in curses
+                    # based on the enum value
+                    color_idx = self.color_pairs.get(
+                        (cell.b_char.char_attributes.char_color, 
+                         cell.b_char.char_attributes.background_color), 0)
+                    
+                    attributes = 0
+                    if cell.b_char.char_attributes.underline:
+                        attributes |= curses.A_UNDERLINE
+                    if cell.b_char.char_attributes.blinking:
+                        attributes |= curses.A_BLINK
+                    if cell.b_char.char_attributes.inverted:
+                        attributes |= curses.A_REVERSE
+
                     # print
-                    self.stdscr.addch(y, x, char.b_char)
+                    self.stdscr.addch(y, x, cell.b_char.char, curses.color_pair(color_idx) | attributes)
 
                     # simulate slow drawing
                     time.sleep(CURSES_WAIT_TIME)
@@ -67,8 +91,16 @@ class TerminalCurses(Terminal):
         self.framebuffer.screen_lock.acquire()
         for y, row in enumerate(screen_copy):
             for x, char in enumerate(row):
-                self.framebuffer.screen[y][x].a_char = char.b_char
-                self.framebuffer.screen[y][x].a_color = char.b_color
+                self.framebuffer.screen[y][x].a_char.char = char.b_char.char
+                self.framebuffer.screen[y][x].a_char.char_attributes.char_color = char.b_char.char_attributes.char_color
+                self.framebuffer.screen[y][x].a_char.char_attributes.background_color = char.b_char.char_attributes.background_color
+                self.framebuffer.screen[y][x].a_char.char_attributes.size = char.b_char.char_attributes.size
+                self.framebuffer.screen[y][x].a_char.char_attributes.underline = char.b_char.char_attributes.underline
+                self.framebuffer.screen[y][x].a_char.char_attributes.blinking = char.b_char.char_attributes.blinking
+                self.framebuffer.screen[y][x].a_char.char_attributes.inverted = char.b_char.char_attributes.inverted
+                self.framebuffer.screen[y][x].a_char.char_attributes.z = char.b_char.char_attributes.z
+                self.framebuffer.screen[y][x].a_char.char_attributes.order = char.b_char.char_attributes.order
+
         self.framebuffer.screen_lock.release()
 
         #myLogger.log(f"Redrew {n} chars")

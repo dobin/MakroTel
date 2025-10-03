@@ -24,7 +24,7 @@ def main(stdscr):
     pageb: Page = PageB(framebuffer)
     engine.pageManager.add_page("PageA", pagea)
     engine.pageManager.add_page("PageB", pageb)
-    engine.pageManager.set_current_page("PageB")
+    engine.pageManager.set_current_page("PageA")
 
     while True:
         engine.Tick()

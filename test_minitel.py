@@ -10,10 +10,9 @@ config_set_mode("minitel")
 
 from terminals.terminal_minitel import Minitel
 from mylogger import myLogger
-from terminals.terminal import Terminal
 from pages.page import Page
 from pages.page_a import PageA
-from components.sequence import Sequence
+from pages.page_b import PageB
 from engine import Engine
 from framebuffer import FrameBuffer
 
@@ -35,9 +34,11 @@ def main():
     terminal.cursor(False)
     engine = Engine(framebuffer, terminal)
 
-    page: Page = PageA(framebuffer)
-    engine.pageManager.add_page("page_a", page)
-    engine.pageManager.set_current_page("page_a")
+    pagea: Page = PageA(framebuffer)
+    pageb: Page = PageB(framebuffer)
+    engine.pageManager.add_page("PageA", pagea)
+    engine.pageManager.add_page("PageB", pageb)
+    engine.pageManager.set_current_page("PageA")
 
     while True:
         engine.Tick()

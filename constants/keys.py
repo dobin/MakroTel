@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+import enum
+
+
 """Unified key constants for all terminal types
 
 This module provides a unified interface for key constants across different
@@ -8,6 +12,26 @@ instead of directly from terminal-specific modules.
 """
 
 from config import MODE
+
+# Minitel colors actually (monochrome crt)
+class MINITEL_COLOR(enum.Enum):
+    BLACK = 0
+    GREY_1 = 1
+    GREY_2 = 2
+    GREY_3 = 3
+    GREY_4 = 4
+    GREY_5 = 5
+    GREY_6 = 6
+    WHITE = 7
+
+
+class MINITEL_SIZE(enum.Enum):
+    NORMAL = 0
+    DOUBLE_WIDTH = 1
+    DOUBLE_HEIGHT = 2
+    DOUBLE_SIZE = 3
+
+
 
 if MODE == "minitel":
     from terminals.minitel_constants import (
