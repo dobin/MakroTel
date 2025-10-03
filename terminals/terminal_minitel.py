@@ -8,7 +8,7 @@ from threading import Thread   # Threads for sending/receiving
 from queue import Queue, Empty # Character queues for sending/receiving
 import copy
 import time
-from framebuffer import FrameBuffer
+from framebuffer import FrameBuffer, INIT_CHAR
 from constants.keys import MINITEL_COLOR
 
 from mylogger import myLogger
@@ -202,6 +202,9 @@ class Minitel(Terminal):
                 continue
             for x, cell in enumerate(row):
                 if cell.a_char.char != cell.b_char.char:
+                    if cell.b_char.char == INIT_CHAR:
+                        cell.b_char.char = ' '  # Treat INIT_CHAR as space for display purposes
+
                     # Position Cursor - first if needed (for color to work properly)
                     if current_row != y or current_col != x:
                         self.position(x+1, y+1)  # Minitel uses 1-based coordinates
@@ -232,7 +235,6 @@ class Minitel(Terminal):
                         inversions = {True: [ESC, 0x5d], False: [ESC, 0x5c], None: None}
                         self.send(inversions[cell.b_char.char_attributes.inverted])
 
-
                     # send to minitel
                     self.send(cell.b_char.char)
                     current_col += 1  # Update our tracking of current column
@@ -246,6 +248,10 @@ class Minitel(Terminal):
                 self.framebuffer.screen[y][x].a_char.char = cell.b_char.char
                 self.framebuffer.screen[y][x].a_char.char_attributes.char_color = cell.b_char.char_attributes.char_color
                 self.framebuffer.screen[y][x].a_char.char_attributes.background_color = cell.b_char.char_attributes.background_color
+                self.framebuffer.screen[y][x].a_char.char_attributes.underline = cell.b_char.char_attributes.underline
+                self.framebuffer.screen[y][x].a_char.char_attributes.blinking = cell.b_char.char_attributes.blinking
+                self.framebuffer.screen[y][x].a_char.char_attributes.inverted = cell.b_char.char_attributes.inverted
+
         self.framebuffer.screen_lock.release()
         #myLogger.log(f"Redrew {n} chars")
 
