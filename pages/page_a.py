@@ -15,8 +15,8 @@ class PageA(Page):
         super().__init__(framebuffer)
         self.dx: int = 1
 
-        self.components.append(ComponentClock(framebuffer, 1, 0))
-        self.components.append(ComponentText(framebuffer, 12, 0, "MakroTel"))
-        self.components.append(ComponentMover(framebuffer, 1, 1))
-        self.components.append(ComponentTextField(framebuffer, 15, 2, 20))
+        self.components.append(ComponentClock(framebuffer, 1, 1))
+        self.components.append(ComponentText(framebuffer, 12, 1, "MakroTel"))
+        self.components.append(ComponentMover(framebuffer, 1, 2))
+        self.components.append(ComponentTextField(framebuffer, 15, 3, 20))
         self.components.append(ComponentMenu(framebuffer, ["Item 1", "Item 2", "Item 3"], 1, 4))

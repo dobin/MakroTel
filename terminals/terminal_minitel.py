@@ -194,6 +194,9 @@ class Minitel(Terminal):
         n = 0
         
         for y, row in enumerate(screen_copy):
+            if y == 0:
+                # status bar
+                continue
             for x, char in enumerate(row):
                 if char.a_char != char.b_char:
                     # Only call position() if we need to move to a new position
