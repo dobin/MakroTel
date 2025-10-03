@@ -81,7 +81,7 @@ class ComponentMenu(Component):
         """Internal method to draw the complete menu"""
         # Draw the top border
         for i in range(self.w):
-            char = '_' if i > 0 and i < self.w - 1 else '+'
+            char = '~' if i > 0 and i < self.w - 1 else '+'  # ~ = 0x7e
             self.framebuffer.set_char(self.x + i, self.y, char)
 
         # Draw the menu options
@@ -89,7 +89,7 @@ class ComponentMenu(Component):
             y_pos = self.y + 1 + i
             
             # Draw left border
-            self.framebuffer.set_char(self.x, y_pos, '|')
+            self.framebuffer.set_char(self.x, y_pos, '\x7b') # '{' character
             
             # Draw the option content
             if option == '-':

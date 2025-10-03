@@ -45,3 +45,6 @@ class PageA(Page):
         self.components.append(ComponentText(framebuffer, 25, 11, "GREY_5", CharacterAttributes(background_color=MINITEL_COLOR.GREY_5)))
         self.components.append(ComponentText(framebuffer, 25, 12, "GREY_6", CharacterAttributes(background_color=MINITEL_COLOR.GREY_6)))
         self.components.append(ComponentText(framebuffer, 25, 13, "BLACK", CharacterAttributes(background_color=MINITEL_COLOR.BLACK)))
+    
+        test_string = "` { \\ ¦ } ^ ~ / _"
+        self.components.append(ComponentText(framebuffer, 15, 4, test_string, CharacterAttributes(background_color=MINITEL_COLOR.BLACK)))
