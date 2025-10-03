@@ -253,7 +253,7 @@ class Minitel(Terminal):
                 self.framebuffer.screen[y][x].a_char.char_attributes.inverted = cell.b_char.char_attributes.inverted
 
         self.framebuffer.screen_lock.release()
-        #myLogger.log(f"Redrew {n} chars")
+        myLogger.log(f"Redrew {n} chars")
 
 
     def close(self):
