@@ -320,6 +320,7 @@ class Minitel(Terminal):
             # bypassing the output queue
             for value in content.valeurs:
                 self._minitel.write(chr(value).encode())
+            self._minitel.flush()
         else:
             # Adds the characters one by one to the send queue
             for value in content.valeurs:
