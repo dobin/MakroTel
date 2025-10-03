@@ -199,12 +199,18 @@ class Minitel(Terminal):
                 continue
             for x, cell in enumerate(row):
                 if cell.a_char.char != cell.b_char.char:
+                    # Position Cursor - first if needed (for color to work properly)
+                    if current_row != y or current_col != x:
+                        self.position(x+1, y+1)  # Minitel uses 1-based coordinates
+                        current_row = y
+                        current_col = x
+
                     # color, fg bg
                     if cell.a_char.char_attributes.char_color != cell.b_char.char_attributes.char_color:
-                        myLogger.log(f"Color FG to: {cell.b_char.char_attributes.char_color} {cell.b_char.char_attributes.background_color}")
+                        myLogger.log(f"Color FG to: {cell.b_char.char_attributes.char_color} value: {cell.b_char.char_attributes.char_color.value}")
                         self.send([ESC, 0x40 + cell.b_char.char_attributes.char_color.value])
                     if cell.a_char.char_attributes.background_color != cell.b_char.char_attributes.background_color:
-                        myLogger.log(f"Color BG to: {cell.b_char.char_attributes.char_color} {cell.b_char.char_attributes.background_color}")
+                        myLogger.log(f"Color BG to: {cell.b_char.char_attributes.background_color} value: {cell.b_char.char_attributes.background_color.value}")
                         self.send([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
 
                     # attributes / effects
@@ -219,11 +225,6 @@ class Minitel(Terminal):
                         inversions = {True: [ESC, 0x5d], False: [ESC, 0x5c], None: None}
                         self.send(inversions[cell.b_char.char_attributes.inverted])
 
-                    # Position
-                    if current_row != y or current_col != x:
-                        self.position(x+1, y+1)  # Minitel uses 1-based coordinates
-                        current_row = y
-                        current_col = x
 
                     # send to minitel
                     self.send(cell.b_char.char)
