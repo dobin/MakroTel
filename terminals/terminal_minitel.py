@@ -200,13 +200,12 @@ class Minitel(Terminal):
             for x, cell in enumerate(row):
                 if cell.a_char.char != cell.b_char.char:
                     # color, fg bg
-                    if cell.a_char.char_attributes.char_color != cell.b_char.char_attributes.char_color or \
-                          cell.a_char.char_attributes.background_color != cell.b_char.char_attributes.background_color:
-                        myLogger.log(f"Color to: {cell.b_char.char_attributes.char_color} {cell.b_char.char_attributes.background_color}")
-                        self.color(
-                            cell.b_char.char_attributes.char_color.value,
-                            cell.b_char.char_attributes.background_color.value
-                        )
+                    if cell.a_char.char_attributes.char_color != cell.b_char.char_attributes.char_color:
+                        myLogger.log(f"Color FG to: {cell.b_char.char_attributes.char_color} {cell.b_char.char_attributes.background_color}")
+                        self.send([ESC, 0x40 + cell.b_char.char_attributes.char_color.value])
+                    if cell.a_char.char_attributes.background_color != cell.b_char.char_attributes.background_color:
+                        myLogger.log(f"Color BG to: {cell.b_char.char_attributes.char_color} {cell.b_char.char_attributes.background_color}")
+                        self.send([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
 
                     # attributes / effects
                     #   instead of self.effect() (inefficient as a bit incompatible)
@@ -809,20 +808,13 @@ class Minitel(Terminal):
         :type background:
             a string, an integer or None
         """
-        assert isinstance(character, (str, int)) or character == None
-        assert isinstance(background, (str, int)) or background == None
+        #assert isinstance(character, (str, int)) or character == None
+        #assert isinstance(background, (str, int)) or background == None
 
-        # Defines the foreground color (the character's color)
         if character != None:
-            color = normalize_color(character)
-            if color != None:
-                self.send([ESC, 0x40 + color])
-
-        # Defines the background color (the background color)
+            self.send([ESC, 0x40 + character])
         if background != None:
-            color = normalize_color(background)
-            if color != None:
-                self.send([ESC, 0x50 + color])
+            self.send([ESC, 0x50 + background])
 
     def position(self, column, row, relative = False):
         """Defines the position of the Minitel cursor
