@@ -222,6 +222,7 @@ class Minitel(Terminal):
                             self._minitel.write([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
                             self._minitel.write([0x20])
                             self._minitel.flush()
+                            myLogger.log(f"BG before char: {cell.b_char.char} hex: {cell.b_char.char.encode().hex()}")
                     # attributes / effects
                     #   instead of self.effect() (inefficient as a bit incompatible)
                     if cell.b_char.char_attributes.underline != cell.a_char.char_attributes.underline:
