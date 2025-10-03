@@ -197,16 +197,36 @@ class Minitel(Terminal):
             if y == 0:
                 # status bar
                 continue
-            for x, char in enumerate(row):
-                if char.a_char != char.b_char:
-                    # Only call position() if we need to move to a new position
+            for x, cell in enumerate(row):
+                if cell.a_char.char != cell.b_char.char:
+                    # color, fg bg
+                    if cell.a_char.char_attributes.char_color != cell.b_char.char_attributes.char_color or \
+                          cell.a_char.char_attributes.background_color != cell.b_char.char_attributes.background_color:
+                        self.color(
+                            cell.b_char.char_attributes.char_color,
+                            cell.b_char.char_attributes.background_color
+                        )
+
+                    # attributes / effects
+                    #   instead of self.effect() (inefficient as a bit incompatible)
+                    if cell.b_char.char_attributes.underline != cell.a_char.char_attributes.underline:
+                        underlines = {True: [ESC, 0x5a], False: [ESC, 0x59], None: None}
+                        self.send(underlines[cell.b_char.char_attributes.underline])
+                    if cell.b_char.char_attributes.blinking != cell.a_char.char_attributes.blinking:
+                        blinkings = {True: [ESC, 0x48], False: [ESC, 0x49], None: None}
+                        self.send(blinkings[cell.b_char.char_attributes.blinking])
+                    if cell.b_char.char_attributes.inverted != cell.a_char.char_attributes.inverted:
+                        inversions = {True: [ESC, 0x5d], False: [ESC, 0x5c], None: None}
+                        self.send(inversions[cell.b_char.char_attributes.inverted])
+
+                    # Position
                     if current_row != y or current_col != x:
                         self.position(x+1, y+1)  # Minitel uses 1-based coordinates
                         current_row = y
                         current_col = x
 
                     # send to minitel
-                    self.send(char.b_char)
+                    self.send(cell.b_char.char)
                     current_col += 1  # Update our tracking of current column
                     n += 1
 
@@ -214,9 +234,10 @@ class Minitel(Terminal):
         # NOTE: Lock probably not needed here
         self.framebuffer.screen_lock.acquire()
         for y, row in enumerate(screen_copy):
-            for x, char in enumerate(row):
-                self.framebuffer.screen[y][x].a_char = char.b_char
-                self.framebuffer.screen[y][x].a_color = char.b_color
+            for x, cell in enumerate(row):
+                self.framebuffer.screen[y][x].a_char.char = cell.b_char.char
+                self.framebuffer.screen[y][x].a_char.char_attributes.char_color = cell.b_char.char_attributes.char_color
+                self.framebuffer.screen[y][x].a_char.char_attributes.background_color = cell.b_char.char_attributes.background_color
         self.framebuffer.screen_lock.release()
         #myLogger.log(f"Redrew {n} chars")
 
