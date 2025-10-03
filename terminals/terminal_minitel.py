@@ -9,6 +9,7 @@ from queue import Queue, Empty # Character queues for sending/receiving
 import copy
 import time
 from framebuffer import FrameBuffer
+from constants.keys import MINITEL_COLOR
 
 from mylogger import myLogger
 from terminals.terminal import Terminal
@@ -191,6 +192,8 @@ class Minitel(Terminal):
 
         current_row = -1
         current_col = -1
+        last_color = MINITEL_COLOR.WHITE
+        last_background_color = MINITEL_COLOR.BLACK
         n = 0
         
         for y, row in enumerate(screen_copy):
@@ -207,12 +210,18 @@ class Minitel(Terminal):
 
                     # color, fg bg
                     if cell.a_char.char_attributes.char_color != cell.b_char.char_attributes.char_color:
-                        myLogger.log(f"Color FG to: {cell.b_char.char_attributes.char_color} value: {cell.b_char.char_attributes.char_color.value}")
-                        self.send([ESC, 0x40 + cell.b_char.char_attributes.char_color.value])
+                        if cell.b_char.char_attributes.char_color != last_color:
+                            last_color = cell.b_char.char_attributes.char_color
+                            myLogger.log(f"Color FG to: {cell.b_char.char_attributes.char_color} value: {cell.b_char.char_attributes.char_color.value}")
+                            self.send([ESC, 0x40 + cell.b_char.char_attributes.char_color.value])
                     if cell.a_char.char_attributes.background_color != cell.b_char.char_attributes.background_color:
-                        myLogger.log(f"Color BG to: {cell.b_char.char_attributes.background_color} value: {cell.b_char.char_attributes.background_color.value}")
-                        self.send([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
-
+                        if cell.b_char.char_attributes.background_color != last_background_color:
+                            last_background_color = cell.b_char.char_attributes.background_color
+                            myLogger.log(f"Color BG to: {cell.b_char.char_attributes.background_color} value: {cell.b_char.char_attributes.background_color.value}")
+                            #self.send([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
+                            self._minitel.write([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
+                            self._minitel.write([0x20])
+                            self._minitel.flush()
                     # attributes / effects
                     #   instead of self.effect() (inefficient as a bit incompatible)
                     if cell.b_char.char_attributes.underline != cell.a_char.char_attributes.underline:
