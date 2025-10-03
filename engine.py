@@ -23,20 +23,21 @@ class Engine:
         if current_page is None:
             return
         
-        current_page.Tick()
-
         keySequence = self.terminal.get_input_key()
         if keySequence is not None:
             current_page.KeyPressed(keySequence)
+        current_page.Tick()
 
 
     def draw_loop(self):
         while self.running:
-            # Wait for the event to be set, with a timeout for periodic refresh
-            self.framebuffer.draw_event.wait(timeout=1.0)  # 1 second timeout as fallback
-            
+            self.framebuffer.draw_event.wait()
             if self.running:  # Check if we should still be running
+                # log time taken for performance monitoring in high precision
+                start_time = time.perf_counter()
                 self.terminal.draw_buffer()
+                end_time = time.perf_counter()
+                myLogger.log(f"Draw time: {end_time - start_time:.6f} seconds")
                 self.framebuffer.draw_event.clear()  # Reset the event after drawing
 
 
