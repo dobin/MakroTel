@@ -202,6 +202,7 @@ class Minitel(Terminal):
                     # color, fg bg
                     if cell.a_char.char_attributes.char_color != cell.b_char.char_attributes.char_color or \
                           cell.a_char.char_attributes.background_color != cell.b_char.char_attributes.background_color:
+                        myLogger.log(f"Color to: {cell.b_char.char_attributes.char_color} {cell.b_char.char_attributes.background_color}")
                         self.color(
                             cell.b_char.char_attributes.char_color.value,
                             cell.b_char.char_attributes.background_color.value

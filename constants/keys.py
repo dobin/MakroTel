@@ -16,12 +16,12 @@ from config import MODE
 # Minitel colors actually (monochrome crt)
 class MINITEL_COLOR(enum.Enum):
     BLACK = 0
-    GREY_1 = 1
-    GREY_2 = 2
-    GREY_3 = 3
-    GREY_4 = 4
-    GREY_5 = 5
-    GREY_6 = 6
+    GREY_1 = 4
+    GREY_2 = 1
+    GREY_3 = 5
+    GREY_4 = 2
+    GREY_5 = 6
+    GREY_6 = 3
     WHITE = 7
 
 
