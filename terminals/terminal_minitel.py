@@ -204,6 +204,13 @@ class Minitel(Terminal):
                         self.position(x+1, y+1)  # Minitel uses 1-based coordinates
                         current_row = y
                         current_col = x
+
+                    if char.a_color != char.b_color:
+                        color = normalize_color(char.b_color)
+                        if color is not None:
+                            #self.send([PRO1, COLOR + color])
+                            self.color(color)
+                            char.a_color = char.b_color  # Update our tracking of current color
                     
                     # send to minitel
                     self.send(char.b_char)
