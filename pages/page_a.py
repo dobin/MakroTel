@@ -22,7 +22,3 @@ class PageA(Page):
         self.components.append(ComponentMover(framebuffer, 1, 2))
         self.components.append(ComponentTextField(framebuffer, 15, 3, 20))
         self.components.append(ComponentMenu(framebuffer, ["Item 1", "Item 2", "Item 3"], 1, 4))
-
-        #self.framebuffer.set_char(5, 5, 'X', color=MINITEL_COLOR.RED)
-        self.framebuffer.screen[12][1].a_color = "red"
-

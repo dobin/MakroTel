@@ -136,14 +136,17 @@ class MINITEL_COLOR(enum.Enum):
     MAGENTA = 5
     CYAN = 6
     WHITE = 7
-    GREY_0 = 8  # black
-    GREY_1 = 9  # blue
-    GREY_2 = 10 # red
-    GREY_3 = 11 # magenta
-    GREY_4 = 12 # green
-    GREY_5 = 13 # cyan
-    GREY_6 = 14 # yellow
-    GREY_7 = 15 # white
+
+# Minitel colors actually (monochrome crt)
+class MINITEL_COLOR_MONO(enum.Enum):
+    BLACK = 0
+    GREY_1 = 1
+    GREY_2 = 2
+    GREY_3 = 3
+    GREY_4 = 4
+    GREY_5 = 5
+    GREY_6 = 6
+    WHITE = 7
 
 class MINITEL_SIZE(enum.Enum):
     NORMAL = 0
