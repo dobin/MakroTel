@@ -14,7 +14,7 @@ class CharacterAttributes:
         self.size: MINITEL_SIZE = size
         self.underline: bool = underline
         self.blinking: bool = blinking
-        self.inverted: bool = False
+        self.inverted: bool = inverted
 
         # MakroTel rendering specific
         self.z: int = 0
