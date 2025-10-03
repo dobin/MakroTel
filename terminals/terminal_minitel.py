@@ -218,10 +218,7 @@ class Minitel(Terminal):
                         if cell.b_char.char_attributes.background_color != last_background_color:
                             last_background_color = cell.b_char.char_attributes.background_color
                             myLogger.log(f"Color BG to: {cell.b_char.char_attributes.background_color} value: {cell.b_char.char_attributes.background_color.value}")
-                            #self.send([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
-                            self._minitel.write([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
-                            self._minitel.write([0x20])
-                            self._minitel.flush()
+                            self.send([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
                             myLogger.log(f"BG before char: {cell.b_char.char} hex: {cell.b_char.char.encode().hex()}")
                     # attributes / effects
                     #   instead of self.effect() (inefficient as a bit incompatible)

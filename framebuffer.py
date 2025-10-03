@@ -36,7 +36,7 @@ class CharacterAttributes:
 
 class BufferCharacter: 
     def __init__(self):
-        self.char: str = ' '
+        self.char: str = '\x00'
         self.char_attributes: CharacterAttributes = CharacterAttributes()
 
 
@@ -73,5 +73,5 @@ class FrameBuffer():
     def clear_buffer(self):
         for y in range(HEIGHT):
             for x in range(WIDTH):
-                self.screen[y][x].b_char.Set(CHAR_BG, char_attributes=CharacterAttributes())
+                self.screen[y][x].b_char.Set("\x00", char_attributes=CharacterAttributes())
 
