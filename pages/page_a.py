@@ -37,14 +37,15 @@ class PageA(Page):
         self.components.append(ComponentText(framebuffer, 18, 17, "INVERTED", CharacterAttributes(inverted=True)))
 
         # Color: Background
-        self.components.append(ComponentText(framebuffer, 25, 6, "WHITE", CharacterAttributes(background_color=MINITEL_COLOR.WHITE)))
-        self.components.append(ComponentText(framebuffer, 25, 7, "GREY_1", CharacterAttributes(background_color=MINITEL_COLOR.GREY_1)))
-        self.components.append(ComponentText(framebuffer, 25, 8, "GREY_2", CharacterAttributes(background_color=MINITEL_COLOR.GREY_2)))
-        self.components.append(ComponentText(framebuffer, 25, 9, "GREY_3", CharacterAttributes(background_color=MINITEL_COLOR.GREY_3)))
-        self.components.append(ComponentText(framebuffer, 25, 10, "GREY_4", CharacterAttributes(background_color=MINITEL_COLOR.GREY_4)))
-        self.components.append(ComponentText(framebuffer, 25, 11, "GREY_5", CharacterAttributes(background_color=MINITEL_COLOR.GREY_5)))
-        self.components.append(ComponentText(framebuffer, 25, 12, "GREY_6", CharacterAttributes(background_color=MINITEL_COLOR.GREY_6)))
-        self.components.append(ComponentText(framebuffer, 25, 13, "BLACK", CharacterAttributes(background_color=MINITEL_COLOR.BLACK)))
-    
+        delimiters = " `{\\¦}^~/_|"
+        self.components.append(ComponentText(framebuffer, 25, 6, delimiters, CharacterAttributes(background_color=MINITEL_COLOR.WHITE)))
+        self.components.append(ComponentText(framebuffer, 25, 7, delimiters, CharacterAttributes(background_color=MINITEL_COLOR.GREY_1)))
+        self.components.append(ComponentText(framebuffer, 25, 8, delimiters, CharacterAttributes(background_color=MINITEL_COLOR.GREY_2)))
+        self.components.append(ComponentText(framebuffer, 25, 9, delimiters, CharacterAttributes(background_color=MINITEL_COLOR.GREY_3)))
+        self.components.append(ComponentText(framebuffer, 25, 10, delimiters, CharacterAttributes(background_color=MINITEL_COLOR.GREY_4)))
+        self.components.append(ComponentText(framebuffer, 25, 11, delimiters, CharacterAttributes(background_color=MINITEL_COLOR.GREY_5)))
+        self.components.append(ComponentText(framebuffer, 25, 12, delimiters, CharacterAttributes(background_color=MINITEL_COLOR.GREY_6)))
+        self.components.append(ComponentText(framebuffer, 25, 13, delimiters, CharacterAttributes(background_color=MINITEL_COLOR.BLACK)))
+
         test_string = "` { \\ ¦ } ^ ~ / _"
         self.components.append(ComponentText(framebuffer, 15, 4, test_string, CharacterAttributes(background_color=MINITEL_COLOR.BLACK)))
