@@ -7,6 +7,8 @@ from mylogger import myLogger
 from config import *
 
 
+INIT_CHAR = '\x01'
+
 class CharacterAttributes:
     def __init__(self, char_color: MINITEL_COLOR = MINITEL_COLOR.WHITE, background_color: MINITEL_COLOR = MINITEL_COLOR.BLACK, size: MINITEL_SIZE = MINITEL_SIZE.NORMAL, underline: bool = False, blinking: bool = False, inverted: bool = False):
         self.char_color: MINITEL_COLOR = char_color
@@ -36,7 +38,7 @@ class CharacterAttributes:
 
 class BufferCharacter: 
     def __init__(self):
-        self.char: str = '\x00'
+        self.char: str = INIT_CHAR
         self.char_attributes: CharacterAttributes = CharacterAttributes()
 
 
@@ -73,5 +75,5 @@ class FrameBuffer():
     def clear_buffer(self):
         for y in range(HEIGHT):
             for x in range(WIDTH):
-                self.screen[y][x].b_char.Set("\x00", char_attributes=CharacterAttributes())
+                self.screen[y][x].b_char.Set(INIT_CHAR, char_attributes=CharacterAttributes())
 
