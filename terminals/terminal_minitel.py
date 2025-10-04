@@ -217,17 +217,12 @@ class Minitel(Terminal):
                 current_col = x
 
             # color, fg bg
-            if cell.a_char.char_attributes.char_color != cell.b_char.char_attributes.char_color:
-                if cell.b_char.char_attributes.char_color != last_color:
-                    last_color = cell.b_char.char_attributes.char_color
-                    #myLogger.log(f"Color FG to: {cell.b_char.char_attributes.char_color} value: {cell.b_char.char_attributes.char_color.value}")
-                    self.send([ESC, 0x40 + cell.b_char.char_attributes.char_color.value])
-            if cell.a_char.char_attributes.background_color != cell.b_char.char_attributes.background_color:
-                if cell.b_char.char_attributes.background_color != last_background_color:
-                    last_background_color = cell.b_char.char_attributes.background_color
-                    #myLogger.log(f"Color BG to: {cell.b_char.char_attributes.background_color} value: {cell.b_char.char_attributes.background_color.value}")
-                    self.send([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
-                    #myLogger.log(f"BG before char: {cell.b_char.char} hex: {cell.b_char.char.encode().hex()}")
+            if cell.b_char.char_attributes.char_color != last_color:
+                last_color = cell.b_char.char_attributes.char_color
+                self.send([ESC, 0x40 + cell.b_char.char_attributes.char_color.value])
+            if cell.b_char.char_attributes.background_color != last_background_color:
+                last_background_color = cell.b_char.char_attributes.background_color
+                self.send([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
 
             # underline
             if cell.b_char.char_attributes.underline != is_underline:
@@ -237,7 +232,6 @@ class Minitel(Terminal):
                 else:
                     self.send([ESC, 0x59])
                     is_underline = False
-
 
             # blinking
             if cell.b_char.char_attributes.blinking != is_blinking:
