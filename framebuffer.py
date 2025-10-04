@@ -2,7 +2,7 @@ import threading
 from terminals.minitel_model import *
 from abc import ABC, abstractmethod
 
-from constants.keys import MINITEL_COLOR, MINITEL_SIZE, LINE_HORIZONTAL_TOP, LINE_HORIZONTAL_CENTER, LINE_HORIZONTAL_BOTTOM, LINE_VERTICAL_TOP, LINE_VERTICAL_CENTER, LINE_HORIZONTAL_BOTTOM
+from constants.keys import MINITEL_COLOR, MINITEL_SIZE, LINE_HORIZONTAL_TOP, LINE_HORIZONTAL_CENTER, LINE_HORIZONTAL_BOTTOM, LINE_VERTICAL_LEFT, LINE_VERTICAL_CENTER, LINE_VERTICAL_RIGHT
 from mylogger import myLogger
 from config import *
 

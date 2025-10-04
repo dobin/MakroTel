@@ -77,10 +77,10 @@ else:
     LINE_HORIZONTAL_CENTER = '-'
     LINE_HORIZONTAL_BOTTOM = '_'
 
-    LINE_VERTICAL_TOP = '|'
+    LINE_VERTICAL_LEFT = '|'
     LINE_VERTICAL_CENTER = '|'
-    LINE_HORIZONTAL_LEFT_BOTTOM = '|'
-    
+    LINE_VERTICAL_RIGHT = '|'
+
 
 # Export all unified key constants
 __all__ = [
