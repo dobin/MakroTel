@@ -198,6 +198,9 @@ class Minitel(Terminal):
         last_color = MINITEL_COLOR.WHITE
         last_background_color = MINITEL_COLOR.BLACK
         n = 0
+        is_blinking = False
+        is_underline = False
+        is_inverted = False
 
         for cell in changed_cells:
             if DEBUG:
@@ -233,9 +236,15 @@ class Minitel(Terminal):
             if cell.b_char.char_attributes.blinking != cell.a_char.char_attributes.blinking:
                 blinkings = {True: [ESC, 0x48], False: [ESC, 0x49], None: None}
                 self.send(blinkings[cell.b_char.char_attributes.blinking])
-            if cell.b_char.char_attributes.inverted != cell.a_char.char_attributes.inverted:
-                inversions = {True: [ESC, 0x5d], False: [ESC, 0x5c], None: None}
-                self.send(inversions[cell.b_char.char_attributes.inverted])
+
+            # inverted
+            if cell.b_char.char_attributes.inverted != is_inverted:
+                if cell.b_char.char_attributes.inverted:
+                    self.send([ESC, 0x5d])
+                    is_inverted = True
+                else:
+                    self.send([ESC, 0x5c])
+                    is_inverted = False
 
             # send to minitel
             # If the new char is INIT_CHAR, it is basically deleted
