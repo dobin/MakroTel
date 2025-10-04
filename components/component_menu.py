@@ -88,24 +88,24 @@ class ComponentMenu(Component):
         for i, option in enumerate(self.options):
             y_pos = self.y + 1 + i
             
+            # Create normal (non-inverted) attributes for borders
+            border_attributes = CharacterAttributes()
+            
             # Draw left border
-            self.framebuffer.set_char(self.x, y_pos, '\x7d')
+            self.framebuffer.set_char(self.x, y_pos, '\x7d', border_attributes)
             
             # Draw the option content
             if option == '-':
                 # Draw separator
                 for j in range(1, self.line_width - 1):
-                    self.framebuffer.set_char(self.x + j, y_pos, '-')
+                    self.framebuffer.set_char(self.x + j, y_pos, '-', border_attributes)
             else:
                 # Draw regular option
                 display_text = option.ljust(self.line_width)
                 characterAttributes: CharacterAttributes = CharacterAttributes()
                 if i == self.selection:
-                #    # Highlight selected option with brackets
-                #    display_text = f">{display_text[:self.line_width-1]}<"
                     characterAttributes.inverted = True
                 else:
-                #    display_text = f" {display_text[:self.line_width-1]} "
                     characterAttributes.inverted = False
                 
                 for j, char in enumerate(display_text):
@@ -113,11 +113,10 @@ class ComponentMenu(Component):
                         self.framebuffer.set_char(self.x + 1 + j, y_pos, char, characterAttributes)
             
             # Draw right border
-            self.framebuffer.set_char(self.x + self.line_width - 1, y_pos, '\x7b')
+            self.framebuffer.set_char(self.x + self.line_width + 1, y_pos, '\x7b', border_attributes)
 
         # Draw the bottom border
         for i in range(self.line_width):
-            char = '_' if i > 0 and i < self.line_width - 1 else '+'
             self.framebuffer.set_char(self.x + 1 + i, self.y + self.h - 1, '\x7e')
 
     def KeyPressed(self, keys: Sequence):
