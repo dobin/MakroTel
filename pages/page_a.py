@@ -33,8 +33,8 @@ class PageA(Page):
         self.components.append(ComponentText(framebuffer, 18, 12, "GREY_6", CharacterAttributes(char_color=MINITEL_COLOR.GREY_6)))
         self.components.append(ComponentText(framebuffer, 18, 13, "BLACK", CharacterAttributes(char_color=MINITEL_COLOR.BLACK)))
         self.components.append(ComponentText(framebuffer, 18, 15, "BLINK", CharacterAttributes(blinking=True)))
-        self.components.append(ComponentText(framebuffer, 18, 16, "UNDERLINE", CharacterAttributes(underline=True)))
-        self.components.append(ComponentText(framebuffer, 18, 17, "INVERTED", CharacterAttributes(inverted=True)))
+        self.components.append(ComponentText(framebuffer, 18, 16, "INVERTED", CharacterAttributes(inverted=True)))
+        self.components.append(ComponentText(framebuffer, 18, 17, "UNDERLINE", CharacterAttributes(underline=True)))
 
         # Color: Background
         delimiters = " `{\\¦}^~/_|"
