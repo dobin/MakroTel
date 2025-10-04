@@ -53,6 +53,8 @@ class PageA(Page):
 
     def Tick(self):
         super().Tick()
-        self.framebuffer.set_line(0, 10, 12, "horizontal")
-        self.framebuffer.set_line(5, 11, 6, "vertical")
+        self.framebuffer.set_line(0, 10, 4, "horizontal", align=0)
+        self.framebuffer.set_line(4, 10, 4, "horizontal", align=1)
+        self.framebuffer.set_line(8, 11, 4, "horizontal", align=2)
+        self.framebuffer.set_line(9, 12, 3, "vertical")
 

@@ -141,11 +141,11 @@ class FrameBuffer():
             # Use hyphen/dash for horizontal lines
             line_char = ''
             if align == 0:
-                line_char = LINE_HORIZONTAL_LEFT
+                line_char = LINE_HORIZONTAL_TOP
             elif align == 1:
                 line_char = LINE_HORIZONTAL_CENTER
             elif align == 2:
-                line_char = LINE_HORIZONTAL_RIGHT
+                line_char = LINE_HORIZONTAL_BOTTOM
             else:
                 myLogger.log(f"Invalid align '{align}' in set_line. Use 0 (left), 1 (center), or 2 (right).")
 
@@ -156,11 +156,11 @@ class FrameBuffer():
         elif direction.lower() == "vertical":
             line_char = ''
             if align == 0:
-                line_char = LINE_VERTICAL_TOP
+                line_char = LINE_VERTICAL_LEFT
             elif align == 1:
                 line_char = LINE_VERTICAL_CENTER
             elif align == 2:
-                line_char = LINE_HORIZONTAL_LEFT_BOTTOM
+                line_char = LINE_VERTICAL_RIGHT
             else:
                 myLogger.log(f"Invalid align '{align}' in set_line. Use 0 (top), 1 (center), or 2 (bottom).")
             for i in range(length):
