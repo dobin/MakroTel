@@ -17,7 +17,7 @@ class PageA(Page):
     def __init__(self, framebuffer: FrameBuffer):
         super().__init__(framebuffer)
 
-        self.components.append(ComponentClock(framebuffer, 1, 1))
+        self.components.append(ComponentClock(framebuffer, 0, 0))  # in status bar
         self.components.append(ComponentText(framebuffer, 12, 1, "MakroTel"))
         self.components.append(ComponentMover(framebuffer, 1, 2))
         self.components.append(ComponentTextField(framebuffer, 15, 3, 20))
@@ -34,7 +34,7 @@ class PageA(Page):
         self.components.append(ComponentText(framebuffer, 18, 13, "BLACK", CharacterAttributes(char_color=MINITEL_COLOR.BLACK)))
         self.components.append(ComponentText(framebuffer, 18, 15, "BLINK", CharacterAttributes(blinking=True)))
         self.components.append(ComponentText(framebuffer, 18, 16, "INVERTED", CharacterAttributes(inverted=True)))
-        self.components.append(ComponentText(framebuffer, 18, 17, "UNDERLINE", CharacterAttributes(underline=True)))
+        self.components.append(ComponentText(framebuffer, 18, 17, " UNDERLINE", CharacterAttributes(underline=True)))
 
         # Color: Background
         delimiters = " `{\\¦}^~/_|"

@@ -204,13 +204,12 @@ class Minitel(Terminal):
                 myLogger.log(f"Changed Cell at ({cell.x},{cell.y}): a_char='{cell.a_char.char}' b_char='{cell.b_char.char}(0x{cell.b_char.char.encode().hex()})'")
             y  = cell.y
             x  = cell.x
-            if y == 0:
-                # status bar
-                continue
 
             # Position Cursor - first if needed (for color to work properly)
             if current_row != y or current_col != x:
-                self.position(x+1, y+1)  # Minitel uses 1-based coordinates
+                # x is 1-based
+                # y line 0 is status bar, but valid
+                self.position(x+1, y)
                 current_row = y
                 current_col = x
 
