@@ -183,11 +183,13 @@ class Minitel(Terminal):
 
 
     def draw_buffer(self):
-        # Stream current screen to the terminal
-        # NOTE: We copy it for now
-        # NOTE: Lock it so we have a clean copy
+        # find all changes. copy them
         self.framebuffer.screen_lock.acquire()
-        screen_copy = copy.deepcopy(self.framebuffer.screen)
+        changed_cells = []
+        for y, row in enumerate(self.framebuffer.screen):
+            for x, cell in enumerate(row):
+                if cell.a_char.char != cell.b_char.char or cell.a_char.char_attributes != cell.b_char.char_attributes:
+                    changed_cells.append(cell)
         self.framebuffer.screen_lock.release()
 
         current_row = -1
@@ -195,63 +197,63 @@ class Minitel(Terminal):
         last_color = MINITEL_COLOR.WHITE
         last_background_color = MINITEL_COLOR.BLACK
         n = 0
-        
-        for y, row in enumerate(screen_copy):
+
+        for cell in changed_cells:
+            y  = cell.y
+            x  = cell.x
             if y == 0:
                 # status bar
                 continue
-            for x, cell in enumerate(row):
-                if cell.a_char.char != cell.b_char.char:
-                    if cell.b_char.char == INIT_CHAR:
-                        cell.b_char.char = ' '  # Treat INIT_CHAR as space for display purposes
+            
+            if cell.b_char.char == INIT_CHAR:
+                cell.b_char.char = ' '  # Treat INIT_CHAR as space for display purposes
 
-                    # Position Cursor - first if needed (for color to work properly)
-                    if current_row != y or current_col != x:
-                        self.position(x+1, y+1)  # Minitel uses 1-based coordinates
-                        current_row = y
-                        current_col = x
+            # Position Cursor - first if needed (for color to work properly)
+            if current_row != y or current_col != x:
+                self.position(x+1, y+1)  # Minitel uses 1-based coordinates
+                current_row = y
+                current_col = x
 
-                    # color, fg bg
-                    if cell.a_char.char_attributes.char_color != cell.b_char.char_attributes.char_color:
-                        if cell.b_char.char_attributes.char_color != last_color:
-                            last_color = cell.b_char.char_attributes.char_color
-                            myLogger.log(f"Color FG to: {cell.b_char.char_attributes.char_color} value: {cell.b_char.char_attributes.char_color.value}")
-                            self.send([ESC, 0x40 + cell.b_char.char_attributes.char_color.value])
-                    if cell.a_char.char_attributes.background_color != cell.b_char.char_attributes.background_color:
-                        if cell.b_char.char_attributes.background_color != last_background_color:
-                            last_background_color = cell.b_char.char_attributes.background_color
-                            myLogger.log(f"Color BG to: {cell.b_char.char_attributes.background_color} value: {cell.b_char.char_attributes.background_color.value}")
-                            self.send([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
-                            myLogger.log(f"BG before char: {cell.b_char.char} hex: {cell.b_char.char.encode().hex()}")
-                    # attributes / effects
-                    #   instead of self.effect() (inefficient as a bit incompatible)
-                    if cell.b_char.char_attributes.underline != cell.a_char.char_attributes.underline:
-                        underlines = {True: [ESC, 0x5a], False: [ESC, 0x59], None: None}
-                        self.send(underlines[cell.b_char.char_attributes.underline])
-                    if cell.b_char.char_attributes.blinking != cell.a_char.char_attributes.blinking:
-                        blinkings = {True: [ESC, 0x48], False: [ESC, 0x49], None: None}
-                        self.send(blinkings[cell.b_char.char_attributes.blinking])
-                    if cell.b_char.char_attributes.inverted != cell.a_char.char_attributes.inverted:
-                        inversions = {True: [ESC, 0x5d], False: [ESC, 0x5c], None: None}
-                        self.send(inversions[cell.b_char.char_attributes.inverted])
+            # color, fg bg
+            if cell.a_char.char_attributes.char_color != cell.b_char.char_attributes.char_color:
+                if cell.b_char.char_attributes.char_color != last_color:
+                    last_color = cell.b_char.char_attributes.char_color
+                    #myLogger.log(f"Color FG to: {cell.b_char.char_attributes.char_color} value: {cell.b_char.char_attributes.char_color.value}")
+                    self.send([ESC, 0x40 + cell.b_char.char_attributes.char_color.value])
+            if cell.a_char.char_attributes.background_color != cell.b_char.char_attributes.background_color:
+                if cell.b_char.char_attributes.background_color != last_background_color:
+                    last_background_color = cell.b_char.char_attributes.background_color
+                    #myLogger.log(f"Color BG to: {cell.b_char.char_attributes.background_color} value: {cell.b_char.char_attributes.background_color.value}")
+                    self.send([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
+                    #myLogger.log(f"BG before char: {cell.b_char.char} hex: {cell.b_char.char.encode().hex()}")
+            # attributes / effects
+            #   instead of self.effect() (inefficient as a bit incompatible)
+            if cell.b_char.char_attributes.underline != cell.a_char.char_attributes.underline:
+                underlines = {True: [ESC, 0x5a], False: [ESC, 0x59], None: None}
+                self.send(underlines[cell.b_char.char_attributes.underline])
+            if cell.b_char.char_attributes.blinking != cell.a_char.char_attributes.blinking:
+                blinkings = {True: [ESC, 0x48], False: [ESC, 0x49], None: None}
+                self.send(blinkings[cell.b_char.char_attributes.blinking])
+            if cell.b_char.char_attributes.inverted != cell.a_char.char_attributes.inverted:
+                inversions = {True: [ESC, 0x5d], False: [ESC, 0x5c], None: None}
+                self.send(inversions[cell.b_char.char_attributes.inverted])
 
-                    # send to minitel
-                    self.send(cell.b_char.char)
-                    current_col += 1  # Update our tracking of current column
-                    n += 1
+            # send to minitel
+            self.send(cell.b_char.char)
+            current_col += 1  # Update our tracking of current column
+            n += 1
 
         # NOTE: update the screen, indicate what we have written
-        # NOTE: Lock probably not needed here
         self.framebuffer.screen_lock.acquire()
-        for y, row in enumerate(screen_copy):
-            for x, cell in enumerate(row):
-                self.framebuffer.screen[y][x].a_char.char = cell.b_char.char
-                self.framebuffer.screen[y][x].a_char.char_attributes.char_color = cell.b_char.char_attributes.char_color
-                self.framebuffer.screen[y][x].a_char.char_attributes.background_color = cell.b_char.char_attributes.background_color
-                self.framebuffer.screen[y][x].a_char.char_attributes.underline = cell.b_char.char_attributes.underline
-                self.framebuffer.screen[y][x].a_char.char_attributes.blinking = cell.b_char.char_attributes.blinking
-                self.framebuffer.screen[y][x].a_char.char_attributes.inverted = cell.b_char.char_attributes.inverted
-
+        for cell in changed_cells:
+            y  = cell.y
+            x  = cell.x
+            self.framebuffer.screen[y][x].a_char.char = cell.b_char.char
+            self.framebuffer.screen[y][x].a_char.char_attributes.char_color = cell.b_char.char_attributes.char_color
+            self.framebuffer.screen[y][x].a_char.char_attributes.background_color = cell.b_char.char_attributes.background_color
+            self.framebuffer.screen[y][x].a_char.char_attributes.underline = cell.b_char.char_attributes.underline
+            self.framebuffer.screen[y][x].a_char.char_attributes.blinking = cell.b_char.char_attributes.blinking
+            self.framebuffer.screen[y][x].a_char.char_attributes.inverted = cell.b_char.char_attributes.inverted
         self.framebuffer.screen_lock.release()
         myLogger.log(f"Redrew {n} chars")
 

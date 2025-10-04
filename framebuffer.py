@@ -55,14 +55,16 @@ class BufferCharacter:
 
 
 class Cell:
-    def __init__(self):
+    def __init__(self, x, y):
         self.a_char: BufferCharacter = BufferCharacter()
         self.b_char: BufferCharacter = BufferCharacter()
+        self.x = x
+        self.y = y
 
 
 class FrameBuffer():
     def __init__(self): 
-        self.screen: list[list[Cell]] = [[Cell() for _ in range(WIDTH)] for _ in range(HEIGHT)]
+        self.screen: list[list[Cell]] = [[Cell(x, y) for x in range(WIDTH)] for y in range(HEIGHT)]
         self.screen_lock = threading.Lock()
         self.draw_event = threading.Event()  # Event to signal when drawing is needed
 
