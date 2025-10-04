@@ -228,14 +228,25 @@ class Minitel(Terminal):
                     #myLogger.log(f"Color BG to: {cell.b_char.char_attributes.background_color} value: {cell.b_char.char_attributes.background_color.value}")
                     self.send([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
                     #myLogger.log(f"BG before char: {cell.b_char.char} hex: {cell.b_char.char.encode().hex()}")
-            # attributes / effects
-            #   instead of self.effect() (inefficient as a bit incompatible)
-            if cell.b_char.char_attributes.underline != cell.a_char.char_attributes.underline:
-                underlines = {True: [ESC, 0x5a], False: [ESC, 0x59], None: None}
-                self.send(underlines[cell.b_char.char_attributes.underline])
-            if cell.b_char.char_attributes.blinking != cell.a_char.char_attributes.blinking:
-                blinkings = {True: [ESC, 0x48], False: [ESC, 0x49], None: None}
-                self.send(blinkings[cell.b_char.char_attributes.blinking])
+
+            # underline
+            if cell.b_char.char_attributes.underline != is_underline:
+                if cell.b_char.char_attributes.underline:
+                    self.send([ESC, 0x5a])
+                    is_underline = True
+                else:
+                    self.send([ESC, 0x59])
+                    is_underline = False
+
+
+            # blinking
+            if cell.b_char.char_attributes.blinking != is_blinking:
+                if cell.b_char.char_attributes.blinking:
+                    self.send([ESC, 0x48])
+                    is_blinking = True
+                else:
+                    self.send([ESC, 0x49])
+                    is_blinking = False
 
             # inverted
             if cell.b_char.char_attributes.inverted != is_inverted:
