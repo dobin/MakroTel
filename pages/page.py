@@ -10,6 +10,7 @@ class PageManager():
     def __init__(self):
         self.current_page: Page
         self.pages = {}
+        self.has_page_changed = False
 
     def add_page(self, name: str, page: Page):
         self.pages[name] = page
@@ -20,8 +21,14 @@ class PageManager():
             myLogger.log(f"Page '{name}' not found in PageManager.")
             return
         self.current_page = self.pages[name]
-        self.current_page.initial()
         myLogger.log(f"Switched to page: {name}")
+        self.set_page_changed(True)
+
+    def get_page_changed(self):
+        return self.has_page_changed
+
+    def set_page_changed(self, b):
+        self.has_page_changed = b
 
     def get_current_page(self) -> Page|None:
         return self.current_page

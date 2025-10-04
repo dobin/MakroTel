@@ -31,7 +31,18 @@ class Engine:
 
     def draw_loop(self):
         while self.running:
+            # handle page changes
+            # - before draw_event.wait() 
+            # - pageManager.initial() will notify us
+            if self.pageManager.get_page_changed():
+                self.pageManager.set_page_changed(False)
+                current_page = self.pageManager.get_current_page()
+                if current_page is None:
+                    return
+                current_page.initial() 
+
             self.framebuffer.draw_event.wait()
+
             if self.running:  # Check if we should still be running
                 # log time taken for performance monitoring in high precision
                 start_time = time.perf_counter()

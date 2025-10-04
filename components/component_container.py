@@ -104,26 +104,24 @@ class ComponentContainer(Component):
         # Initialize all child components
         for component in self.child_components:
             component.Initial()
+        self._draw_container()
 
     def Tick(self):
         """Update the container display and all child components each tick."""
-        self.framebuffer.screen_lock.acquire()
-        try:
-            # Draw the container (border if enabled)
-            if self.border:
-                self._draw_border()
-            
-            # Update all child components
-            # Note: We don't call framebuffer.screen_lock.acquire() in child components
-            # since we already have the lock here
-            for component in self.child_components:
-                # Temporarily release lock for child component drawing
-                self.framebuffer.screen_lock.release()
-                component.Tick()
-                self.framebuffer.screen_lock.acquire()
+        self._draw_container()
+        
+    
+    def _draw_container(self):
+        # Draw the container (border if enabled)
+        if self.border:
+            self._draw_border()
+        
+        # Update all child components
+        # Note: We don't call framebuffer.screen_lock.acquire() in child components
+        # since we already have the lock here
+        for component in self.child_components:
+            component.Tick()
                 
-        finally:
-            self.framebuffer.screen_lock.release()
 
     def KeyPressed(self, keys: Sequence):
         """Handle key press events and forward to child components.
@@ -138,6 +136,8 @@ class ComponentContainer(Component):
 
     def _draw_border(self):
         """Internal method to draw the border around the container."""
+        self.framebuffer.screen_lock.acquire()
+        
         if self.w < 2 or self.h < 2:
             return  # Too small to draw a border
             
@@ -157,6 +157,9 @@ class ComponentContainer(Component):
             self.framebuffer.set_char(self.x, self.y + i, LINE_VERTICAL_LEFT, self.border_attributes)
             # Right border
             self.framebuffer.set_char(self.x + self.w - 1, self.y + i, LINE_VERTICAL_RIGHT, self.border_attributes)
+
+        self.framebuffer.screen_lock.release()
+
 
     def set_page_manager(self, pageManager):
         """Set the page manager for this container and all child components.

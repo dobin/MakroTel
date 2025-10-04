@@ -10,7 +10,7 @@ class ComponentMover(Component):
 
 
     def Initial(self):
-        self.framebuffer.set_char(self.x, self.y, '@')
+        self._draw_mover()
 
 
     def Tick(self):
@@ -18,8 +18,13 @@ class ComponentMover(Component):
         if self.x >= WIDTH or self.x < 0:
             self.dx *= -1
             self.x += self.dx  # Bounce back
-        self.framebuffer.set_char(self.x, self.y, '@')
+        self._draw_mover()
 
+
+    def _draw_mover(self):
+        self.framebuffer.screen_lock.acquire()
+        self.framebuffer.set_char(self.x, self.y, '@')
+        self.framebuffer.screen_lock.release()
 
     def KeyPressed(self, keys: Sequence):
         if keys.egale(KEY_UP) and self.y > 0:

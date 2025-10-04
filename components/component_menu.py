@@ -68,18 +68,17 @@ class ComponentMenu(Component):
             if option != '-':
                 self.selection = i
                 break
+        self._draw_menu()
 
     def Tick(self):
         """Update the menu display each tick"""
-        self.framebuffer.screen_lock.acquire()
-        try:
-            # Draw the menu using the framebuffer's character-based system
-            self._draw_menu()
-        finally:
-            self.framebuffer.screen_lock.release()
+        # Draw the menu using the framebuffer's character-based system
+        self._draw_menu()
 
     def _draw_menu(self):
         """Internal method to draw the complete menu"""
+        self.framebuffer.screen_lock.acquire()
+
         # Draw the top border
         for i in range(self.line_width):
             self.framebuffer.set_char(self.x + 1 + i, self.y, LINE_HORIZONTAL_BOTTOM)
@@ -118,6 +117,9 @@ class ComponentMenu(Component):
         # Draw the bottom border
         for i in range(self.line_width):
             self.framebuffer.set_char(self.x + 1 + i, self.y + self.h - 1, LINE_HORIZONTAL_TOP)
+
+        self.framebuffer.screen_lock.release()
+
 
     def KeyPressed(self, keys: Sequence):
         """Handle key presses for menu navigation"""

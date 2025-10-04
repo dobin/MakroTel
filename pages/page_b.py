@@ -14,11 +14,9 @@ from components.component_container import ComponentContainer
 class PageB(Page):
     def __init__(self, framebuffer: FrameBuffer):
         super().__init__(framebuffer)
-        self.dx: int = 1
 
         self.components.append(ComponentClock(framebuffer, 1, 1))
         self.components.append(ComponentText(framebuffer, 12, 1, "MakroTel Page 2"))
-
 
         # Create a container at position (5, 5) with size 20x10 and border
         container = ComponentContainer(framebuffer, x=5, y=5, h=10, w=20, border=True)

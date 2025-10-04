@@ -10,13 +10,16 @@ class ComponentClock(Component):
 
 
     def Initial(self):
-        pass
+        self._draw_clock()
 
 
     def Tick(self):
+        self._draw_clock()
+
+
+    def _draw_clock(self):
         t = time.localtime()
         timestr = time.strftime("%H:%M:%S", t)
-
         self.framebuffer.screen_lock.acquire()
         for i, c in enumerate(timestr):
             self.framebuffer.set_char(self.x + i, self.y, c)

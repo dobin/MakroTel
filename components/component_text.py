@@ -11,12 +11,14 @@ class ComponentText(Component):
 
 
     def Initial(self):
-        pass
+        self._draw_text()
 
 
     def Tick(self):
-        self.framebuffer.screen_lock.acquire()
+        self._draw_text()
 
+    def _draw_text(self):
+        self.framebuffer.screen_lock.acquire()
         for i, char in enumerate(self.text):
             self.framebuffer.set_char(self.x + i, self.y, char, char_attributes=self.character_attributes)
         self.framebuffer.screen_lock.release()

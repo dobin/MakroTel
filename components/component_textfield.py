@@ -67,6 +67,16 @@ class ComponentTextField(Component):
         self.hidden_field = hidden_field
         self.color = color
 
+
+    def Tick(self):
+        """Update the text field display each tick"""
+        self._draw_textfield()
+
+
+    def Initial(self):
+        self._draw_textfield()
+
+
     def KeyPressed(self, keys: Sequence):
         """Key handling
 
@@ -96,7 +106,7 @@ class ComponentTextField(Component):
             if self.cursor_left():
                 self.value = (self.value[0:self.cursor_x] +
                                self.value[self.cursor_x + 1:])
-                self.display()
+                self._draw_textfield()
         elif keys.egale(ACCENT_ACUTE) or keys.egale(ACCENT_GRAVE) or keys.egale(ACCENT_CIRCUMFLEX) or keys.egale(ACCENT_DIAERESIS):
             key = keys.valeurs[0] if keys.valeurs else 0
             self.accent = key
@@ -106,7 +116,7 @@ class ComponentTextField(Component):
                            'ç' +
                            self.value[self.cursor_x:])
             self.cursor_right()
-            self.display()
+            self._draw_textfield()
         else:
             # Handle regular ASCII characters
             #             caractere = '' + chr(sequence.valeurs[0])
@@ -130,7 +140,7 @@ class ComponentTextField(Component):
                                character +
                                self.value[self.cursor_x:])
                 self.cursor_right()
-                self.display()
+                self._draw_textfield()
 
     def cursor_left(self):
         """Move the cursor one character to the left
@@ -158,7 +168,7 @@ class ComponentTextField(Component):
                 0,
                 int(self.offset - self.visible_length / 2)
             )
-            self.display()
+            self._draw_textfield()
 
         return True
     
@@ -188,7 +198,7 @@ class ComponentTextField(Component):
                 0,
                 int(self.offset + self.visible_length / 2)
             )
-            self.display()
+            self._draw_textfield()
 
         return True
 
@@ -208,7 +218,7 @@ class ComponentTextField(Component):
         self.accent = None
         # TODO: Hide cursor when framebuffer supports it
 
-    def display(self):
+    def _draw_textfield(self):
         """Display the text field
 
         If the value is smaller than the displayed length, we fill the
@@ -246,7 +256,3 @@ class ComponentTextField(Component):
                     
         finally:
             self.framebuffer.screen_lock.release()
-
-    def Tick(self):
-        """Update the text field display each tick"""
-        self.display()
