@@ -5,6 +5,7 @@
 from components.component import Component
 from components.sequence import Sequence
 from constants.keys import KEY_UP, KEY_DOWN
+from framebuffer import CharacterAttributes
 
 # From: https://github.com/Zigazou/PyMinitel/blob/master/minitel/ui/UI.py
 # Translated and adapted by Claude for this project
@@ -80,9 +81,8 @@ class ComponentMenu(Component):
     def _draw_menu(self):
         """Internal method to draw the complete menu"""
         # Draw the top border
-        for i in range(self.w):
-            #char = '\x5f' if i > 0 and i < self.w - 1 else '+'  # ~ = 0x7e
-            self.framebuffer.set_char(self.x + i, self.y, '\x5f')
+        for i in range(self.line_width):
+            self.framebuffer.set_char(self.x + 1 + i, self.y, '\x5f')
 
         # Draw the menu options
         for i, option in enumerate(self.options):
@@ -94,28 +94,31 @@ class ComponentMenu(Component):
             # Draw the option content
             if option == '-':
                 # Draw separator
-                for j in range(1, self.w - 1):
+                for j in range(1, self.line_width - 1):
                     self.framebuffer.set_char(self.x + j, y_pos, '-')
             else:
                 # Draw regular option
                 display_text = option.ljust(self.line_width)
+                characterAttributes: CharacterAttributes = CharacterAttributes()
                 if i == self.selection:
-                    # Highlight selected option with brackets
-                    display_text = f">{display_text[:self.line_width-1]}<"
+                #    # Highlight selected option with brackets
+                #    display_text = f">{display_text[:self.line_width-1]}<"
+                    characterAttributes.inverted = True
                 else:
-                    display_text = f" {display_text[:self.line_width-1]} "
+                #    display_text = f" {display_text[:self.line_width-1]} "
+                    characterAttributes.inverted = False
                 
                 for j, char in enumerate(display_text):
                     if j < self.line_width:
-                        self.framebuffer.set_char(self.x + 1 + j, y_pos, char)
+                        self.framebuffer.set_char(self.x + 1 + j, y_pos, char, characterAttributes)
             
             # Draw right border
-            self.framebuffer.set_char(self.x + self.w - 1, y_pos, '\x7b')
+            self.framebuffer.set_char(self.x + self.line_width - 1, y_pos, '\x7b')
 
         # Draw the bottom border
-        for i in range(self.w):
-            char = '_' if i > 0 and i < self.w - 1 else '+'
-            self.framebuffer.set_char(self.x + i, self.y + self.h - 1, '\x7e')
+        for i in range(self.line_width):
+            char = '_' if i > 0 and i < self.line_width - 1 else '+'
+            self.framebuffer.set_char(self.x + 1 + i, self.y + self.h - 1, '\x7e')
 
     def KeyPressed(self, keys: Sequence):
         """Handle key presses for menu navigation"""
