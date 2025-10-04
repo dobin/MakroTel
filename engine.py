@@ -37,7 +37,8 @@ class Engine:
                 start_time = time.perf_counter()
                 self.terminal.draw_buffer()
                 end_time = time.perf_counter()
-                myLogger.log(f"Draw time: {end_time - start_time:.6f} seconds")
+                if DEBUG:
+                    myLogger.log(f"Draw time: {end_time - start_time:.6f} seconds")
                 self.framebuffer.draw_event.clear()  # Reset the event after drawing
 
 
