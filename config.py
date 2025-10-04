@@ -5,6 +5,8 @@ CHAR_BG = " "
 
 MODE = "minitel"
 
+DEBUG = False
+
 # Timing settings
 REFRESH_TIME = 0.20 # seconds
 CURSES_WAIT_TIME = 0.01 # seconds

@@ -3,6 +3,7 @@
 """Minitel is a module for controlling a Minitel from a Python script.
 """
 
+from config import DEBUG
 from serial import Serial      # Physical link with the Minitel
 from threading import Thread   # Threads for sending/receiving
 from queue import Queue, Empty # Character queues for sending/receiving
@@ -199,7 +200,8 @@ class Minitel(Terminal):
         n = 0
 
         for cell in changed_cells:
-            myLogger.log(f"Changed Cell at ({cell.x},{cell.y}): a_char='{cell.a_char.char}' b_char='{cell.b_char.char}(0x{cell.b_char.char.encode().hex()})'")
+            if DEBUG:
+                myLogger.log(f"Changed Cell at ({cell.x},{cell.y}): a_char='{cell.a_char.char}' b_char='{cell.b_char.char}(0x{cell.b_char.char.encode().hex()})'")
             y  = cell.y
             x  = cell.x
             if y == 0:
@@ -258,7 +260,9 @@ class Minitel(Terminal):
             self.framebuffer.screen[y][x].a_char.char_attributes.blinking = cell.b_char.char_attributes.blinking
             self.framebuffer.screen[y][x].a_char.char_attributes.inverted = cell.b_char.char_attributes.inverted
         self.framebuffer.screen_lock.release()
-        myLogger.log(f"Redrew {n} chars")
+
+        if DEBUG:
+            myLogger.log(f"Redrew {n} chars")
 
 
     def close(self):
