@@ -189,7 +189,7 @@ class Minitel(Terminal):
         for y, row in enumerate(self.framebuffer.screen):
             for x, cell in enumerate(row):
                 if cell.a_char.char != cell.b_char.char or cell.a_char.char_attributes != cell.b_char.char_attributes:
-                    changed_cells.append(cell)
+                    changed_cells.append(cell.copy())
         self.framebuffer.screen_lock.release()
 
         current_row = -1
@@ -199,14 +199,12 @@ class Minitel(Terminal):
         n = 0
 
         for cell in changed_cells:
+            myLogger.log(f"Changed Cell at ({cell.x},{cell.y}): a_char='{cell.a_char.char}' b_char='{cell.b_char.char}(0x{cell.b_char.char.encode().hex()})'")
             y  = cell.y
             x  = cell.x
             if y == 0:
                 # status bar
                 continue
-            
-            if cell.b_char.char == INIT_CHAR:
-                cell.b_char.char = ' '  # Treat INIT_CHAR as space for display purposes
 
             # Position Cursor - first if needed (for color to work properly)
             if current_row != y or current_col != x:
@@ -239,7 +237,12 @@ class Minitel(Terminal):
                 self.send(inversions[cell.b_char.char_attributes.inverted])
 
             # send to minitel
-            self.send(cell.b_char.char)
+            # If the new char is INIT_CHAR, it is basically deleted
+            # Change it to a whitespace instead for display purposes
+            if cell.b_char.char == INIT_CHAR:
+                self.send(' ')
+            else:
+                self.send(cell.b_char.char)
             current_col += 1  # Update our tracking of current column
             n += 1
 

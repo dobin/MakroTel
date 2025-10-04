@@ -36,6 +36,25 @@ class CharacterAttributes:
                 self.order == value.order)
 
 
+    def copy(self):
+        """Create a deep copy of this CharacterAttributes object.
+        
+        Returns:
+            CharacterAttributes: A new CharacterAttributes object with all the same values.
+        """
+        copied_attrs = CharacterAttributes(
+            char_color=self.char_color,
+            background_color=self.background_color,
+            size=self.size,
+            underline=self.underline,
+            blinking=self.blinking,
+            inverted=self.inverted
+        )
+        copied_attrs.z = self.z
+        copied_attrs.order = self.order
+        return copied_attrs
+
+
 class BufferCharacter: 
     def __init__(self):
         self.char: str = INIT_CHAR
@@ -54,12 +73,36 @@ class BufferCharacter:
                 self.char_attributes == value.char_attributes)
 
 
+    def copy(self):
+        """Create a deep copy of this BufferCharacter object.
+        
+        Returns:
+            BufferCharacter: A new BufferCharacter object with copied char and char_attributes.
+        """
+        copied_buffer_char = BufferCharacter()
+        copied_buffer_char.char = self.char  # strings are immutable, so this is fine
+        copied_buffer_char.char_attributes = self.char_attributes.copy()
+        return copied_buffer_char
+
+
 class Cell:
     def __init__(self, x, y):
         self.a_char: BufferCharacter = BufferCharacter()
         self.b_char: BufferCharacter = BufferCharacter()
         self.x = x
         self.y = y
+
+
+    def copy(self):
+        """Create a deep copy of this Cell object.
+        
+        Returns:
+            Cell: A new Cell object with copied a_char, b_char BufferCharacters and x, y coordinates.
+        """
+        copied_cell = Cell(self.x, self.y)
+        copied_cell.a_char = self.a_char.copy()
+        copied_cell.b_char = self.b_char.copy()
+        return copied_cell
 
 
 class FrameBuffer():
