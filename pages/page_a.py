@@ -49,3 +49,10 @@ class PageA(Page):
 
         test_string = " ` { \\ ¦ } ^ ~ / _"
         self.components.append(ComponentText(framebuffer, 15, 4, test_string, CharacterAttributes(background_color=MINITEL_COLOR.GREY_4)))
+
+
+    def Tick(self):
+        super().Tick()
+        self.framebuffer.set_line(0, 10, 12, "horizontal")
+        self.framebuffer.set_line(5, 11, 6, "vertical")
+

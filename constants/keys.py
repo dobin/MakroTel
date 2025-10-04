@@ -52,6 +52,14 @@ if MODE == "minitel":
     KEY_BACKSPACE = BS
     KEY_CORRECTION = CORRECTION
 
+    LINE_HORIZONTAL_TOP = 0x7B
+    LINE_HORIZONTAL_CENTER = 0x7C
+    LINE_HORIZONTAL_BOTTOM = 0x7D
+
+    LINE_VERTICAL_LEFT = 0x7E
+    LINE_VERTICAL_CENTER = 0x60
+    LINE_VERTICAL_RIGHT = 0x5F
+
 
 else:
     import curses
@@ -64,6 +72,14 @@ else:
     KEY_ENTER = 10  # ASCII code for Enter
     KEY_BACKSPACE = curses.KEY_BACKSPACE
     KEY_CORRECTION = curses.KEY_BACKSPACE
+
+    LINE_HORIZONTAL_TOP = '-'
+    LINE_HORIZONTAL_CENTER = '-'
+    LINE_HORIZONTAL_BOTTOM = '_'
+
+    LINE_VERTICAL_TOP = '|'
+    LINE_VERTICAL_CENTER = '|'
+    LINE_HORIZONTAL_LEFT_BOTTOM = '|'
     
 
 # Export all unified key constants

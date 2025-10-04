@@ -2,7 +2,7 @@ import threading
 from terminals.minitel_model import *
 from abc import ABC, abstractmethod
 
-from constants.keys import MINITEL_COLOR, MINITEL_SIZE
+from constants.keys import MINITEL_COLOR, MINITEL_SIZE, LINE_HORIZONTAL_TOP, LINE_HORIZONTAL_CENTER, LINE_HORIZONTAL_BOTTOM, LINE_VERTICAL_TOP, LINE_VERTICAL_CENTER, LINE_HORIZONTAL_BOTTOM
 from mylogger import myLogger
 from config import *
 
@@ -121,4 +121,51 @@ class FrameBuffer():
         for y in range(HEIGHT):
             for x in range(WIDTH):
                 self.screen[y][x].b_char.Set(INIT_CHAR, char_attributes=CharacterAttributes())
+
+
+    def set_line(self, x: int, y: int, length: int, direction: str, char_attributes: CharacterAttributes = CharacterAttributes(), align: int = 1):
+        """Draw a line using appropriate ASCII/Minitel characters.
+        
+        Args:
+            x: Starting X coordinate (0-based)
+            y: Starting Y coordinate (0-based) 
+            length: Length of the line in characters
+            direction: "horizontal" or "vertical"
+            char_attributes: Character attributes for the line
+            align: Alignment for horizontal lines (0: left, 1: center, 2: right)
+        """
+        if length <= 0:
+            return
+            
+        if direction.lower() == "horizontal":
+            # Use hyphen/dash for horizontal lines
+            line_char = ''
+            if align == 0:
+                line_char = LINE_HORIZONTAL_LEFT
+            elif align == 1:
+                line_char = LINE_HORIZONTAL_CENTER
+            elif align == 2:
+                line_char = LINE_HORIZONTAL_RIGHT
+            else:
+                myLogger.log(f"Invalid align '{align}' in set_line. Use 0 (left), 1 (center), or 2 (right).")
+
+            for i in range(length):
+                if 0 <= x + i < WIDTH and 0 <= y < HEIGHT:
+                    self.screen[y][x + i].b_char.Set(line_char, char_attributes=char_attributes)
+                    
+        elif direction.lower() == "vertical":
+            line_char = ''
+            if align == 0:
+                line_char = LINE_VERTICAL_TOP
+            elif align == 1:
+                line_char = LINE_VERTICAL_CENTER
+            elif align == 2:
+                line_char = LINE_HORIZONTAL_LEFT_BOTTOM
+            else:
+                myLogger.log(f"Invalid align '{align}' in set_line. Use 0 (top), 1 (center), or 2 (bottom).")
+            for i in range(length):
+                if 0 <= x < WIDTH and 0 <= y + i < HEIGHT:
+                    self.screen[y + i][x].b_char.Set(line_char, char_attributes=char_attributes)
+        else:
+            myLogger.log(f"Invalid direction '{direction}' in set_line. Use 'horizontal' or 'vertical'.")
 
