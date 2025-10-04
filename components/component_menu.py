@@ -4,7 +4,7 @@
 
 from components.component import Component
 from components.sequence import Sequence
-from constants.keys import KEY_UP, KEY_DOWN
+from constants.keys import KEY_UP, KEY_DOWN, LINE_HORIZONTAL_TOP, LINE_HORIZONTAL_CENTER, LINE_HORIZONTAL_BOTTOM, LINE_VERTICAL_LEFT, LINE_VERTICAL_CENTER, LINE_VERTICAL_RIGHT
 from framebuffer import CharacterAttributes
 
 # From: https://github.com/Zigazou/PyMinitel/blob/master/minitel/ui/UI.py
@@ -82,7 +82,7 @@ class ComponentMenu(Component):
         """Internal method to draw the complete menu"""
         # Draw the top border
         for i in range(self.line_width):
-            self.framebuffer.set_char(self.x + 1 + i, self.y, '\x5f')
+            self.framebuffer.set_char(self.x + 1 + i, self.y, LINE_HORIZONTAL_BOTTOM)
 
         # Draw the menu options
         for i, option in enumerate(self.options):
@@ -92,7 +92,7 @@ class ComponentMenu(Component):
             border_attributes = CharacterAttributes()
             
             # Draw left border
-            self.framebuffer.set_char(self.x, y_pos, '\x7d', border_attributes)
+            self.framebuffer.set_char(self.x, y_pos, LINE_VERTICAL_RIGHT, border_attributes)
             
             # Draw the option content
             if option == '-':
@@ -113,11 +113,11 @@ class ComponentMenu(Component):
                         self.framebuffer.set_char(self.x + 1 + j, y_pos, char, characterAttributes)
             
             # Draw right border
-            self.framebuffer.set_char(self.x + self.line_width + 1, y_pos, '\x7b', border_attributes)
+            self.framebuffer.set_char(self.x + self.line_width + 1, y_pos, LINE_VERTICAL_LEFT, border_attributes)
 
         # Draw the bottom border
         for i in range(self.line_width):
-            self.framebuffer.set_char(self.x + 1 + i, self.y + self.h - 1, '\x7e')
+            self.framebuffer.set_char(self.x + 1 + i, self.y + self.h - 1, LINE_HORIZONTAL_TOP)
 
     def KeyPressed(self, keys: Sequence):
         """Handle key presses for menu navigation"""
