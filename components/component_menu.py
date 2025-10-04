@@ -81,15 +81,15 @@ class ComponentMenu(Component):
         """Internal method to draw the complete menu"""
         # Draw the top border
         for i in range(self.w):
-            char = '~' if i > 0 and i < self.w - 1 else '+'  # ~ = 0x7e
-            self.framebuffer.set_char(self.x + i, self.y, char)
+            #char = '\x5f' if i > 0 and i < self.w - 1 else '+'  # ~ = 0x7e
+            self.framebuffer.set_char(self.x + i, self.y, '\x5f')
 
         # Draw the menu options
         for i, option in enumerate(self.options):
             y_pos = self.y + 1 + i
             
             # Draw left border
-            self.framebuffer.set_char(self.x, y_pos, '\x7b') # '{' character
+            self.framebuffer.set_char(self.x, y_pos, '\x7d')
             
             # Draw the option content
             if option == '-':
@@ -110,12 +110,12 @@ class ComponentMenu(Component):
                         self.framebuffer.set_char(self.x + 1 + j, y_pos, char)
             
             # Draw right border
-            self.framebuffer.set_char(self.x + self.w - 1, y_pos, '|')
+            self.framebuffer.set_char(self.x + self.w - 1, y_pos, '\x7b')
 
         # Draw the bottom border
         for i in range(self.w):
             char = '_' if i > 0 and i < self.w - 1 else '+'
-            self.framebuffer.set_char(self.x + i, self.y + self.h - 1, char)
+            self.framebuffer.set_char(self.x + i, self.y + self.h - 1, '\x7e')
 
     def KeyPressed(self, keys: Sequence):
         """Handle key presses for menu navigation"""
