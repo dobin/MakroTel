@@ -5,7 +5,7 @@ import curses
 import copy
 from mylogger import myLogger
 
-from framebuffer import FrameBuffer, MINITEL_COLOR
+from framebuffer import FrameBuffer, MINITEL_COLOR, INIT_CHAR
 from terminals.terminal import Terminal
 from components.sequence import Sequence
 
@@ -63,7 +63,7 @@ class TerminalCurses(Terminal):
         self.framebuffer.screen_lock.release()
         for y, row in enumerate(screen_copy):
             for x, cell in enumerate(row):
-                if cell.a_char != cell.b_char:
+                if cell.a_char != cell.b_char or cell.a_char.char_attributes != cell.b_char.char_attributes:
                     # grab color pre-defined in curses
                     # based on the enum value
                     color_idx = self.color_pairs.get(
@@ -79,7 +79,10 @@ class TerminalCurses(Terminal):
                         attributes |= curses.A_REVERSE
 
                     # print
-                    self.stdscr.addch(y, x, cell.b_char.char, curses.color_pair(color_idx) | attributes)
+                    char = cell.b_char.char
+                    if char == INIT_CHAR:
+                        char = ' '
+                    self.stdscr.addch(y, x, char, curses.color_pair(color_idx) | attributes)
 
                     # simulate slow drawing
                     time.sleep(CURSES_WAIT_TIME)
