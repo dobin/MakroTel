@@ -189,7 +189,7 @@ class Minitel(Terminal):
         changed_cells = []
         for y, row in enumerate(self.framebuffer.screen):
             for x, cell in enumerate(row):
-                if cell.a_char.char != cell.b_char.char or cell.a_char.char_attributes != cell.b_char.char_attributes:
+                if cell.a_char.char != cell.b_char.char or cell.a_char.attr != cell.b_char.attr:
                     changed_cells.append(cell.copy())
         self.framebuffer.screen_lock.release()
 
@@ -217,16 +217,16 @@ class Minitel(Terminal):
                 current_col = x
 
             # color, fg bg
-            if cell.b_char.char_attributes.char_color != last_color:
-                last_color = cell.b_char.char_attributes.char_color
-                self.send([ESC, 0x40 + cell.b_char.char_attributes.char_color.value])
-            if cell.b_char.char_attributes.background_color != last_background_color:
-                last_background_color = cell.b_char.char_attributes.background_color
-                self.send([ESC, 0x50 + cell.b_char.char_attributes.background_color.value])
+            if cell.b_char.attr.char_color != last_color:
+                last_color = cell.b_char.attr.char_color
+                self.send([ESC, 0x40 + cell.b_char.attr.char_color.value])
+            if cell.b_char.attr.background_color != last_background_color:
+                last_background_color = cell.b_char.attr.background_color
+                self.send([ESC, 0x50 + cell.b_char.attr.background_color.value])
 
             # underline
-            if cell.b_char.char_attributes.underline != is_underline:
-                if cell.b_char.char_attributes.underline:
+            if cell.b_char.attr.underline != is_underline:
+                if cell.b_char.attr.underline:
                     self.send([ESC, 0x5a])
                     is_underline = True
                 else:
@@ -234,8 +234,8 @@ class Minitel(Terminal):
                     is_underline = False
 
             # blinking
-            if cell.b_char.char_attributes.blinking != is_blinking:
-                if cell.b_char.char_attributes.blinking:
+            if cell.b_char.attr.blinking != is_blinking:
+                if cell.b_char.attr.blinking:
                     self.send([ESC, 0x48])
                     is_blinking = True
                 else:
@@ -243,8 +243,8 @@ class Minitel(Terminal):
                     is_blinking = False
 
             # inverted
-            if cell.b_char.char_attributes.inverted != is_inverted:
-                if cell.b_char.char_attributes.inverted:
+            if cell.b_char.attr.inverted != is_inverted:
+                if cell.b_char.attr.inverted:
                     self.send([ESC, 0x5d])
                     is_inverted = True
                 else:
@@ -267,11 +267,11 @@ class Minitel(Terminal):
             y  = cell.y
             x  = cell.x
             self.framebuffer.screen[y][x].a_char.char = cell.b_char.char
-            self.framebuffer.screen[y][x].a_char.char_attributes.char_color = cell.b_char.char_attributes.char_color
-            self.framebuffer.screen[y][x].a_char.char_attributes.background_color = cell.b_char.char_attributes.background_color
-            self.framebuffer.screen[y][x].a_char.char_attributes.underline = cell.b_char.char_attributes.underline
-            self.framebuffer.screen[y][x].a_char.char_attributes.blinking = cell.b_char.char_attributes.blinking
-            self.framebuffer.screen[y][x].a_char.char_attributes.inverted = cell.b_char.char_attributes.inverted
+            self.framebuffer.screen[y][x].a_char.attr.char_color = cell.b_char.attr.char_color
+            self.framebuffer.screen[y][x].a_char.attr.background_color = cell.b_char.attr.background_color
+            self.framebuffer.screen[y][x].a_char.attr.underline = cell.b_char.attr.underline
+            self.framebuffer.screen[y][x].a_char.attr.blinking = cell.b_char.attr.blinking
+            self.framebuffer.screen[y][x].a_char.attr.inverted = cell.b_char.attr.inverted
         self.framebuffer.screen_lock.release()
 
         if DEBUG:

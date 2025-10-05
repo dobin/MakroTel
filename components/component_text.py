@@ -20,5 +20,5 @@ class ComponentText(Component):
     def _draw_text(self):
         self.framebuffer.screen_lock.acquire()
         for i, char in enumerate(self.text):
-            self.framebuffer.set_char(self.x + i, self.y, char, char_attributes=self.character_attributes)
+            self.framebuffer.set_char(self.x + i, self.y, char, attr=self.character_attributes)
         self.framebuffer.screen_lock.release()

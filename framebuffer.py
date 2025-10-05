@@ -58,30 +58,30 @@ class CharacterAttributes:
 class BufferCharacter: 
     def __init__(self):
         self.char: str = INIT_CHAR
-        self.char_attributes: CharacterAttributes = CharacterAttributes()
+        self.attr: CharacterAttributes = CharacterAttributes()
 
 
-    def Set(self, char: str, char_attributes: CharacterAttributes):
+    def Set(self, char: str, attr: CharacterAttributes):
         self.char = char
-        self.char_attributes = char_attributes
+        self.attr = attr
 
 
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, BufferCharacter):
             return NotImplemented
         return (self.char == value.char and
-                self.char_attributes == value.char_attributes)
+                self.attr == value.attr)
 
 
     def copy(self):
         """Create a deep copy of this BufferCharacter object.
         
         Returns:
-            BufferCharacter: A new BufferCharacter object with copied char and char_attributes.
+            BufferCharacter: A new BufferCharacter object with copied char and attr.
         """
         copied_buffer_char = BufferCharacter()
         copied_buffer_char.char = self.char  # strings are immutable, so this is fine
-        copied_buffer_char.char_attributes = self.char_attributes.copy()
+        copied_buffer_char.attr = self.attr.copy()
         return copied_buffer_char
 
 
@@ -112,18 +112,18 @@ class FrameBuffer():
         self.draw_event = threading.Event()  # Event to signal when drawing is needed
 
 
-    def set_char(self, x: int, y: int, char: str, char_attributes: CharacterAttributes = CharacterAttributes()):
+    def set_char(self, x: int, y: int, char: str, attr: CharacterAttributes = CharacterAttributes()):
         if 0 <= x < WIDTH and 0 <= y < HEIGHT:
-            self.screen[y][x].b_char.Set(char, char_attributes=char_attributes)
+            self.screen[y][x].b_char.Set(char, attr=attr)
 
 
     def clear_buffer(self):
         for y in range(HEIGHT):
             for x in range(WIDTH):
-                self.screen[y][x].b_char.Set(INIT_CHAR, char_attributes=CharacterAttributes())
+                self.screen[y][x].b_char.Set(INIT_CHAR, attr=CharacterAttributes())
 
 
-    def set_line(self, x: int, y: int, length: int, direction: str, char_attributes: CharacterAttributes = CharacterAttributes(), align: int = 1):
+    def set_line(self, x: int, y: int, length: int, direction: str, attr: CharacterAttributes = CharacterAttributes(), align: int = 1):
         """Draw a line using appropriate ASCII/Minitel characters.
         
         Args:
@@ -131,7 +131,7 @@ class FrameBuffer():
             y: Starting Y coordinate (0-based) 
             length: Length of the line in characters
             direction: "horizontal" or "vertical"
-            char_attributes: Character attributes for the line
+            attr: Character attributes for the line
             align: Alignment for horizontal lines (0: left, 1: center, 2: right)
         """
         if length <= 0:
@@ -151,7 +151,7 @@ class FrameBuffer():
 
             for i in range(length):
                 if 0 <= x + i < WIDTH and 0 <= y < HEIGHT:
-                    self.screen[y][x + i].b_char.Set(line_char, char_attributes=char_attributes)
+                    self.screen[y][x + i].b_char.Set(line_char, attr=attr)
                     
         elif direction.lower() == "vertical":
             line_char = ''
@@ -165,7 +165,7 @@ class FrameBuffer():
                 myLogger.log(f"Invalid align '{align}' in set_line. Use 0 (top), 1 (center), or 2 (bottom).")
             for i in range(length):
                 if 0 <= x < WIDTH and 0 <= y + i < HEIGHT:
-                    self.screen[y + i][x].b_char.Set(line_char, char_attributes=char_attributes)
+                    self.screen[y + i][x].b_char.Set(line_char, attr=attr)
         else:
             myLogger.log(f"Invalid direction '{direction}' in set_line. Use 'horizontal' or 'vertical'.")
 

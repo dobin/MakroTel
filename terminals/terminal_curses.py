@@ -63,19 +63,19 @@ class TerminalCurses(Terminal):
         self.framebuffer.screen_lock.release()
         for y, row in enumerate(screen_copy):
             for x, cell in enumerate(row):
-                if cell.a_char != cell.b_char or cell.a_char.char_attributes != cell.b_char.char_attributes:
+                if cell.a_char != cell.b_char or cell.a_char.attr != cell.b_char.attr:
                     # grab color pre-defined in curses
                     # based on the enum value
                     color_idx = self.color_pairs.get(
-                        (cell.b_char.char_attributes.char_color, 
-                         cell.b_char.char_attributes.background_color), 0)
+                        (cell.b_char.attr.char_color, 
+                         cell.b_char.attr.background_color), 0)
                     
                     attributes = 0
-                    if cell.b_char.char_attributes.underline:
+                    if cell.b_char.attr.underline:
                         attributes |= curses.A_UNDERLINE
-                    if cell.b_char.char_attributes.blinking:
+                    if cell.b_char.attr.blinking:
                         attributes |= curses.A_BLINK
-                    if cell.b_char.char_attributes.inverted:
+                    if cell.b_char.attr.inverted:
                         attributes |= curses.A_REVERSE
 
                     # print
@@ -95,14 +95,14 @@ class TerminalCurses(Terminal):
         for y, row in enumerate(screen_copy):
             for x, char in enumerate(row):
                 self.framebuffer.screen[y][x].a_char.char = char.b_char.char
-                self.framebuffer.screen[y][x].a_char.char_attributes.char_color = char.b_char.char_attributes.char_color
-                self.framebuffer.screen[y][x].a_char.char_attributes.background_color = char.b_char.char_attributes.background_color
-                self.framebuffer.screen[y][x].a_char.char_attributes.size = char.b_char.char_attributes.size
-                self.framebuffer.screen[y][x].a_char.char_attributes.underline = char.b_char.char_attributes.underline
-                self.framebuffer.screen[y][x].a_char.char_attributes.blinking = char.b_char.char_attributes.blinking
-                self.framebuffer.screen[y][x].a_char.char_attributes.inverted = char.b_char.char_attributes.inverted
-                self.framebuffer.screen[y][x].a_char.char_attributes.z = char.b_char.char_attributes.z
-                self.framebuffer.screen[y][x].a_char.char_attributes.order = char.b_char.char_attributes.order
+                self.framebuffer.screen[y][x].a_char.attr.char_color = char.b_char.attr.char_color
+                self.framebuffer.screen[y][x].a_char.attr.background_color = char.b_char.attr.background_color
+                self.framebuffer.screen[y][x].a_char.attr.size = char.b_char.attr.size
+                self.framebuffer.screen[y][x].a_char.attr.underline = char.b_char.attr.underline
+                self.framebuffer.screen[y][x].a_char.attr.blinking = char.b_char.attr.blinking
+                self.framebuffer.screen[y][x].a_char.attr.inverted = char.b_char.attr.inverted
+                self.framebuffer.screen[y][x].a_char.attr.z = char.b_char.attr.z
+                self.framebuffer.screen[y][x].a_char.attr.order = char.b_char.attr.order
 
         self.framebuffer.screen_lock.release()
 
