@@ -3,6 +3,9 @@ from components.component import Component
 from framebuffer import FrameBuffer, CharacterAttributes, CharacterAttributes
 
 
+# Blindly position text somewhere
+# One line only
+
 class ComponentText(Component):
     def __init__(self, framebuffer, x: int, y: int, text: str, attributes: CharacterAttributes = CharacterAttributes()):
         super().__init__(framebuffer, x, y, 1, len(text))
@@ -16,6 +19,7 @@ class ComponentText(Component):
 
     def Tick(self):
         self._draw_text()
+        
 
     def _draw_text(self):
         self.framebuffer.screen_lock.acquire()

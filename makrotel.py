@@ -10,6 +10,7 @@ from terminals.terminal import Terminal
 from pages.page import Page
 from pages.page_a import PageA
 from pages.page_b import PageB
+from pages.page_meditations import PageMeditations
 from components.sequence import Sequence
 from engine import Engine
 from framebuffer import FrameBuffer
@@ -22,9 +23,11 @@ def main(stdscr):
 
     pagea: Page = PageA(framebuffer)
     pageb: Page = PageB(framebuffer)
+    pagemeditations: Page = PageMeditations(framebuffer)
     engine.pageManager.add_page("PageA", pagea)
     engine.pageManager.add_page("PageB", pageb)
-    engine.pageManager.set_current_page("PageA")
+    engine.pageManager.add_page("Meditations", pagemeditations)
+    engine.pageManager.set_current_page("Meditations")
 
     while True:
         engine.Tick()
