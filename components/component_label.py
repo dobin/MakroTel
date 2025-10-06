@@ -45,5 +45,22 @@ class ComponentLabel(Component):
         
         self.framebuffer.screen_lock.release()
 
-    def set_text(self, text):
+
+    def set_text(self, text: str):
+        """Update the text content and recalculate positioning"""
         self.text = text
+        
+        text_length = len(self.text)
+        if text_length > self.w:
+            # Truncate text if it's longer than width
+            self.display_text = self.text[:self.w]
+            self.start_x = self.x
+        elif self.center:
+            # Center the text
+            padding = (self.w - text_length) // 2
+            self.start_x = self.x + padding
+            self.display_text = self.text
+        else:
+            # Left-align the text
+            self.start_x = self.x
+            self.display_text = self.text
