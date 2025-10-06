@@ -44,3 +44,6 @@ class ComponentLabel(Component):
                 self.framebuffer.set_char(self.start_x + i, self.y, char, attr=self.character_attributes)
         
         self.framebuffer.screen_lock.release()
+
+    def set_text(self, text):
+        self.text = text

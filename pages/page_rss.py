@@ -20,7 +20,7 @@ class PageRss(Page):
         
         # Configuration
         self.feed_url = "https://feeds.bbci.co.uk/news/rss.xml"  # Default RSS feed
-        self.entries_per_page = 5  # Fixed number of entries per page
+        self.entries_per_page = 4  # Fixed number of entries per page
         self.current_page = 0  # Current page index (0-based)
         self.total_pages = 0   # Total number of pages available
         
