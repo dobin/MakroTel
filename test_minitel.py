@@ -17,6 +17,8 @@ from engine import Engine
 from framebuffer import FrameBuffer
 from pages.page_meditations import PageMeditations
 from pages.page_rss import PageRss
+from pages.page_overview import PageOverview
+from pages.page_80_read import Page80Read
 
 
 def main():
@@ -38,15 +40,19 @@ def main():
 
     pagea: Page = PageA(framebuffer)
     pageb: Page = PageB(framebuffer)
+    pageoverview: Page = PageOverview(framebuffer)
     pagemeditations: Page = PageMeditations(framebuffer)
     pagerss: Page = PageRss(framebuffer)
+    page80read: Page = Page80Read(framebuffer)
 
+    engine.pageManager.add_page("Overview", pageoverview)
     engine.pageManager.add_page("PageA", pagea)
     engine.pageManager.add_page("PageB", pageb)
-    engine.pageManager.set_current_page("PageA")
     engine.pageManager.add_page("Meditations", pagemeditations)
     engine.pageManager.add_page("RSS", pagerss)
-    engine.pageManager.set_current_page("RSS")
+    engine.pageManager.add_page("80-Column", page80read)
+    
+    engine.pageManager.set_current_page("Overview")
 
     while True:
         engine.Tick()
