@@ -35,11 +35,10 @@ class PageManager():
 
 
 class Page:
-    def __init__(self, framebuffer: FrameBuffer):
+    def __init__(self, framebuffer: FrameBuffer, mode: int = 0):
+        self.mode = mode
         self.framebuffer = framebuffer
         self.components: list = []
-        self.x: int = 0
-        self.y: int = HEIGHT // 2
         self.pageManager: PageManager|None = None
 
     

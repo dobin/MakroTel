@@ -126,6 +126,14 @@ class FrameBuffer():
             self.screen[y][x].b_char.Set(char, attr=attr)
 
 
+    # a and b
+    def reset_buffer(self):
+        for y in range(HEIGHT):
+            for x in range(self.width):
+                self.screen[y][x].a_char.Set(INIT_CHAR, attr=CharacterAttributes())
+                self.screen[y][x].b_char.Set(INIT_CHAR, attr=CharacterAttributes())
+
+    # only b
     def clear_buffer(self):
         for y in range(HEIGHT):
             for x in range(self.width):

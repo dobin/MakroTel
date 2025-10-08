@@ -15,6 +15,7 @@ class Engine:
         self.running = True  # Flag to control the draw loop
         self.terminal = terminal
         self.pageManager = PageManager()
+        self.current_mode = 0
         threading.Thread(target=self.draw_loop, daemon=True).start()
 
 
@@ -39,7 +40,13 @@ class Engine:
                 current_page = self.pageManager.get_current_page()
                 if current_page is None:
                     return
-                current_page.initial() 
+                
+                # change width 40/80 if needed
+                if self.current_mode != current_page.mode:
+                    self.current_mode = current_page.mode
+                    self.terminal.change_mode(self.current_mode)
+                    self.framebuffer.reset_buffer()
+                current_page.initial()
 
             self.framebuffer.draw_event.wait()
 
