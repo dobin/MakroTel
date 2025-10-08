@@ -19,6 +19,6 @@ class Page80Read(Page):
         super().__init__(framebuffer, mode=1)
 
         str = "A" * 80
-        textarea = ComponentTextArea(framebuffer, 0, 0, WIDE_WIDTH, HEIGHT, str)
+        textarea = ComponentTextArea(framebuffer, 0, 1, WIDE_WIDTH, HEIGHT-1, str)
 
         self.components.append(textarea)

@@ -21,7 +21,7 @@ class PageManager():
             myLogger.log(f"Page '{name}' not found in PageManager.")
             return
         self.current_page = self.pages[name]
-        myLogger.log(f"Switched to page: {name}")
+        myLogger.log(f"PageManager: Switched to page: {name}")
         self.set_page_changed(True)
 
     def get_page_changed(self):

@@ -515,12 +515,15 @@ class Minitel(Terminal):
 
 
     def set_mode(self, mode: int):
+        myLogger.log(f"Terminal: Change gfx mode from {self.mode} to {mode}")
         if mode == 0:
             #self.send(b"\x1b\x5b\x3f\x7b")
-            self._set_mode('VIDEOTEX')
+            if not self._set_mode('VIDEOTEX'):
+                myLogger.log("Error changing videomode 0")
         elif mode == 1:
             #self.send(b"\x1b\x3a\x31\x7d")
-            self._set_mode('TELEINFORMATIQUE')
+            if not self._set_mode('TELEINFORMATIQUE'):
+                myLogger.log("Error changing videomode 1")
 
 
     def _set_mode(self, mode = 'VIDEOTEX'):
