@@ -50,7 +50,14 @@ class TerminalCurses(Terminal):
             return key_sequence
         else:
             return None
-        
+    
+    def set_mode(self, mode: int):
+        # Curses terminal mode change (0=40 cols, 1=80 cols)
+        #if mode == 0:
+        #    self.stdscr.resize(HEIGHT, 40)
+        #else:
+        #    self.stdscr.resize(HEIGHT, 80)
+        self.stdscr.clear()
 
     def draw_buffer(self):
         n = 0

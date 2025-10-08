@@ -65,10 +65,13 @@ class Page:
 
 
     def KeyPressed(self, keys: Sequence):
-        if keys.egale(Sequence([0x41])):
-            self.pageManager.set_current_page("PageA")
-        elif keys.egale(Sequence([0x42])):
-            self.pageManager.set_current_page("PageB")
+        if self.pageManager is not None:
+            if keys.egale(Sequence([0x41])):
+                self.pageManager.set_current_page("PageA")
+            elif keys.egale(Sequence([0x42])):
+                self.pageManager.set_current_page("PageB")
+            elif keys.egale(Sequence([ord('O')])) or keys.egale(Sequence([ord('o')])):
+                self.pageManager.set_current_page("Overview")
 
         for component in self.components:
             component.KeyPressed(keys)

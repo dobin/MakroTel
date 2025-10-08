@@ -513,7 +513,17 @@ class Minitel(Terminal):
 
         return response
 
-    def set_mode(self, mode = 'VIDEOTEX'):
+
+    def set_mode(self, mode: int):
+        if mode == 0:
+            #self.send(b"\x1b\x5b\x3f\x7b")
+            self._set_mode('VIDEOTEX')
+        elif mode == 1:
+            #self.send(b"\x1b\x3a\x31\x7d")
+            self._set_mode('TELEINFORMATIQUE')
+
+
+    def _set_mode(self, mode = 'VIDEOTEX'):
         """Defines the Minitel's operating mode.
 
         The Minitel can operate in 3 modes: VideoTex (the standard
