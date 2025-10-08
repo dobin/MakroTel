@@ -50,7 +50,7 @@ class TerminalCurses(Terminal):
             return key_sequence
         else:
             return None
-
+        
 
     def draw_buffer(self):
         n = 0

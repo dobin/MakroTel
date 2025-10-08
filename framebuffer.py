@@ -107,19 +107,28 @@ class Cell:
 
 class FrameBuffer():
     def __init__(self): 
-        self.screen: list[list[Cell]] = [[Cell(x, y) for x in range(WIDTH)] for y in range(HEIGHT)]
+        # 80 columns max, even if just 40 are used
+        self.screen: list[list[Cell]] = [[Cell(x, y) for x in range(80)] for y in range(HEIGHT)]
         self.screen_lock = threading.Lock()
         self.draw_event = threading.Event()  # Event to signal when drawing is needed
+        self.width = 40  # Default on Minitel1b init
+
+    
+    def set_mode(self, mode: int):
+        if mode == 0:
+            self.width = 40
+        else:
+            self.width = 80
 
 
     def set_char(self, x: int, y: int, char: str, attr: CharacterAttributes = CharacterAttributes()):
-        if 0 <= x < WIDTH and 0 <= y < HEIGHT:
+        if 0 <= x < self.width and 0 <= y < HEIGHT:
             self.screen[y][x].b_char.Set(char, attr=attr)
 
 
     def clear_buffer(self):
         for y in range(HEIGHT):
-            for x in range(WIDTH):
+            for x in range(self.width):
                 self.screen[y][x].b_char.Set(INIT_CHAR, attr=CharacterAttributes())
 
 
@@ -150,7 +159,7 @@ class FrameBuffer():
                 myLogger.log(f"Invalid align '{align}' in set_line. Use 0 (left), 1 (center), or 2 (right).")
 
             for i in range(length):
-                if 0 <= x + i < WIDTH and 0 <= y < HEIGHT:
+                if 0 <= x + i < self.width and 0 <= y < HEIGHT:
                     self.screen[y][x + i].b_char.Set(line_char, attr=attr)
                     
         elif direction.lower() == "vertical":
@@ -164,7 +173,7 @@ class FrameBuffer():
             else:
                 myLogger.log(f"Invalid align '{align}' in set_line. Use 0 (top), 1 (center), or 2 (bottom).")
             for i in range(length):
-                if 0 <= x < WIDTH and 0 <= y + i < HEIGHT:
+                if 0 <= x < self.width and 0 <= y + i < HEIGHT:
                     self.screen[y + i][x].b_char.Set(line_char, attr=attr)
         else:
             myLogger.log(f"Invalid direction '{direction}' in set_line. Use 'horizontal' or 'vertical'.")

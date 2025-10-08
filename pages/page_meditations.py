@@ -13,7 +13,7 @@ from components.component_menu import ComponentMenu
 from components.component_textfield import ComponentTextField
 from components.component_label import ComponentLabel
 from components.component_textarea import ComponentTextArea
-from config import WIDTH, HEIGHT
+from config import HEIGHT
 
 import os
 import random
@@ -37,7 +37,7 @@ class PageMeditations(Page):
         self.components.append(ComponentLabel(framebuffer, 0, 2, 40, subtitle, center=True))
 
         # Line 2-25: Quote text area
-        self.textarea = ComponentTextArea(framebuffer, 0, 3, WIDTH, HEIGHT-3, quote_data['text'])
+        self.textarea = ComponentTextArea(framebuffer, 0, 3, self.framebuffer.width, HEIGHT-3, quote_data['text'])
         self.components.append(self.textarea)
         
         # Add instructions at the bottom

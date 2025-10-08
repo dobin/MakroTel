@@ -10,8 +10,6 @@ from pages.page import Page
 
 class Terminal:
     def __init__(self, framebuffer: FrameBuffer):
-        self.width: int = WIDTH
-        self.height: int = HEIGHT
         self.framebuffer = framebuffer
 
 
@@ -27,11 +25,26 @@ class Terminal:
         pass
 
 
+    @abstractmethod
+    def set_mode(self, mode: int):
+        pass
+
+
+    def change_mode(self, mode: int):
+        """Change terminal mode (0=40 cols, 1=80 cols)"""
+        if mode == 0:
+            self.framebuffer.set_mode(mode)
+            self.set_mode(mode)
+        else:
+            self.framebuffer.set_mode(mode)
+            self.set_mode(mode)
+
+
     def position(self, x, y):
         """Set cursor position (1-based coordinates like Minitel)"""
         # Convert from 1-based to 0-based coordinates
-        self.cursor_x = max(1, min(x, self.width))
-        self.cursor_y = max(1, min(y, self.height))
+        self.cursor_x = max(1, min(x, self.framebuffer.width))
+        self.cursor_y = max(1, min(y, HEIGHT))
         # Note: We don't move the actual cursor here, just track position
         # The actual positioning happens in send() method
 
@@ -66,14 +79,14 @@ class Terminal:
 
     def _put_char_at_cursor(self, char):
         """Internal method to put a character at current cursor position"""
-        if 0 <= self.cursor_x - 1 < self.width and 0 <= self.cursor_y - 1 < self.height:
+        if 0 <= self.cursor_x - 1 < self.framebuffer.width and 0 <= self.cursor_y - 1 < HEIGHT:
             self.framebuffer.screen[self.cursor_y - 1][self.cursor_x - 1].Set(char)
             self.cursor_x += 1
-            if self.cursor_x > self.width:
+            if self.cursor_x > self.framebuffer.width:
                 self.cursor_x = 1
                 self.cursor_y += 1
-                if self.cursor_y > self.height:
-                    self.cursor_y = self.height
+                if self.cursor_y > HEIGHT:
+                    self.cursor_y = HEIGHT
 
     def repeat(self, char, count):
         """Repeat a character a specified number of times"""

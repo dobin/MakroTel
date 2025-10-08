@@ -1,5 +1,4 @@
 # Screen dimensions
-WIDTH = 40
 HEIGHT = 25
 CHAR_BG = " "
 

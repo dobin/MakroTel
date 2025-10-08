@@ -15,7 +15,7 @@ class ComponentMover(Component):
 
     def Tick(self):
         self.x += self.dx
-        if self.x >= WIDTH or self.x < 0:
+        if self.x >= self.framebuffer.width or self.x < 0:
             self.dx *= -1
             self.x += self.dx  # Bounce back
         self._draw_mover()

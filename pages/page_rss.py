@@ -5,7 +5,7 @@ from components.component_textarea import ComponentTextArea
 from components.sequence import Sequence
 from constants.keys import KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT
 from framebuffer import FrameBuffer
-from config import WIDTH, HEIGHT
+from config import HEIGHT
 from mylogger import myLogger
 import feedparser
 import datetime
@@ -33,16 +33,16 @@ class PageRss(Page):
         self.components.append(ComponentClock(framebuffer, 0, 0))
         
         # Line 1: Title
-        self.title_label = ComponentLabel(framebuffer, 0, 0, WIDTH, "RSS News Feed", center=True)
+        self.title_label = ComponentLabel(framebuffer, 0, 0, self.framebuffer.width, "RSS News Feed", center=True)
         self.components.append(self.title_label)
         
         # Line 2: Pagination info and controls
-        self.info_label = ComponentLabel(framebuffer, 0, HEIGHT-1, WIDTH, "Loading... (←→ to navigate)", center=True)
+        self.info_label = ComponentLabel(framebuffer, 0, HEIGHT-1, self.framebuffer.width, "Loading... (←→ to navigate)", center=True)
         self.components.append(self.info_label)
         
         # Line 3-24: RSS content text area (dynamic height based on entry count)
         self.calculate_textarea_height()
-        self.textarea = ComponentTextArea(framebuffer, 0, 2, WIDTH, self.textarea_height, "Loading RSS feed...")
+        self.textarea = ComponentTextArea(framebuffer, 0, 2, self.framebuffer.width, self.textarea_height, "Loading RSS feed...")
         self.components.append(self.textarea)
         
         # Load RSS feed
@@ -108,7 +108,7 @@ class PageRss(Page):
             # Format title (truncate if necessary)
             title = getattr(entry, 'title', 'No title')
             # Split long titles across multiple lines
-            title_lines = self._wrap_text(title, WIDTH - 2)
+            title_lines = self._wrap_text(title, self.framebuffer.width - 2)
             
             # Format date
             date_str = "No date"
