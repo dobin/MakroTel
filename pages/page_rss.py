@@ -22,7 +22,7 @@ class RssEntry():
         self.text: str = text
 
 
-# Mostly Claude generated
+# initially Claude generated
 
 class PageRss(Page):
     def __init__(self, framebuffer: FrameBuffer, name: str, feed_url="https://feeds.bbci.co.uk/news/rss.xml"):
@@ -40,8 +40,6 @@ class PageRss(Page):
         self.feed_entries: List[RssEntry] = []
 
         # Components
-        # Line 0: Status bar with clock
-        #self.components.append(ComponentClock(framebuffer, 0, 0))
         # Line 1: Title
         self.c_title = ComponentLabel(framebuffer, 0, 0, self.framebuffer.width, "RSS News Feed", center=True)
         # Line 3-24: RSS content text area (dynamic height based on entry count)
@@ -83,6 +81,12 @@ class PageRss(Page):
                 if abs_id != -1 and abs_id < len(self.feed_entries):
                     entry = self.feed_entries[abs_id]
                     myLogger.log(f"Selected Entry {entry.id}: {entry.title}")
+                    pageReadInput = {
+                        "id": entry.id,
+                        "title": entry.title,
+                        "content": entry.text,
+                    }
+                    self.pageManager.set_current_page("80Read", pageReadInput)
         
         # Let textarea handle its own keys (up/down for scrolling)
         # This is handled automatically by the component system
@@ -121,7 +125,7 @@ class PageRss(Page):
                         except:
                             date_str = "Date error"
 
-                    rssEntry = RssEntry(id, date_str, title_str, date_str)
+                    rssEntry = RssEntry(id, date_str, title_str, entry.link)
                     self.feed_entries.append(rssEntry)
             
         except Exception as e:

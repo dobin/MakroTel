@@ -18,7 +18,15 @@ class Page80Read(Page):
     def __init__(self, framebuffer: FrameBuffer, name: str):
         super().__init__(framebuffer, name, mode=1)
 
-        str = "A" * 80
-        textarea = ComponentTextArea(framebuffer, 0, 1, WIDE_WIDTH, HEIGHT-1, str)
+        self.textarea = ComponentTextArea(framebuffer, 0, 1, WIDE_WIDTH, HEIGHT-1, "")
+        self.components.append(self.textarea)
 
-        self.components.append(textarea)
+
+    def initial(self):
+        super().initial()
+
+        pageInput: dict|None = self.get_page_input_once()
+        if pageInput is not None and "content" in pageInput:
+            content = pageInput["content"]
+            if isinstance(content, str):
+                self.textarea.set_text(content)

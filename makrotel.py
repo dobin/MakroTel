@@ -30,7 +30,11 @@ def main(stdscr):
     pageoverview: Page = PageOverview(framebuffer, "Overview")
     pagemeditations: Page = PageMeditations(framebuffer, "Meditations")
     pagerss: Page = PageRss(framebuffer, "RSS")
-    page80read: Page = Page80Read(framebuffer, "80-Column")
+    page80read: Page = Page80Read(framebuffer, "80Read")
+
+    #pageZinesList: Page = PageZinesList(framebuffer, "ZinesList", dir="data/zines")
+    #pageZine: Page = PageZine(framebuffer, "Zine")
+    #pageZineArticle: Page = PageZineArticle(framebuffer, "ZineArticle")
 
     engine.pageManager.add_page(pageoverview)
     engine.pageManager.add_page(pagea)

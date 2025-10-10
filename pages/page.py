@@ -20,7 +20,7 @@ class PageManager():
 
 
     # current page
-    def set_current_page(self, name: str):
+    def set_current_page(self, name: str, pageInput: dict|None = None):
         if name not in self.pages:
             myLogger.log(f"Page '{name}' not found in PageManager.")
             return
@@ -32,6 +32,10 @@ class PageManager():
             myLogger.log(f"PageManager: Added '{current_page_name}' to navigation stack")
         
         self.current_page = self.pages[name]
+        if self.current_page is None:
+            myLogger.log(f"PageManager: Current page is None after setting to '{name}'")
+            return
+        self.current_page.set_page_input(pageInput)
         myLogger.log(f"PageManager: Switched to page: {name}")
         self.set_page_changed(True)
 
@@ -74,6 +78,17 @@ class Page:
         self.framebuffer = framebuffer
         self.components: list = []
         self.pageManager: PageManager|None = None
+        self.pageInput: dict|None = None
+
+
+    def set_page_input(self, pageInput: dict|None):
+        self.pageInput = pageInput
+
+    def get_page_input_once(self) -> dict|None:
+        """Retrieve and clear the page input data."""
+        temp = self.pageInput
+        self.pageInput = None
+        return temp
 
     
     def initial(self):

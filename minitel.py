@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import time
-import threading
 import sys
 
 from config import *
@@ -31,7 +29,7 @@ def main():
     terminal.guess_speed()
     terminal.identify()
     terminal.set_speed(1200)
-    terminal.set_mode('VIDEOTEX')
+    terminal.set_mode(0)
     terminal.configure_keyboard(extended = True, cursor = False, lowercase = True)
     terminal.echo(False)
     terminal.clear()
@@ -43,7 +41,7 @@ def main():
     pageoverview: Page = PageOverview(framebuffer, "Overview")
     pagemeditations: Page = PageMeditations(framebuffer, "Meditations")
     pagerss: Page = PageRss(framebuffer, "RSS")
-    page80read: Page = Page80Read(framebuffer, "80-Column")
+    page80read: Page = Page80Read(framebuffer, "80Read")
 
     engine.pageManager.add_page(pageoverview)
     engine.pageManager.add_page(pagea)
