@@ -23,26 +23,41 @@ class PageMeditations(Page):
     def __init__(self, framebuffer: FrameBuffer):
         super().__init__(framebuffer)
         
+        # Add components
+        # Line 0: Status bar
+        #self.components.append(ComponentClock(framebuffer, 0, 0))
+
+        self.c_title = ComponentLabel(framebuffer, 0, 1, 40, "Marcus Aurelius - Meditations", center=True)
+        self.c_subtitle = ComponentLabel(framebuffer, 0, 2, 40, "", center=True)
+        self.c_content = ComponentTextArea(framebuffer, 0, 4, self.framebuffer.width, HEIGHT-4, "")
+
+        self.components.append(self.c_title)
+        self.components.append(self.c_subtitle)
+        self.components.append(self.c_content)
+
+
+    def initial(self):
+        self._update()
+
+
+    def KeyPressed(self, keys: Sequence):
+        if keys.egale(Sequence('r')):
+            self._update()
+
+        return super().KeyPressed(keys)
+
+
+    def _update(self):
         # Load a random quote
         quote_data: Dict[str, str] = self._load_random_quote()
         
-        # Add components
-        # Line 0: Status bar
-        self.components.append(ComponentClock(framebuffer, 0, 0))  # in status bar
-
-        # Line 1: Title
-        self.components.append(ComponentLabel(framebuffer, 0, 1, 40, "Marcus Aurelius - Meditations", center=True))
         # Line 2: Subtitle with book and quote number
         subtitle = f"{quote_data.get('book', '')} - {quote_data.get('quote_num', '')}"
-        self.components.append(ComponentLabel(framebuffer, 0, 2, 40, subtitle, center=True))
+        self.c_subtitle.set_text(subtitle)
 
         # Line 2-25: Quote text area
-        self.textarea = ComponentTextArea(framebuffer, 0, 3, self.framebuffer.width, HEIGHT-3, quote_data['text'])
-        self.components.append(self.textarea)
+        self.c_content.set_text(quote_data.get('text', ''))
         
-        # Add instructions at the bottom
-        #self.components.append(ComponentText(framebuffer, 1, 24, "Use UP/DOWN arrows to navigate pages"))
-    
 
     def _load_random_quote(self) -> Dict[str, str]:
         """Load a random quote from the meditations quotes directory"""
@@ -78,11 +93,6 @@ class PageMeditations(Page):
                 elif line.startswith("Text:"):
                     text = line[5:].strip()
             
-            # Format the quote for display
-            #formatted_quote = f"{book} - Quote {quote_num}\n\n"
-            #formatted_quote += text
-            #return formatted_quote
-
             ret = {
                 "book": book,
                 "quote_num": quote_num,
