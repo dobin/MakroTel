@@ -189,3 +189,11 @@ class Sequence:
 
         return self.valeurs == sequence.valeurs
 
+
+    def length(self):
+        """Returns the length of the sequence
+
+        :returns:
+            the number of values in the sequence
+        """
+        return self.longueur
