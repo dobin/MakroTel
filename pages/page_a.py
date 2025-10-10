@@ -14,8 +14,8 @@ from components.component_textfield import ComponentTextField
 
 
 class PageA(Page):
-    def __init__(self, framebuffer: FrameBuffer):
-        super().__init__(framebuffer)
+    def __init__(self, framebuffer: FrameBuffer, name: str):
+        super().__init__(framebuffer, name)
 
         self.components.append(ComponentClock(framebuffer, 0, 0))  # in status bar
         self.components.append(ComponentText(framebuffer, 12, 1, "MakroTel"))

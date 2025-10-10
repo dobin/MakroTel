@@ -12,8 +12,8 @@ from components.component_container import ComponentContainer
 
 
 class PageB(Page):
-    def __init__(self, framebuffer: FrameBuffer):
-        super().__init__(framebuffer)
+    def __init__(self, framebuffer: FrameBuffer, name: str):
+        super().__init__(framebuffer, name)
 
         self.components.append(ComponentClock(framebuffer, 1, 1))
         self.components.append(ComponentText(framebuffer, 12, 1, "MakroTel Page 2"))

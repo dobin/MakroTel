@@ -25,9 +25,9 @@ class RssEntry():
 # Mostly Claude generated
 
 class PageRss(Page):
-    def __init__(self, framebuffer: FrameBuffer, feed_url="https://feeds.bbci.co.uk/news/rss.xml"):
-        super().__init__(framebuffer)
-        
+    def __init__(self, framebuffer: FrameBuffer, name: str, feed_url="https://feeds.bbci.co.uk/news/rss.xml"):
+        super().__init__(framebuffer, name)
+
         # Configuration
         self.feed_url = feed_url
         self.entries_per_page = 6

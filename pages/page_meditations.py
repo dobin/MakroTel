@@ -20,9 +20,9 @@ import random
 
 
 class PageMeditations(Page):
-    def __init__(self, framebuffer: FrameBuffer):
-        super().__init__(framebuffer)
-        
+    def __init__(self, framebuffer: FrameBuffer, name: str):
+        super().__init__(framebuffer, name)
+
         # Add components
         # Line 0: Status bar
         #self.components.append(ComponentClock(framebuffer, 0, 0))

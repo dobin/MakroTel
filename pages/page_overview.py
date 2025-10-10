@@ -12,8 +12,8 @@ from components.component_textarea import ComponentTextArea
 
 
 class PageOverview(Page):
-    def __init__(self, framebuffer: FrameBuffer):
-        super().__init__(framebuffer)
+    def __init__(self, framebuffer: FrameBuffer, name: str):
+        super().__init__(framebuffer, name)
         
         # Create the page title
         self.components.append(ComponentText(framebuffer, 15, 2, "MakroTel", 
