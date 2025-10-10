@@ -36,7 +36,7 @@ class PageManager():
             myLogger.log(f"PageManager: Current page is None after setting to '{name}'")
             return
         self.current_page.set_page_input(pageInput)
-        myLogger.log(f"PageManager: Switched to page: {name}")
+        myLogger.log(f"PageManager: Set new page: {name}")
         self.set_page_changed(True)
 
     def get_current_page(self) -> Page|None:

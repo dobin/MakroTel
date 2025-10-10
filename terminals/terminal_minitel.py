@@ -204,7 +204,7 @@ class Minitel(Terminal):
 
         for cell in changed_cells:
             if DEBUG:
-                myLogger.log(f"Changed Cell at ({cell.x},{cell.y}): a_char='{cell.a_char.char}' b_char='{cell.b_char.char}(0x{cell.b_char.char.encode().hex()})'")
+                myLogger.log(f"Changed Cell at ({cell.x},{cell.y}): a_char='{cell.a_char.char}' ((0x{cell.a_char.char.encode().hex()}) b_char='{cell.b_char.char}' (0x{cell.b_char.char.encode().hex()})")
             y  = cell.y
             x  = cell.x
 
@@ -259,11 +259,11 @@ class Minitel(Terminal):
             else:
                 self.send(cell.b_char.char)
             current_col += 1  # Update our tracking of current column
-            n += 1
 
         # NOTE: update the screen, indicate what we have written
         self.framebuffer.screen_lock.acquire()
         for cell in changed_cells:
+            n += 1
             y  = cell.y
             x  = cell.x
             self.framebuffer.screen[y][x].a_char.char = cell.b_char.char
@@ -274,7 +274,7 @@ class Minitel(Terminal):
             self.framebuffer.screen[y][x].a_char.attr.inverted = cell.b_char.attr.inverted
         self.framebuffer.screen_lock.release()
 
-        if DEBUG:
+        if DEBUG and n > 0:
             myLogger.log(f"Redrew {n} chars")
 
 

@@ -150,9 +150,9 @@ class ComponentTextArea(Component):
         
         try:
             # Clear the display area
-            for row in range(self.height):
-                for col in range(self.width):
-                    self.framebuffer.set_char(self.x + col, self.y + row, ' ')
+            #for row in range(self.height):
+            #    for col in range(self.width):
+            #        self.framebuffer.set_char(self.x + col, self.y + row, ' ')
             
             # Get lines for current page
             page_lines = self._get_current_page_lines()

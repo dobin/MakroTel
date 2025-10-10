@@ -36,18 +36,24 @@ class Engine:
             # - before draw_event.wait() 
             # - pageManager.initial() will notify us
             if self.pageManager.get_page_changed():
-                myLogger.log("Engine: set new page")
+                if DEBUG:
+                    myLogger.log("Engine: got new page")
                 self.pageManager.set_page_changed(False)
                 current_page = self.pageManager.get_current_page()
                 if current_page is None:
                     return
                 
                 # change width 40/80 if needed
-                myLogger.log("Engine: Change video mode")
+                if DEBUG:
+                    myLogger.log("Engine: Change video mode")
                 if self.current_mode != current_page.mode:
                     self.current_mode = current_page.mode
                     self.terminal.change_mode(self.current_mode)
+
+                    # Minitel terminal will clear screan itself
                     self.framebuffer.reset_buffer()
+
+                myLogger.log("Engine: new page initial()")
                 current_page.initial()
 
             self.framebuffer.draw_event.wait()
@@ -57,8 +63,8 @@ class Engine:
                 start_time = time.perf_counter()
                 self.terminal.draw_buffer()
                 end_time = time.perf_counter()
-                if DEBUG:
-                    myLogger.log(f"Draw time: {end_time - start_time:.6f} seconds")
+                #if DEBUG:
+                #    myLogger.log(f"Draw time: {end_time - start_time:.6f} seconds")
                 self.framebuffer.draw_event.clear()  # Reset the event after drawing
 
 
