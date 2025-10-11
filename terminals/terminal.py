@@ -26,18 +26,17 @@ class Terminal:
 
 
     @abstractmethod
-    def set_mode(self, mode: int):
+    def set_mode(self, mode: str):
+        # change the hardwore to the specific mode
         pass
 
 
-    def change_mode(self, mode: int):
-        """Change terminal mode (0=40 cols, 1=80 cols)"""
-        if mode == 0:
-            self.framebuffer.set_mode(mode)
-            self.set_mode(mode)
-        else:
-            self.framebuffer.set_mode(mode)
-            self.set_mode(mode)
+    def change_mode(self, mode: str):
+        # notify framebuffer about the size change
+        self.framebuffer.set_mode(mode)
+
+        # notify the hardware
+        self.set_mode(mode)
 
 
     def position(self, x, y):
@@ -99,22 +98,3 @@ class Terminal:
         
         data = char * count
         self.send(data)
-
-    def color(self, character=None, background=None):
-        """Set text color"""
-        # For now, we'll just track the color but not apply it in curses
-        # since the current drawing system doesn't support colors yet
-        self.current_color = character
-        # Could be extended to use curses color pairs in the future
-
-    def effect(self, invert=None, bold=None, underline=None):
-        """Set text effects"""
-        if invert is not None:
-            self.invert_mode = invert
-        # For now, we only track the invert mode
-        # The actual invert effect could be implemented by swapping
-        # characters or using curses attributes
-
-    def beep(self):
-        """Make a beep sound"""
-        myLogger.log("Beep not available")

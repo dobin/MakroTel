@@ -11,11 +11,11 @@ from terminals.terminal import Terminal
 
 class Engine:
     def __init__(self, framebuffer: FrameBuffer, terminal: Terminal):
-        self.framebuffer = framebuffer
-        self.running = True  # Flag to control the draw loop
-        self.terminal = terminal
-        self.pageManager = PageManager()
-        self.current_mode = 0
+        self.framebuffer: FrameBuffer = framebuffer
+        self.running: bool = True  # Flag to control the draw loop
+        self.terminal: Terminal = terminal
+        self.pageManager: PageManager = PageManager()
+        self.current_mode: str = 'VIDEOTEX'
         threading.Thread(target=self.draw_loop, daemon=True).start()
 
 

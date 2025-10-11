@@ -11,7 +11,7 @@ terminal types (Minitel and Curses). Components should import keys from here
 instead of directly from terminal-specific modules.
 """
 
-from config import MODE
+from config import PROG_MODE
 
 # Minitel colors actually (monochrome crt)
 class MINITEL_COLOR(enum.Enum):
@@ -33,7 +33,7 @@ class MINITEL_SIZE(enum.Enum):
 
 
 
-if MODE == "minitel":
+if PROG_MODE == "minitel":
     from terminals.minitel_constants import (
         UP, DOWN, LEFT, RIGHT, 
         RETURN, ENTER, 

@@ -16,7 +16,7 @@ WIDE_WIDTH = 80
 
 class Page80Read(Page):
     def __init__(self, framebuffer: FrameBuffer, name: str):
-        super().__init__(framebuffer, name, mode=1)
+        super().__init__(framebuffer, name, mode='TELEINFORMATIQUE')
 
         self.textarea = ComponentTextArea(framebuffer, 0, 1, WIDE_WIDTH, HEIGHT-1, "")
         self.components.append(self.textarea)

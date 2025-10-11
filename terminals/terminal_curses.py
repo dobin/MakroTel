@@ -51,7 +51,7 @@ class TerminalCurses(Terminal):
         else:
             return None
     
-    def set_mode(self, mode: int):
+    def set_mode(self, mode: str):
         # Curses terminal mode change (0=40 cols, 1=80 cols)
         #if mode == 0:
         #    self.stdscr.resize(HEIGHT, 40)

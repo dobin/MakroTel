@@ -114,10 +114,10 @@ class FrameBuffer():
         self.width = 40  # Default on Minitel1b init
 
     
-    def set_mode(self, mode: int):
-        if mode == 0:
+    def set_mode(self, mode: str):
+        if mode == 'VIDEOTEX':
             self.width = 40
-        else:
+        elif mode == 'TELEINFORMATIQUE':
             self.width = 80
 
 

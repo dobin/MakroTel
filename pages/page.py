@@ -72,9 +72,9 @@ class PageManager():
 
 
 class Page:
-    def __init__(self, framebuffer: FrameBuffer, name: str, mode: int = 0):
+    def __init__(self, framebuffer: FrameBuffer, name: str, mode: str = 'VIDEOTEX'):
         self.name = name
-        self.mode = mode
+        self.mode: str = mode
         self.framebuffer = framebuffer
         self.components: list = []
         self.pageManager: PageManager|None = None
