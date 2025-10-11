@@ -574,7 +574,7 @@ class Minitel(Terminal):
 
         return result
 
-    def identify(self):
+    def identify_capabilities(self):
         """Identifies the connected Minitel.
 
         This method must be called once the connection with the
@@ -606,6 +606,7 @@ class Minitel(Terminal):
         if (response.longueur != 5 or
             response.valeurs[0] != SOH or
             response.valeurs[4] != EOT):
+            myLogger.log("Identify Capabilities: Response error (is Terminal set to telematic instead of teletel?)")
             return
 
         # Extracts the identification characters
@@ -629,30 +630,18 @@ class Minitel(Terminal):
             if software_version == ['4', '5', ';', '<']:
                 self.capabilities['constructeur'] = 'Telic ou Matra'
 
-        # Determines the screen mode in which the Minitel is
-        response = self.call([PRO1, OPERATING_STATUS], PRO2_LENGTH)
-
-        if response.longueur != PRO2_LENGTH:
-            # The Minitel is in Tele-informatique mode because it does not respond
-            # to a protocol command
-            self.mode = 'TELEINFORMATIQUE'
-        elif response.valeurs[3] & 1 == 1:
-            # Bit 1 of the operating status indicates 80-column mode
-            self.mode = 'MIXTE'
-        else:
-            # By default, we consider that we are in Videotex mode
-            self.mode = 'VIDEOTEX'
-
         # Manufacturer correction
         if minitel_manufacturer == 'B' and minitel_type == 'v':
             self.capabilities['constructeur'] = 'Philips'
         elif minitel_manufacturer == 'C':
             if software_version == ['4', '5', ';', '<']:
                 self.capabilities['constructeur'] = 'Telic ou Matra'
+        myLogger.log(f"Capabilities: {self.capabilities['constructeur']} {self.capabilities['name']} {self.capabilities['speed']} 80:{self.capabilities['80columns']} Redef: {self.capabilities['characters']} V:{self.capabilities['version']}")
 
+
+    def identify_mode(self):
         # Determines the screen mode in which the Minitel is
         response = self.call([PRO1, OPERATING_STATUS], PRO2_LENGTH)
-
         if response.longueur != PRO2_LENGTH:
             # The Minitel is in Tele-informatique mode because it does not respond
             # to a protocol command
@@ -664,6 +653,10 @@ class Minitel(Terminal):
             # By default, we consider that we are in Videotex mode
             self.mode = 'VIDEOTEX'
 
+        myLogger.log(f"Identify: Mode: {self.mode}")
+
+
+    # Note: This doesnt seem to work for minitel 1 to identify 4800
     def guess_speed(self):
         """Guess the connection speed with the Minitel.
 
@@ -695,6 +688,7 @@ class Minitel(Terminal):
 
             # The Minitel must return a PRO2 acknowledgement
             if response.longueur == PRO2_LENGTH:
+                myLogger.log(f"GuessSpeed: {speed}")
                 self.speed = speed
                 return speed
 

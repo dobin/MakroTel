@@ -32,7 +32,7 @@ def stdin_reader_thread(terminal):
         try:
             # Read a single character from stdin
             char = sys.stdin.read(1)
-            if char:
+            if char and char != 0x0A:
                 # Convert character to bytes and put in the input queue
                 char_bytes = char.encode('latin-1')
                 for byte_val in char_bytes:
@@ -54,10 +54,10 @@ def main():
 
     framebuffer = FrameBuffer()
     terminal = Minitel(framebuffer, device=dev)
-    terminal.guess_speed()
-    terminal.identify()
-    terminal.set_speed(1200)
-    terminal.set_mode(0)
+    terminal.set_speed(4800)  # full speed ahead
+    terminal.identify_capabilities()  # mostly nice to have information
+    terminal.identify_mode()  # check in which video mode the terminal is
+    terminal.set_mode(0)  # change it to VIDEOTEX
     terminal.configure_keyboard(extended = True, cursor = False, lowercase = True)
     terminal.echo(False)
     terminal.video.clear()
