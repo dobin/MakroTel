@@ -1,0 +1,68 @@
+# Minitel Terminal modes
+
+## Term fixing
+
+/sbin/getty -i -L -I "\033\143" ttyUSB0 1200 minitel1b-80
+videomode.py
+
+
+infocmp minitel1b-80 > /tmp/minitel1b-80.src
+* acsc=j+k+l+m+n+q-t+u+v+w+x|,
+* acsc=j/k\l/m\n+q-t+u+v+w+x|,
+tic /tmp/minitel1b-80.src
+
+
+/sbin/getty -i -L -I "\033\143" ttyUSB0 1200 minitel1b-80
+1b 64
+
+
+## Term Tests
+
+Set speed:
+stty -F /dev/ttyUSB0 1200 cs7 parenb -parodd -cstopb
+
+Terminal:
+/sbin/getty -L -i ttyUSB0 1200
+agetty ttyUSB0 1200 minitel1b-80
+
+Tests:
+/sbin/getty -L -i ttyUSB0 1200 minitel1b-nb
+-> several characters are completely white. Enter doesnt do anything. 
+
+agetty -L -i ttyUSB0 1200 minitel1b-nb
+-> several characters are completely white. Enter doesnt do anything.
+
+$ export TERM=m1b-nb 
+$ export TERM=minitel1b-nb
+(ou TERM=minitel1b-nb) via screen(1) 
+
+$ agetty -f /etc/issue.minitelG -L -i ttyUSB0 1200 minitel1b-nb
+$ agetty -L -i ttyUSB0 1200 minitel1b-nb
+
+TERM=minitel1b-nb /sbin/getty -L -i ttyUSB0 1200 minitel1b-nb
+TERM=minitel1b /sbin/getty -L -i ttyUSB0 1200 minitel1b
+/sbin/getty -L -i -I "\033\143" ttyUSB0 1200 minitel1b
+/sbin/getty -i -L -I "\033\143" ttyUSB0 1200 minitel1b-80
+
+minitel1b: Top: broken (scrolling)
+minitel1b-80: Top: WORKS beautiful
+minitel1b-nb: Top: broken
+m1b-x80: Works (same as minitel1b-80)
+
+note: press enter a few times to see if we are fucked
+
+
+## Infocmp
+
+$ infocmp m1b-x80
+m1b-x80|minitel 1-bistandard (standard teleinformatique)
+
+$ infocmp minitel1b-80
+minitel1b-80|minitel 1-bistandard (standard teleinformatique),
+
+$ infocmp minitel1b
+minitel1b|minitel 1-bistandard (in 40cols mode),
+
+$ infocmp minitel1b-nb
+minitel1b-nb|minitel 1b (40cols) noir & blanc sans couleurs avec bold et dim ...,
+
