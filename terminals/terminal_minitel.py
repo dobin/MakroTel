@@ -204,7 +204,7 @@ class Minitel(Terminal):
 
         for cell in changed_cells:
             if DEBUG:
-                myLogger.log(f"Changed Cell at ({cell.x},{cell.y}): a_char='{cell.a_char.char}' ((0x{cell.a_char.char.encode().hex()}) b_char='{cell.b_char.char}' (0x{cell.b_char.char.encode().hex()})")
+                myLogger.log(f"Changed Cell at ({cell.x},{cell.y}): a_char='{cell.a_char.char}' (0x{cell.a_char.char.encode().hex()}) b_char='{cell.b_char.char}' (0x{cell.b_char.char.encode().hex()})")
             y  = cell.y
             x  = cell.x
 
