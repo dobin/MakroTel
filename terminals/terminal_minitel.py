@@ -496,6 +496,10 @@ class Minitel(Terminal):
 
 
     def set_mode(self, mode: MinitelVideoMode):
+        # If the requested mode is already active, do nothing
+        if self.mode == mode:
+            return True
+
         myLogger.log(f"Terminal: Change gfx mode from {self.mode} to {mode}")
         if mode == MinitelVideoMode.VIDEOTEX:
             if not self._set_mode(MinitelVideoMode.VIDEOTEX):
@@ -506,8 +510,12 @@ class Minitel(Terminal):
                 myLogger.log("Error changing videomode 1")
             self.video = self.video_telematic
 
+        # resetting videomode also resets other options
+        self.echo(False)
+        self.cursor(False)
 
-    def _set_mode(self, mode = MinitelVideoMode.VIDEOTEX):
+
+    def _set_mode(self, mode = MinitelVideoMode.VIDEOTEX) -> bool:
         """Defines the Minitel's operating mode.
 
         The Minitel can operate in 3 modes: VideoTex (the standard
@@ -526,12 +534,7 @@ class Minitel(Terminal):
         :returns:
             False if the mode change could not take place, True otherwise.
         """
-
-        # If the requested mode is already active, do nothing
-        if self.mode == mode:
-            return True
-
-        result = False
+        result: bool = False
 
         # There are 9 possible cases, but only 6 are relevant. The cases
         # requesting to switch from VIDEOTEX to VIDEOTEX, for example, do not give
