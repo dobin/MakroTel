@@ -32,7 +32,7 @@ def main():
     terminal.set_mode(0)
     terminal.configure_keyboard(extended = True, cursor = False, lowercase = True)
     terminal.echo(False)
-    terminal.clear()
+    terminal.video.clear()
     terminal.cursor(False)
     engine = Engine(framebuffer, terminal)
 
