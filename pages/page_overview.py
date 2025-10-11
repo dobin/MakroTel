@@ -25,14 +25,15 @@ class PageOverview(Page):
         self.components.append(ComponentText(framebuffer, 5, 6, "1. PageA - Demo Page A"))
         self.components.append(ComponentText(framebuffer, 5, 7, "2. PageB - Demo Page B"))
         self.components.append(ComponentText(framebuffer, 5, 8, "3. Meditations - Philosophy"))
-        self.components.append(ComponentText(framebuffer, 5, 9, "4. RSS - News Feed"))
-        self.components.append(ComponentText(framebuffer, 5, 10, "5. 80-Column - Text Reader"))
-        
+        self.components.append(ComponentText(framebuffer, 5, 9, "4. RSS - BBC News"))
+        self.components.append(ComponentText(framebuffer, 5, 10, "5. RSS - Ars Technica"))
+        self.components.append(ComponentText(framebuffer, 5, 11, "6. 80-Column - Text Reader"))
+
         # Instructions
-        self.components.append(ComponentText(framebuffer, 5, 13, "Press a number (1-5) to navigate", 
-                                           CharacterAttributes(char_color=MINITEL_COLOR.GREY_4)))
-        self.components.append(ComponentText(framebuffer, 5, 14, "Press 'O' from any page to return here", 
-                                           CharacterAttributes(char_color=MINITEL_COLOR.GREY_5)))
+        #self.components.append(ComponentText(framebuffer, 5, 13, "Press a number (1-5) to navigate", 
+        #                                   CharacterAttributes(char_color=MINITEL_COLOR.GREY_4)))
+        #self.components.append(ComponentText(framebuffer, 5, 14, "Press 'O' from any page to return here", 
+        #                                   CharacterAttributes(char_color=MINITEL_COLOR.GREY_5)))
 
     def Initial(self):
         super().Initial()
@@ -47,8 +48,10 @@ class PageOverview(Page):
             elif keys.egale(Sequence([ord('3')])):
                 self.pageManager.set_current_page("Meditations")
             elif keys.egale(Sequence([ord('4')])):
-                self.pageManager.set_current_page("RSS")
+                self.pageManager.set_current_page("RSS_BBC")
             elif keys.egale(Sequence([ord('5')])):
+                self.pageManager.set_current_page("RSS_ARS")
+            elif keys.egale(Sequence([ord('6')])):
                 self.pageManager.set_current_page("80Read", {
                     "id": 0,
                     "title": "",

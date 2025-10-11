@@ -61,25 +61,32 @@ def main():
     terminal.identify_mode()  # check in which video mode the terminal is
     terminal.set_mode(MinitelVideoMode.VIDEOTEX)  # change it to VIDEOTEX
     terminal.configure_keyboard(extended = True, cursor = False, lowercase = True)
-    terminal.echo(False)
+    terminal.video.echo(False)
     terminal.video.clear()
-    terminal.cursor(False)
+    terminal.video.cursor(False)
     engine = Engine(framebuffer, terminal)
+
 
     pagea: Page = PageA(framebuffer, "PageA")
     pageb: Page = PageB(framebuffer, "PageB")
     pageoverview: Page = PageOverview(framebuffer, "Overview")
     pagemeditations: Page = PageMeditations(framebuffer, "Meditations")
-    pagerss: Page = PageRss(framebuffer, "RSS")
+    pageRssBbc: Page = PageRss(framebuffer, "RSS_BBC", "https://feeds.bbci.co.uk/news/rss.xml")
+    pageRssArs: Page = PageRss(framebuffer, "RSS_ARS", "https://feeds.arstechnica.com/arstechnica/index/")
     page80read: Page = Page80Read(framebuffer, "80Read")
+
+    #pageZinesList: Page = PageZinesList(framebuffer, "ZinesList", dir="data/zines")
+    #pageZine: Page = PageZine(framebuffer, "Zine")
+    #pageZineArticle: Page = PageZineArticle(framebuffer, "ZineArticle")
 
     engine.pageManager.add_page(pageoverview)
     engine.pageManager.add_page(pagea)
     engine.pageManager.add_page(pageb)
     engine.pageManager.add_page(pagemeditations)
-    engine.pageManager.add_page(pagerss)
+    engine.pageManager.add_page(pageRssArs)
+    engine.pageManager.add_page(pageRssBbc)
     engine.pageManager.add_page(page80read)
-
+    
     engine.pageManager.set_current_page("Overview")
 
     # Start the stdin reader thread

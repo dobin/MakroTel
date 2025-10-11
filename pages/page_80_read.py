@@ -1,8 +1,10 @@
+import re
 from config import HEIGHT
 from pages.page import Page
 from components.sequence import Sequence
 from framebuffer import FrameBuffer
 from terminals.minitel_model import MinitelVideoMode
+from mylogger import myLogger
 
 from components.component_clock import ComponentClock
 from components.component_text import ComponentText
@@ -27,7 +29,9 @@ class Page80Read(Page):
         super().Initial()
 
         pageInput: dict|None = self.get_page_input_once()
+        myLogger.log(f"Page80Read: Initial with input {pageInput}")
         if pageInput is not None and "content" in pageInput:
-            content = pageInput["content"]
-            if isinstance(content, str):
-                self.textarea.set_text(content)
+            content = pageInput.get("content", None)
+            if not isinstance(content, str):
+                myLogger.log("Page80Read: Error: content is not a string, using as is.")
+            self.textarea.set_text(content)

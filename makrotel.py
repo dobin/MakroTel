@@ -29,7 +29,8 @@ def main(stdscr):
     pageb: Page = PageB(framebuffer, "PageB")
     pageoverview: Page = PageOverview(framebuffer, "Overview")
     pagemeditations: Page = PageMeditations(framebuffer, "Meditations")
-    pagerss: Page = PageRss(framebuffer, "RSS")
+    pageRssBbc: Page = PageRss(framebuffer, "RSS_BBC", "https://feeds.bbci.co.uk/news/rss.xml")
+    pageRssArs: Page = PageRss(framebuffer, "RSS_ARS", "https://feeds.arstechnica.com/arstechnica/index/")
     page80read: Page = Page80Read(framebuffer, "80Read")
 
     #pageZinesList: Page = PageZinesList(framebuffer, "ZinesList", dir="data/zines")
@@ -40,7 +41,8 @@ def main(stdscr):
     engine.pageManager.add_page(pagea)
     engine.pageManager.add_page(pageb)
     engine.pageManager.add_page(pagemeditations)
-    engine.pageManager.add_page(pagerss)
+    engine.pageManager.add_page(pageRssArs)
+    engine.pageManager.add_page(pageRssBbc)
     engine.pageManager.add_page(page80read)
     
     engine.pageManager.set_current_page("Overview")

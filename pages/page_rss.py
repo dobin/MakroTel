@@ -1,6 +1,7 @@
 import feedparser
 import datetime
 import time
+import re
 from typing import List
 
 from pages.page import Page
@@ -15,17 +16,18 @@ from mylogger import myLogger
 
 
 class RssEntry():
-    def __init__(self, id: int, date: str, title: str, text: str):
+    def __init__(self, id: int, date: str, title: str, text: str, link: str):
         self.id: int = id
         self.date: str = date
         self.title: str = title
         self.text: str = text
+        self.link: str = link
 
 
 # initially Claude generated
 
 class PageRss(Page):
-    def __init__(self, framebuffer: FrameBuffer, name: str, feed_url="https://feeds.bbci.co.uk/news/rss.xml"):
+    def __init__(self, framebuffer: FrameBuffer, name: str, feed_url):
         super().__init__(framebuffer, name)
 
         # Configuration
@@ -108,7 +110,31 @@ class PageRss(Page):
                 self.feed_title = f"RSS: {feed_title}"
 
                 for id, entry in enumerate(feed_data.entries):
-                    title_str = entry.get('title', '')
+                    title_str = str(entry.get('title', ''))
+                    
+                    # Extract HTML content from the content structure
+                    content_str = ''
+                    content_data = entry.get('content', [])
+                    if isinstance(content_data, list) and len(content_data) > 0:
+                        # Look for HTML content type
+                        for content_item in content_data:
+                            if isinstance(content_item, dict) and content_item.get('type') == 'text/html':
+                                content_str = str(content_item.get('value', ''))
+                                break
+                        # If no HTML found, try the first content item
+                        if not content_str and isinstance(content_data[0], dict):
+                            content_str = str(content_data[0].get('value', ''))
+                    elif isinstance(content_data, str):
+                        # Fallback for simple string content
+                        content_str = content_data
+                    
+                    # Also try 'summary' as fallback if content is empty
+                    if not content_str:
+                        content_str = str(entry.get('summary', ''))
+                    
+                    content_str = self._strip_html_tags(content_str)
+                    link_str = str(entry.get('link', ''))
+                                            
                     date_str = "No date"
                     if hasattr(entry, 'published'):
                         try:
@@ -125,7 +151,7 @@ class PageRss(Page):
                         except:
                             date_str = "Date error"
 
-                    rssEntry = RssEntry(id, date_str, title_str, entry.link)
+                    rssEntry = RssEntry(id, date_str, title_str, content_str, link_str)
                     self.feed_entries.append(rssEntry)
             
         except Exception as e:
@@ -212,3 +238,22 @@ class PageRss(Page):
         if 0 <= abs_id < len(self.feed_entries):
             return abs_id
         return -1
+    
+
+    def _strip_html_tags(self, html_content: str) -> str:
+        """Remove HTML tags and decode common HTML entities"""
+        # Remove HTML tags
+        clean_text = re.sub(r'<[^>]+>', '', html_content)
+        
+        # Decode common HTML entities
+        clean_text = clean_text.replace('&lt;', '<')
+        clean_text = clean_text.replace('&gt;', '>')
+        clean_text = clean_text.replace('&amp;', '&')
+        clean_text = clean_text.replace('&quot;', '"')
+        clean_text = clean_text.replace('&#39;', "'")
+        clean_text = clean_text.replace('&nbsp;', ' ')
+        
+        # Clean up extra whitespace
+        clean_text = re.sub(r'\s+', ' ', clean_text).strip()
+        
+        return clean_text
