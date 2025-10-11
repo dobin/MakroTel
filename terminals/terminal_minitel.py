@@ -24,8 +24,8 @@ from components.sequence import Sequence # Manages character sequences
 
 from terminals.minitel_constants import *
 from terminals.minitel_model import *
-from terminals.minitel_teletel import *
-from terminals.minitel_telematic import *
+from terminals.video_teletel import *
+from terminals.video_telematic import *
 
 
 class Minitel(Terminal):
@@ -511,8 +511,8 @@ class Minitel(Terminal):
             self.video = self.video_telematic
 
         # resetting videomode also resets other options
-        self.echo(False)
-        self.cursor(False)
+        self.video.echo(False)
+        self.video.cursor(False)
 
 
     def _set_mode(self, mode = MinitelVideoMode.VIDEOTEX) -> bool:
@@ -803,60 +803,6 @@ F
 
         return True
 
-    def cursor(self, visible):
-        """Activates or deactivates the cursor display
-
-        The Minitel can display a blinking cursor at the
-        display position of the next characters.
-
-        It is interesting to deactivate it when the computer has to send
-        long character sequences because the Minitel will try to
-        display the cursor for each character displayed, generating an
-        unpleasant effect.
-
-        :param visible:
-            indicates whether to activate the cursor (True) or make it invisible
-            (False)
-        :type visible:
-            a boolean
-        """
-        assert visible in [True, False]
-
-        states = {True: CON, False: COF}
-        self.send([states[visible]])
-
-    def echo(self, active):
-        """Activates or deactivates the keyboard echo
-
-        By default, the Minitel sends any character typed on the keyboard to both
-        the screen and the peripheral socket. This trick saves the
-        computer from having to send the last typed character back to the screen,
-        thus saving bandwidth.
-
-        In the case where the computer offers a more advanced user interface,
-        it is important to be able to control exactly what is
-        displayed by the Minitel.
-
-        The method returns True if the command has been correctly processed by the
-        Minitel, False otherwise.
-
-        :param active:
-            indicates whether to activate the echo (True) or deactivate it (False)
-        :type active:
-            a boolean
-
-        :returns:
-            True if the command was accepted by the Minitel, False otherwise.
-        """
-        assert active in [True, False]
-
-        actives = {
-            True: [PRO3, ROUTING_ON, RECV_SCREEN, SEND_MODEM],
-            False: [PRO3, ROUTING_OFF, RECV_SCREEN, SEND_MODEM]
-        }
-        response = self.call(actives[active], PRO3_LENGTH)
-        
-        return response.longueur == PRO3_LENGTH
     
     def semigraphic(self, active = True):
         """Switches to semi-graphic mode or alphabetic mode
@@ -871,6 +817,7 @@ F
 
         actives = { True: SO, False: SI}
         self.send(actives[active])
+
 
     def redefine(self, from_char, drawings, charset = 'G0'):
         """Redefines Minitel characters

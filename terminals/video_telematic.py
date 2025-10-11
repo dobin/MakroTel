@@ -1,7 +1,8 @@
 from terminals.minitel_constants import *
+from terminals.video import VideoTerminal
 
 
-class VideoTelematic(): 
+class VideoTelematic(VideoTerminal): 
     def __init__(self, terminal):
         self.terminal = terminal
 
@@ -313,3 +314,35 @@ class VideoTelematic():
             else:
                 self.terminal.send(f"\x1b[{nb_row}L")
 
+
+    def cursor(self, visible):
+        """Activates or deactivates the cursor visibility using VT100 sequences
+
+        VT100 cursor visibility:
+        - ESC[?25h: Show cursor
+        - ESC[?25l: Hide cursor
+
+        :param visible:
+            indicates whether to make the cursor visible (True) or invisible (False)
+        :type visible:
+            a boolean
+        """
+        assert visible in [True, False]
+
+        states = {True: "\x1b[?25h", False: "\x1b[?25l"}
+        self.terminal.send(states[visible])
+
+
+    def echo(self, active):
+        """Activates or deactivates the keyboard echo using VT100 sequences
+
+        VT100 does not have a native echo control sequence.
+        This function is left empty for compatibility.
+
+        :param active:
+            indicates whether to activate (True) or deactivate (False) the echo
+        :type active:
+            a boolean
+        """
+        # VT100 does not support echo control - function left empty
+        pass

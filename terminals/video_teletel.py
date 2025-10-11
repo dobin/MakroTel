@@ -1,4 +1,5 @@
 from terminals.minitel_constants import *
+from terminals.video import VideoTerminal
 
 
 def normalize_color(color):
@@ -31,7 +32,7 @@ def normalize_color(color):
     return None
 
 
-class VideoTeletel(): 
+class VideoTeletel(VideoTerminal): 
     def __init__(self, terminal):
         self.terminal = terminal
 
@@ -335,3 +336,59 @@ class VideoTeletel():
         if nb_row != None:
             self.terminal.send([CSI, str(nb_row), 'L'])
 
+
+    def cursor(self, visible):
+        """Activates or deactivates the cursor display
+
+        The Minitel can display a blinking cursor at the
+        display position of the next characters.
+
+        It is interesting to deactivate it when the computer has to send
+        long character sequences because the Minitel will try to
+        display the cursor for each character displayed, generating an
+        unpleasant effect.
+
+        :param visible:
+            indicates whether to activate the cursor (True) or make it invisible
+            (False)
+        :type visible:
+            a boolean
+        """
+        assert visible in [True, False]
+
+        states = {True: CON, False: COF}
+        self.terminal.send([states[visible]])
+
+
+    def echo(self, active):
+        """Activates or deactivates the keyboard echo
+
+        By default, the Minitel sends any character typed on the keyboard to both
+        the screen and the peripheral socket. This trick saves the
+        computer from having to send the last typed character back to the screen,
+        thus saving bandwidth.
+
+        In the case where the computer offers a more advanced user interface,
+        it is important to be able to control exactly what is
+        displayed by the Minitel.
+
+        The method returns True if the command has been correctly processed by the
+        Minitel, False otherwise.
+
+        :param active:
+            indicates whether to activate the echo (True) or deactivate it (False)
+        :type active:
+            a boolean
+
+        :returns:
+            True if the command was accepted by the Minitel, False otherwise.
+        """
+        assert active in [True, False]
+
+        actives = {
+            True: [PRO3, ROUTING_ON, RECV_SCREEN, SEND_MODEM],
+            False: [PRO3, ROUTING_OFF, RECV_SCREEN, SEND_MODEM]
+        }
+        response = self.terminal.call(actives[active], PRO3_LENGTH)
+        
+        return response.longueur == PRO3_LENGTH
