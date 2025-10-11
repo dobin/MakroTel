@@ -9,11 +9,13 @@ config_set_mode("minitel")
 
 from terminals.terminal_minitel import Minitel
 from mylogger import myLogger
+from engine import Engine
+from framebuffer import FrameBuffer
+from terminals.minitel_model import MinitelVideoMode
+
 from pages.page import Page
 from pages.page_a import PageA
 from pages.page_b import PageB
-from engine import Engine
-from framebuffer import FrameBuffer
 from pages.page_meditations import PageMeditations
 from pages.page_rss import PageRss
 from pages.page_overview import PageOverview
@@ -57,7 +59,7 @@ def main():
     terminal.set_speed(4800)  # full speed ahead
     terminal.identify_capabilities()  # mostly nice to have information
     terminal.identify_mode()  # check in which video mode the terminal is
-    terminal.set_mode(0)  # change it to VIDEOTEX
+    terminal.set_mode(MinitelVideoMode.VIDEOTEX)  # change it to VIDEOTEX
     terminal.configure_keyboard(extended = True, cursor = False, lowercase = True)
     terminal.echo(False)
     terminal.video.clear()

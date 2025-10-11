@@ -1,12 +1,13 @@
-from config import *
-from mylogger import myLogger
 import threading
 import time
 from abc import ABC, abstractmethod
-from components.sequence import Sequence
+
+from config import *
+from mylogger import myLogger
 from framebuffer import FrameBuffer, Cell
 from pages.page import Page, PageManager
 from terminals.terminal import Terminal
+from terminals.minitel_model import MinitelVideoMode
 
 
 class Engine:
@@ -15,7 +16,7 @@ class Engine:
         self.running: bool = True  # Flag to control the draw loop
         self.terminal: Terminal = terminal
         self.pageManager: PageManager = PageManager()
-        self.current_mode: str = 'VIDEOTEX'
+        self.current_mode: MinitelVideoMode = MinitelVideoMode.VIDEOTEX
         threading.Thread(target=self.draw_loop, daemon=True).start()
 
 

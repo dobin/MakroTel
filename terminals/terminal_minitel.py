@@ -104,7 +104,7 @@ class Minitel(Terminal):
         super().__init__(framebuffer)
 
         # Initializes the Minitel's state
-        self.mode = 'VIDEOTEX'
+        self.mode: MinitelVideoMode = MinitelVideoMode.VIDEOTEX
         self.speed = 1200
 
         # Initializes the list of Minitel capabilities
@@ -494,19 +494,19 @@ class Minitel(Terminal):
         return response
 
 
-    def set_mode(self, mode: str):
+    def set_mode(self, mode: MinitelVideoMode):
         myLogger.log(f"Terminal: Change gfx mode from {self.mode} to {mode}")
-        if mode == 'VIDEOTEX':
-            if not self._set_mode('VIDEOTEX'):
+        if mode == MinitelVideoMode.VIDEOTEX:
+            if not self._set_mode(MinitelVideoMode.VIDEOTEX):
                 myLogger.log("Error changing videomode 0")
             self.video = self.video_teletel
-        elif mode == 'TELEINFORMATIQUE':
-            if not self._set_mode('TELEINFORMATIQUE'):
+        elif mode == MinitelVideoMode.TELEMATIC:
+            if not self._set_mode(MinitelVideoMode.TELEMATIC):
                 myLogger.log("Error changing videomode 1")
             self.video = self.video_telematic
 
 
-    def _set_mode(self, mode = 'VIDEOTEX'):
+    def _set_mode(self, mode = MinitelVideoMode.VIDEOTEX):
         """Defines the Minitel's operating mode.
 
         The Minitel can operate in 3 modes: VideoTex (the standard
@@ -525,11 +525,6 @@ class Minitel(Terminal):
         :returns:
             False if the mode change could not take place, True otherwise.
         """
-        assert isinstance(mode, str)
-
-        # 3 modes are possible
-        if mode not in ['VIDEOTEX', 'MIXTE', 'TELEINFORMATIQUE']:
-            return False
 
         # If the requested mode is already active, do nothing
         if self.mode == mode:
@@ -540,10 +535,10 @@ class Minitel(Terminal):
         # There are 9 possible cases, but only 6 are relevant. The cases
         # requesting to switch from VIDEOTEX to VIDEOTEX, for example, do not give
         # rise to any transaction with the Minitel
-        if self.mode == 'TELEINFORMATIQUE' and mode == 'VIDEOTEX':
+        if self.mode == MinitelVideoMode.TELEMATIC and mode == MinitelVideoMode.VIDEOTEX:
             response = self.call([CSI, 0x3f, 0x7b], 2)
             result = response.egale([SEP, 0x5e])
-        elif self.mode == 'TELEINFORMATIQUE' and mode == 'MIXTE':
+        elif self.mode == MinitelVideoMode.TELEMATIC and mode == MinitelVideoMode.MIXED:
             # There is no command to switch directly from
             # Tele-Informatique mode to Mixed mode. We therefore perform the
             # transition in two steps by going through Videotex mode
@@ -555,16 +550,16 @@ class Minitel(Terminal):
 
             response = self.call([PRO2, MIXED1], 2)
             result = response.egale([SEP, 0x70])
-        elif self.mode == 'VIDEOTEX' and mode == 'MIXTE':
+        elif self.mode == MinitelVideoMode.VIDEOTEX and mode == MinitelVideoMode.MIXED:
             response = self.call([PRO2, MIXED1], 2)
             result = response.egale([SEP, 0x70])
-        elif self.mode == 'VIDEOTEX' and mode == 'TELEINFORMATIQUE':
+        elif self.mode == MinitelVideoMode.VIDEOTEX and mode == MinitelVideoMode.TELEMATIC:
             response = self.call([PRO2, TELINFO], 4)
             result = response.egale([CSI, 0x3f, 0x7a])
-        elif self.mode == 'MIXTE' and mode == 'VIDEOTEX':
+        elif self.mode == MinitelVideoMode.MIXED and mode == MinitelVideoMode.VIDEOTEX:
             response = self.call([PRO2, MIXED2], 2)
             result = response.egale([SEP, 0x71])
-        elif self.mode == 'MIXTE' and mode == 'TELEINFORMATIQUE':
+        elif self.mode == MinitelVideoMode.MIXED and mode == MinitelVideoMode.TELEMATIC:
             response = self.call([PRO2, TELINFO], 4)
             result = response.egale([CSI, 0x3f, 0x7a])
 
@@ -645,13 +640,13 @@ class Minitel(Terminal):
         if response.longueur != PRO2_LENGTH:
             # The Minitel is in Tele-informatique mode because it does not respond
             # to a protocol command
-            self.mode = 'TELEINFORMATIQUE'
+            self.mode = MinitelVideoMode.TELEMATIC
         elif response.valeurs[3] & 1 == 1:
             # Bit 1 of the operating status indicates 80-column mode
-            self.mode = 'MIXTE'
+            self.mode = MinitelVideoMode.MIXED
         else:
             # By default, we consider that we are in Videotex mode
-            self.mode = 'VIDEOTEX'
+            self.mode = MinitelVideoMode.VIDEOTEX
 
         myLogger.log(f"Identify: Mode: {self.mode}")
 

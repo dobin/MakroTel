@@ -1,11 +1,12 @@
-from config import *
-from mylogger import myLogger
 import threading
 import time
 from abc import ABC, abstractmethod
+
+from config import *
+from mylogger import myLogger
 from components.sequence import Sequence
-from framebuffer import FrameBuffer, Cell
-from pages.page import Page
+from framebuffer import FrameBuffer
+from terminals.minitel_model import MinitelVideoMode
 
 
 class Terminal:
@@ -26,12 +27,14 @@ class Terminal:
 
 
     @abstractmethod
-    def set_mode(self, mode: str):
-        # change the hardwore to the specific mode
+    def set_mode(self, mode: MinitelVideoMode):
+        # change the hardware to the specific mode
         pass
 
 
-    def change_mode(self, mode: str):
+    def change_mode(self, mode: MinitelVideoMode):
+        myLogger.log(f"Terminal: Change mode to {mode.value}")
+
         # notify framebuffer about the size change
         self.framebuffer.set_mode(mode)
 
@@ -86,15 +89,3 @@ class Terminal:
                 self.cursor_y += 1
                 if self.cursor_y > HEIGHT:
                     self.cursor_y = HEIGHT
-
-    def repeat(self, char, count):
-        """Repeat a character a specified number of times"""
-        if isinstance(char, int):
-            # Convert byte value to character
-            if 0 <= char <= 255:
-                char = chr(char) if char >= 32 and char < 127 else '?'
-            else:
-                char = '?'
-        
-        data = char * count
-        self.send(data)

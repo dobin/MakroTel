@@ -1,6 +1,12 @@
 import enum
 
 
+class MinitelVideoMode(enum.Enum):
+    VIDEOTEX = 0
+    MIXED = 1  # not really supported
+    TELEMATIC = 2
+    
+
 # Minitel types
 TYPE_MINITELS = {
     'b': {

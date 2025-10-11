@@ -5,6 +5,7 @@ import curses
 import copy
 from mylogger import myLogger
 
+from terminals.minitel_model import MinitelVideoMode
 from framebuffer import FrameBuffer, MINITEL_COLOR, INIT_CHAR
 from terminals.terminal import Terminal
 from components.sequence import Sequence
@@ -51,7 +52,7 @@ class TerminalCurses(Terminal):
         else:
             return None
     
-    def set_mode(self, mode: str):
+    def set_mode(self, mode: MinitelVideoMode):
         # Curses terminal mode change (0=40 cols, 1=80 cols)
         #if mode == 0:
         #    self.stdscr.resize(HEIGHT, 40)

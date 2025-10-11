@@ -2,6 +2,7 @@ from __future__ import annotations  # for Python 3.7+, optional in 3.11+
 
 from components.sequence import Sequence
 from framebuffer import FrameBuffer
+from terminals.minitel_model import MinitelVideoMode
 from config import HEIGHT
 from mylogger import myLogger
 
@@ -72,10 +73,10 @@ class PageManager():
 
 
 class Page:
-    def __init__(self, framebuffer: FrameBuffer, name: str, mode: str = 'VIDEOTEX'):
-        self.name = name
-        self.mode: str = mode
-        self.framebuffer = framebuffer
+    def __init__(self, framebuffer: FrameBuffer, name: str, mode: MinitelVideoMode = MinitelVideoMode.VIDEOTEX):
+        self.name: str = name
+        self.mode: MinitelVideoMode = mode
+        self.framebuffer: FrameBuffer = framebuffer
         self.components: list = []
         self.pageManager: PageManager|None = None
         self.pageInput: dict|None = None

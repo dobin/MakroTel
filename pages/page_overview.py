@@ -49,7 +49,11 @@ class PageOverview(Page):
             elif keys.egale(Sequence([ord('4')])):
                 self.pageManager.set_current_page("RSS")
             elif keys.egale(Sequence([ord('5')])):
-                self.pageManager.set_current_page("80-Column")
+                self.pageManager.set_current_page("80Read", {
+                    "id": 0,
+                    "title": "",
+                    "content": "AAAA " * 8 + "BBBB " * 8,
+                })
         
         # Call parent to handle other keys and components
         return super().KeyPressed(keys)

@@ -2,7 +2,7 @@
 HEIGHT = 25
 CHAR_BG = " "
 
-MODE = "minitel"
+PROG_MODE = "minitel"
 
 DEBUG = False
 
@@ -11,7 +11,7 @@ REFRESH_TIME = 0.20 # seconds
 CURSES_WAIT_TIME = 0.01 # seconds
 
 def config_set_mode(mode: str):
-    global MODE
-    MODE = mode
-    if MODE not in ["minitel", "curses"]:
-        raise ValueError("Invalid MODE in config.py, must be 'minitel' or 'curses'")
+    global PROG_MODE
+    PROG_MODE = mode
+    if PROG_MODE not in ["minitel", "curses"]:
+        raise ValueError("Invalid PROG_MODE in config.py, must be 'minitel' or 'curses'")
