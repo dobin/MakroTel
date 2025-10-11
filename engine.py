@@ -35,7 +35,7 @@ class Engine:
         while self.running:
             # handle page changes
             # - before draw_event.wait() 
-            # - pageManager.initial() will notify us
+            # - pageManager.Initial() will notify us
             if self.pageManager.get_page_changed():
                 if DEBUG:
                     myLogger.log("Engine: got new page")
@@ -54,8 +54,9 @@ class Engine:
                     # Minitel terminal will clear screan itself
                     self.framebuffer.reset_buffer()
 
-                myLogger.log("Engine: new page initial()")
-                current_page.initial()
+                if DEBUG:
+                    myLogger.log("Engine: new page initial()")
+                current_page.Initial()
 
             self.framebuffer.draw_event.wait()
 

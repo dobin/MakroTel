@@ -155,7 +155,7 @@ class Minitel(Terminal):
     def get_input_key(self) -> Sequence|None:
         try:
             sequence = self.receive_sequence(blocking=False)
-            myLogger.log(f"Got char: {sequence}")
+            myLogger.log(f"Terminal: Input Key: {sequence}")
             return sequence
         except:
             return None
@@ -436,7 +436,8 @@ class Minitel(Terminal):
                 # If no character has occurred after 1/10s, we continue
                 pass
 
-        myLogger.log(f"Received sequence: {sequence}")
+        if DEBUG:
+            myLogger.log(f"Terminal: Received sequence: {sequence}")
         return sequence
 
     def call(self, content, wait):
@@ -601,7 +602,7 @@ class Minitel(Terminal):
         if (response.longueur != 5 or
             response.valeurs[0] != SOH or
             response.valeurs[4] != EOT):
-            myLogger.log("Identify Capabilities: Response error (is Terminal set to telematic instead of teletel?)")
+            myLogger.log("Terminal: Identify Capabilities: Response error (is Terminal set to telematic instead of teletel?)")
             return
 
         # Extracts the identification characters
@@ -631,7 +632,7 @@ class Minitel(Terminal):
         elif minitel_manufacturer == 'C':
             if software_version == ['4', '5', ';', '<']:
                 self.capabilities['constructeur'] = 'Telic ou Matra'
-        myLogger.log(f"Capabilities: {self.capabilities['constructeur']} {self.capabilities['name']} {self.capabilities['speed']} 80:{self.capabilities['80columns']} Redef: {self.capabilities['characters']} V:{self.capabilities['version']}")
+        myLogger.log(f"Terminal Capabilities: {self.capabilities['constructeur']} {self.capabilities['name']} {self.capabilities['speed']} 80:{self.capabilities['80columns']} Redef:{self.capabilities['characters']} V:{self.capabilities['version']}")
 
 
     def identify_mode(self):
@@ -648,13 +649,13 @@ class Minitel(Terminal):
             # By default, we consider that we are in Videotex mode
             self.mode = MinitelVideoMode.VIDEOTEX
 
-        myLogger.log(f"Identify: Mode: {self.mode}")
+        myLogger.log(f"Terminal: VideoMode: {self.mode}")
 
 
     # Note: This doesnt seem to work for minitel 1 to identify 4800
     def guess_speed(self):
         """Guess the connection speed with the Minitel.
-
+F
         This method should be called right after creating the object
         in order to automatically determine the transmission speed on
         which the Minitel is set.
@@ -683,7 +684,7 @@ class Minitel(Terminal):
 
             # The Minitel must return a PRO2 acknowledgement
             if response.longueur == PRO2_LENGTH:
-                myLogger.log(f"GuessSpeed: {speed}")
+                myLogger.log(f"Terminal GuessSpeed: {speed}")
                 self.speed = speed
                 return speed
 

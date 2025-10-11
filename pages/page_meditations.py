@@ -36,7 +36,7 @@ class PageMeditations(Page):
         self.components.append(self.c_content)
 
 
-    def initial(self):
+    def Initial(self):
         self._update()
 
 

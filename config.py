@@ -1,6 +1,5 @@
 # Screen dimensions
 HEIGHT = 25
-CHAR_BG = " "
 
 PROG_MODE = "minitel"
 

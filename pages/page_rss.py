@@ -54,7 +54,7 @@ class PageRss(Page):
         self._load_rss_feed()
 
 
-    def initial(self):
+    def Initial(self):
         self._update_screen()
 
 
@@ -98,7 +98,7 @@ class PageRss(Page):
     def _load_rss_feed(self):
         """Load and parse the RSS feed"""
         try:
-            myLogger.log(f"Loading RSS feed from {self.feed_url}")
+            myLogger.log(f"PageRss: Loading RSS feed from {self.feed_url}")
             self.feed_entries = []
 
             feed_data = feedparser.parse(self.feed_url)

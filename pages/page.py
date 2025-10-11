@@ -3,7 +3,7 @@ from __future__ import annotations  # for Python 3.7+, optional in 3.11+
 from components.sequence import Sequence
 from framebuffer import FrameBuffer
 from terminals.minitel_model import MinitelVideoMode
-from config import HEIGHT
+from config import HEIGHT, DEBUG
 from mylogger import myLogger
 
 
@@ -30,14 +30,19 @@ class PageManager():
         if self.current_page is not None:
             current_page_name = self.current_page.name
             self.page_stack.append(current_page_name)
-            myLogger.log(f"PageManager: Added '{current_page_name}' to navigation stack")
-        
+            if DEBUG:
+                myLogger.log(f"PageManager: Added '{current_page_name}' to navigation stack")
+
+        if self.current_page is None:        
+            myLogger.log(f"PageManager: To {name}")
+        else:
+            myLogger.log(f"PageManager: From {self.current_page.name} to {name}")
+
         self.current_page = self.pages[name]
         if self.current_page is None:
             myLogger.log(f"PageManager: Current page is None after setting to '{name}'")
             return
         self.current_page.set_page_input(pageInput)
-        myLogger.log(f"PageManager: Set new page: {name}")
         self.set_page_changed(True)
 
     def get_current_page(self) -> Page|None:
@@ -92,7 +97,7 @@ class Page:
         return temp
 
     
-    def initial(self):
+    def Initial(self):
         self.framebuffer.clear_buffer()
 
         for component in self.components:

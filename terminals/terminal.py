@@ -33,7 +33,7 @@ class Terminal:
 
 
     def change_mode(self, mode: MinitelVideoMode):
-        myLogger.log(f"Terminal: Change mode to {mode.value}")
+        myLogger.log(f"Terminal: Change mode to {mode}")
 
         # notify framebuffer about the size change
         self.framebuffer.set_mode(mode)

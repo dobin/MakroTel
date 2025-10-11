@@ -28,7 +28,7 @@ stdin_thread_running = True
 def stdin_reader_thread(terminal):
     """Thread function to read from stdin and put characters into terminal input queue"""
     global stdin_thread_running
-    myLogger.log("Stdin reader thread started")
+    myLogger.log("Makrotel: Stdin reader thread started")
     
     while stdin_thread_running:
         try:
@@ -43,14 +43,14 @@ def stdin_reader_thread(terminal):
             # Handle end of input or Ctrl+C
             break
         except Exception as e:
-            myLogger.log(f"Error in stdin reader thread: {e}")
+            myLogger.log(f"Makrotel: Error in stdin reader thread: {e}")
             break
     
-    myLogger.log("Stdin reader thread stopped")
+    myLogger.log("Makrotel: Stdin reader thread stopped")
 
 
 def main():
-    dev = "COM3"
+    dev = "/dev/ttyUSB0"
     if len(sys.argv) > 1:
         dev = sys.argv[1]
 
@@ -85,7 +85,6 @@ def main():
     # Start the stdin reader thread
     stdin_thread = threading.Thread(target=stdin_reader_thread, args=(terminal,), daemon=True)
     stdin_thread.start()
-    myLogger.log("Started stdin reader thread")
 
     try:
         while True:
@@ -93,7 +92,7 @@ def main():
             time.sleep(REFRESH_TIME)
     except KeyboardInterrupt:
         # Handle Ctrl+C gracefully
-        myLogger.log("Received KeyboardInterrupt, shutting down...")
+        myLogger.log("MakroTel: Received KeyboardInterrupt, shutting down...")
     finally:
         # Clean shutdown
         global stdin_thread_running

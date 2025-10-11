@@ -34,8 +34,8 @@ class PageOverview(Page):
         self.components.append(ComponentText(framebuffer, 5, 14, "Press 'O' from any page to return here", 
                                            CharacterAttributes(char_color=MINITEL_COLOR.GREY_5)))
 
-    def initial(self):
-        super().initial()
+    def Initial(self):
+        super().Initial()
 
     def KeyPressed(self, keys: Sequence):
         # Handle number key navigation

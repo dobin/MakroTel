@@ -23,8 +23,8 @@ class Page80Read(Page):
         self.components.append(self.textarea)
 
 
-    def initial(self):
-        super().initial()
+    def Initial(self):
+        super().Initial()
 
         pageInput: dict|None = self.get_page_input_once()
         if pageInput is not None and "content" in pageInput:
