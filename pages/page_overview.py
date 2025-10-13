@@ -28,6 +28,7 @@ class PageOverview(Page):
         self.components.append(ComponentText(framebuffer, 5, 9, "4. RSS - BBC News"))
         self.components.append(ComponentText(framebuffer, 5, 10, "5. RSS - Ars Technica"))
         self.components.append(ComponentText(framebuffer, 5, 11, "6. 80-Column - Text Reader"))
+        self.components.append(ComponentText(framebuffer, 5, 12, "7. File Browser - Browse data/"))
 
         # Instructions
         #self.components.append(ComponentText(framebuffer, 5, 13, "Press a number (1-5) to navigate", 
@@ -57,6 +58,8 @@ class PageOverview(Page):
                     "title": "",
                     "content": "AAAA " * 8 + "BBBB " * 8,
                 })
+            elif keys.egale(Sequence([ord('7')])):
+                self.pageManager.set_current_page("FileBrowser")
         
         # Call parent to handle other keys and components
         return super().KeyPressed(keys)
