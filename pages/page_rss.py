@@ -7,7 +7,7 @@ from typing import List
 from pages.page import Page
 from components.component_clock import ComponentClock
 from components.component_label import ComponentLabel
-from components.component_textarea import ComponentTextArea
+from components.component_pageable_textarea import ComponentTextAreaPageable
 from components.sequence import Sequence
 from constants.keys import KEY_LEFT, KEY_RIGHT
 from framebuffer import FrameBuffer
@@ -33,25 +33,31 @@ class PageRss(Page):
         # Configuration
         self.feed_url = feed_url
         self.entries_per_page = 6
-        self.current_page = 0
-        self.total_pages = 0
         
         # RSS data
-        #self.feed_data = None
         self.feed_title = ""
         self.feed_entries: List[RssEntry] = []
 
         # Components
         # Line 1: Title
         self.c_title = ComponentLabel(framebuffer, 0, 0, self.framebuffer.width, "RSS News Feed", center=True)
-        # Line 3-24: RSS content text area (dynamic height based on entry count)
-        self.textarea = ComponentTextArea(framebuffer, 0, 2, self.framebuffer.width, HEIGHT - 3, "")
-        # Line 25: Pagination info and controls
-        self.info_label = ComponentLabel(framebuffer, 0, HEIGHT-1, self.framebuffer.width, "←→ to navigate", center=True)
+        # Line 3-25: Pageable RSS content text area (includes info label on last line)
+        self.pageable_textarea = ComponentTextAreaPageable(
+            framebuffer, 
+            0, 
+            2, 
+            self.framebuffer.width, 
+            HEIGHT - 2,  # Takes lines 3-25 (height includes the info label)
+            "",
+            entries_per_page=self.entries_per_page
+        )
+        
+        # Set callback to handle page changes
+        self.pageable_textarea.set_on_page_change_callback(self._on_page_changed)
         
         self.components.append(self.c_title)
-        self.components.append(self.info_label)
-        self.components.append(self.textarea)
+        self.components.append(self.pageable_textarea)
+        # Note: info_label is now part of pageable_textarea, no need to add separately
 
         self._load_rss_feed()
 
@@ -62,21 +68,13 @@ class PageRss(Page):
 
     def KeyPressed(self, keys: Sequence):
         """Handle key presses for RSS page"""
-        # Handle pagination navigation
-
-        if keys.egale(KEY_LEFT):
-            if self.current_page > 0:
-                self.current_page -= 1
-                self._update_screen()
-        elif keys.egale(KEY_RIGHT):
-            if self.current_page < self.total_pages - 1:
-                self.current_page += 1
-                self._update_screen()
-        elif keys.egale(Sequence('r')):
+        # Left-right navigation is now handled by the pageable_textarea component
+        
+        if keys.egale(Sequence('r')):
             self._load_rss_feed()
             self._update_screen()
         else:
-            # Number keys
+            # Number keys for selecting entries
             if keys.length() == 1 and keys.valeurs[0] in range(ord('1'), ord('1') + self.entries_per_page):
                 rel_id = keys.valeurs[0] - ord('0')  # Convert ASCII to int (1-based)
                 abs_id = self._rel_page_offset_to_abs_id(rel_id)
@@ -90,9 +88,6 @@ class PageRss(Page):
                     }
                     self.pageManager.set_current_page("80Read", pageReadInput)
         
-        # Let textarea handle its own keys (up/down for scrolling)
-        # This is handled automatically by the component system
-
         # Let parent handle other keys (like page switching)
         super().KeyPressed(keys)
 
@@ -160,25 +155,20 @@ class PageRss(Page):
 
     
     def _update_screen(self):
+        """Update the screen with current RSS feed content"""
         self.c_title.set_text(self.feed_title)
 
         # Calculate pagination
         total_entries = len(self.feed_entries)
-        self.total_pages = (total_entries + self.entries_per_page - 1) // self.entries_per_page
         
-        # Ensure current page is valid
-        if self.current_page >= self.total_pages:
-            self.current_page = max(0, self.total_pages - 1)
+        # Get current page from the pageable component
+        current_page = self.pageable_textarea.get_current_page()
         
         # Calculate entry range for current page
-        start_idx = self.current_page * self.entries_per_page
+        start_idx = current_page * self.entries_per_page
         end_idx = min(start_idx + self.entries_per_page, total_entries)
         
-        # Update info label with pagination info
-        page_info = f"Page {self.current_page + 1}/{self.total_pages} (←→ navigate)"
-        if hasattr(self, 'info_label'):
-            self.info_label.set_text(page_info)
-        
+        # Format the entries for the current page
         formatted_lines = []
         
         page_rel_id = 1
@@ -198,8 +188,15 @@ class PageRss(Page):
             page_rel_id += 1
         
         formatted_text = "\n".join(formatted_lines)
-        if hasattr(self, 'textarea'):
-            self.textarea.set_text(formatted_text)
+        
+        # Update the pageable textarea with content and total items count
+        self.pageable_textarea.set_page_content(formatted_text, total_entries)
+    
+    
+    def _on_page_changed(self, new_page: int):
+        """Callback when the page changes in the pageable textarea component"""
+        # Update the display with content for the new page
+        self._update_screen()
     
 
     def _wrap_text(self, text, width):
@@ -234,7 +231,8 @@ class PageRss(Page):
 
     def _rel_page_offset_to_abs_id(self, rel_id: int) -> int:
         """Convert relative page entry ID to absolute entry ID"""
-        abs_id = self.current_page * self.entries_per_page + (rel_id - 1)
+        current_page = self.pageable_textarea.get_current_page()
+        abs_id = current_page * self.entries_per_page + (rel_id - 1)
         if 0 <= abs_id < len(self.feed_entries):
             return abs_id
         return -1
