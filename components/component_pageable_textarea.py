@@ -6,6 +6,8 @@ from components.sequence import Sequence
 from constants.keys import KEY_LEFT, KEY_RIGHT
 
 
+# Mostly Claude generated
+
 class ComponentTextAreaPageable(ComponentTextArea):
     """A pageable textarea component with left-right navigation and page indicator.
     
