@@ -60,7 +60,7 @@ class PageOverview(Page):
                 })
             elif keys.egale(Sequence([ord('7')])):
                 self.pageManager.set_current_page("FileBrowser")
-        
+
         # Call parent to handle other keys and components
         return super().KeyPressed(keys)
     
