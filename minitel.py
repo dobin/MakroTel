@@ -59,11 +59,6 @@ def main():
     terminal.set_speed(4800)  # full speed ahead
     terminal.identify_capabilities()  # mostly nice to have information
     terminal.identify_mode()  # check in which video mode the terminal is
-    terminal.set_mode(MinitelVideoMode.VIDEOTEX)  # change it to VIDEOTEX
-    terminal.configure_keyboard(extended = True, cursor = False, lowercase = True)
-    terminal.video.echo(False)
-    terminal.video.clear()
-    terminal.video.cursor(False)
     engine = Engine(framebuffer, terminal)
 
 

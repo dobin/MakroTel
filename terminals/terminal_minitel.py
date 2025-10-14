@@ -505,14 +505,19 @@ class Minitel(Terminal):
             if not self._set_mode(MinitelVideoMode.VIDEOTEX):
                 myLogger.log("Error changing videomode 0")
             self.video = self.video_teletel
+            self.configure_keyboard(extended=True, cursor=False, lowercase=True)
+            self.video.echo(False)
+            self.video.clear()
+            self.video.cursor(False)
+            self.cursor_x = 0
+            self.cursor_y = 1
         elif mode == MinitelVideoMode.TELEMATIC:
             if not self._set_mode(MinitelVideoMode.TELEMATIC):
                 myLogger.log("Error changing videomode 1")
             self.video = self.video_telematic
 
-        # resetting videomode also resets other options
-        self.video.echo(False)
-        self.video.cursor(False)
+            #self.video.echo(False)
+            #self.video.cursor(False)
 
 
     def _set_mode(self, mode = MinitelVideoMode.VIDEOTEX) -> bool:
