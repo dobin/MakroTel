@@ -29,7 +29,6 @@ class Page80Read(Page):
         super().Initial()
 
         pageInput: dict|None = self.get_page_input_once()
-        myLogger.log(f"Page80Read: Initial with input {pageInput}")
         if pageInput is not None and "content" in pageInput:
             content = pageInput.get("content", None)
             if not isinstance(content, str):

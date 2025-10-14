@@ -20,6 +20,7 @@ from pages.page_meditations import PageMeditations
 from pages.page_rss import PageRss
 from pages.page_overview import PageOverview
 from pages.page_80_read import Page80Read
+from pages.page_filebrowser import PageFileBrowser
 
 
 # Global flag to control stdin thread
@@ -69,6 +70,7 @@ def main():
     pageRssBbc: Page = PageRss(framebuffer, "RSS_BBC", "https://feeds.bbci.co.uk/news/rss.xml")
     pageRssArs: Page = PageRss(framebuffer, "RSS_ARS", "https://feeds.arstechnica.com/arstechnica/index/")
     page80read: Page = Page80Read(framebuffer, "80Read")
+    pagefilebrowser: Page = PageFileBrowser(framebuffer, "FileBrowser", "data")
 
     #pageZinesList: Page = PageZinesList(framebuffer, "ZinesList", dir="data/zines")
     #pageZine: Page = PageZine(framebuffer, "Zine")
@@ -81,7 +83,8 @@ def main():
     engine.pageManager.add_page(pageRssArs)
     engine.pageManager.add_page(pageRssBbc)
     engine.pageManager.add_page(page80read)
-    
+    engine.pageManager.add_page(pagefilebrowser)
+
     engine.pageManager.set_current_page("Overview")
 
     # Start the stdin reader thread
