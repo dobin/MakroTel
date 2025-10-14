@@ -59,9 +59,10 @@ def main():
     terminal = Minitel(framebuffer, device=dev)
     terminal.set_speed(4800)  # full speed ahead
     terminal.identify_capabilities()  # mostly nice to have information
-    terminal.identify_mode()  # check in which video mode the terminal is
+    #terminal.identify_mode()  # check in which video mode the terminal is
+    # just assume videotex mode for now
+    terminal.terminal_init_videotex()
     engine = Engine(framebuffer, terminal)
-
 
     pagea: Page = PageA(framebuffer, "PageA")
     pageb: Page = PageB(framebuffer, "PageB")
