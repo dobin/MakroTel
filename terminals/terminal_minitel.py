@@ -11,10 +11,11 @@ from queue import Queue, Empty # Character queues for sending/receiving
 import copy
 import time
 
-from framebuffer import FrameBuffer, INIT_CHAR
+from framebuffer import FrameBuffer, INIT_CHAR, Cell
 from constants.keys import MINITEL_COLOR
 from mylogger import myLogger
 from terminals.terminal import Terminal
+from typing import cast
 
 # Based on: https://github.com/Zigazou/PyMinitel/blob/master/minitel/Minitel.py
 # Translated and adapted by Claude for this project
@@ -177,6 +178,98 @@ class Minitel(Terminal):
             return None
 
 
+    # Claude 4.5 generated
+    def _optimize_clear_sequences(self, changed_cells):
+        """Optimize changed cells by detecting sequences that can use clear() operations.
+        
+        This method analyzes changed cells to find consecutive sequences on the same row
+        where cells are being cleared (set to INIT_CHAR or space with default attributes).
+        If 3 or more consecutive cells are being cleared, it replaces them with a clear operation.
+        
+        Args:
+            changed_cells: List of Cell objects that have changed
+            
+        Returns:
+            List of Cell objects and clear operation dicts
+        """
+        if not changed_cells:
+            return []
+        
+        # Sort cells by row, then column
+        sorted_cells = sorted(changed_cells, key=lambda c: (c.y, c.x))
+        
+        optimized = []
+        i = 0
+        
+        while i < len(sorted_cells):
+            cell = sorted_cells[i]
+            
+            # Check if this cell is a "clear" cell (INIT_CHAR or space with default attrs)
+            is_clear_cell = (
+                (cell.b_char.char == INIT_CHAR or cell.b_char.char == ' ') and
+                cell.b_char.attr.char_color == MINITEL_COLOR.WHITE and
+                cell.b_char.attr.background_color == MINITEL_COLOR.BLACK and
+                not cell.b_char.attr.underline and
+                not cell.b_char.attr.blinking and
+                not cell.b_char.attr.inverted
+            )
+            
+            if is_clear_cell:
+                # Look ahead to find consecutive clear cells on the same row
+                clear_sequence = [cell]
+                j = i + 1
+                
+                while j < len(sorted_cells):
+                    next_cell = sorted_cells[j]
+                    
+                    # Check if next cell is on same row and consecutive column
+                    if (next_cell.y == cell.y and 
+                        next_cell.x == clear_sequence[-1].x + 1):
+                        
+                        # Check if it's also a clear cell
+                        is_next_clear = (
+                            (next_cell.b_char.char == INIT_CHAR or next_cell.b_char.char == ' ') and
+                            next_cell.b_char.attr.char_color == MINITEL_COLOR.WHITE and
+                            next_cell.b_char.attr.background_color == MINITEL_COLOR.BLACK and
+                            not next_cell.b_char.attr.underline and
+                            not next_cell.b_char.attr.blinking and
+                            not next_cell.b_char.attr.inverted
+                        )
+                        
+                        if is_next_clear:
+                            clear_sequence.append(next_cell)
+                            j += 1
+                        else:
+                            break
+                    else:
+                        break
+                
+                # If we have 3 or more consecutive clear cells, use clear operation
+                if len(clear_sequence) >= 3:
+                    # Use 'endline' clear - position at start and clear to end of line
+                    optimized.append({
+                        'type': 'clear',
+                        'scope': 'endline',
+                        'x': clear_sequence[0].x,
+                        'y': clear_sequence[0].y,
+                        'cells': clear_sequence,
+                        'count': len(clear_sequence),
+                        'saved': len(clear_sequence) - 1  # chars saved by using clear
+                    })
+                    i = j  # Skip all cells in the sequence
+                else:
+                    # Not enough cells to optimize, add them individually
+                    for c in clear_sequence:
+                        optimized.append(c)
+                    i = j
+            else:
+                # Not a clear cell, add it normally
+                optimized.append(cell)
+                i += 1
+        
+        return optimized
+
+
     def draw_buffer(self):
         # Don't try to draw if not connected
         with self.connection_lock:
@@ -192,6 +285,9 @@ class Minitel(Terminal):
                     changed_cells.append(cell.copy())
         self.framebuffer.screen_lock.release()
 
+        # Optimize: detect sequences that can use clear() instead of individual char writes
+        optimized_cells = self._optimize_clear_sequences(changed_cells)
+
         current_row = -1
         current_col = -1
         last_color = MINITEL_COLOR.WHITE
@@ -201,7 +297,29 @@ class Minitel(Terminal):
         is_underline = False
         is_inverted = False
 
-        for cell in changed_cells:
+        for item in optimized_cells:
+            if isinstance(item, dict) and item.get('type') == 'clear':
+                # Handle clear operation
+                y = item['y']
+                x = item['x']
+                scope = item['scope']
+                
+                # Position cursor at the start of the clear
+                self.video.position(x+1, y)
+                current_row = y
+                current_col = -1  # Reset column tracking after clear
+                
+                # Perform the clear operation
+                self.video.clear(scope)
+                
+                if DEBUG:
+                    myLogger.log(f"Clear operation: scope={scope} at ({x},{y}), saved {item['saved']} chars")
+                
+                n += item['count']
+                continue
+            
+            # Handle normal cell drawing (item is a Cell)
+            cell = cast(Cell, item)
             if DEBUG:
                 myLogger.log(f"Changed Cell at ({cell.x},{cell.y}): a_char='{cell.a_char.char}' (0x{cell.a_char.char.encode().hex()}) b_char='{cell.b_char.char}' (0x{cell.b_char.char.encode().hex()})")
             y  = cell.y
@@ -260,13 +378,28 @@ class Minitel(Terminal):
             else:
                 self.send(cell.b_char.char)
             current_col += 1  # Update our tracking of current column
+            n += 1
 
         # NOTE: update the screen, indicate what we have written
         self.framebuffer.screen_lock.acquire()
-        for cell in changed_cells:
-            n += 1
-            y  = cell.y
-            x  = cell.x
+        for item in optimized_cells:
+            if isinstance(item, dict) and item.get('type') == 'clear':
+                # Update all cells affected by the clear operation
+                for cell in item['cells']:
+                    y = cell.y
+                    x = cell.x
+                    self.framebuffer.screen[y][x].a_char.char = cell.b_char.char
+                    self.framebuffer.screen[y][x].a_char.attr.char_color = cell.b_char.attr.char_color
+                    self.framebuffer.screen[y][x].a_char.attr.background_color = cell.b_char.attr.background_color
+                    self.framebuffer.screen[y][x].a_char.attr.underline = cell.b_char.attr.underline
+                    self.framebuffer.screen[y][x].a_char.attr.blinking = cell.b_char.attr.blinking
+                    self.framebuffer.screen[y][x].a_char.attr.inverted = cell.b_char.attr.inverted
+                continue
+            
+            # Update single cell
+            cell = cast(Cell, item)
+            y = cell.y
+            x = cell.x
             self.framebuffer.screen[y][x].a_char.char = cell.b_char.char
             self.framebuffer.screen[y][x].a_char.attr.char_color = cell.b_char.attr.char_color
             self.framebuffer.screen[y][x].a_char.attr.background_color = cell.b_char.attr.background_color
