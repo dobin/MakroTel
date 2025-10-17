@@ -553,7 +553,7 @@ class Minitel(Terminal):
         self.cursor_y = 1
 
 
-    def set_mode(self, mode: MinitelVideoMode):
+    def set_new_video_mode(self, mode: MinitelVideoMode) -> bool:
         # If the requested mode is already active, do nothing
         if self.mode == mode:
             return True
@@ -570,6 +570,7 @@ class Minitel(Terminal):
 
             #self.video.echo(False)
             #self.video.cursor(False)
+        return True
 
 
     def _set_mode(self, mode = MinitelVideoMode.VIDEOTEX) -> bool:

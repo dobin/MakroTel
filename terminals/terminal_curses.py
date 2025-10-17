@@ -52,13 +52,14 @@ class TerminalCurses(Terminal):
         else:
             return None
     
-    def set_mode(self, mode: MinitelVideoMode):
+    def set_new_video_mode(self, mode: MinitelVideoMode) -> bool:
         # Curses terminal mode change (0=40 cols, 1=80 cols)
         #if mode == 0:
         #    self.stdscr.resize(HEIGHT, 40)
         #else:
         #    self.stdscr.resize(HEIGHT, 80)
         self.stdscr.clear()
+        return True
 
     def draw_buffer(self):
         n = 0

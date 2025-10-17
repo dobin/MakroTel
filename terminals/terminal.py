@@ -27,9 +27,9 @@ class Terminal:
 
 
     @abstractmethod
-    def set_mode(self, mode: MinitelVideoMode):
+    def set_new_video_mode(self, mode: MinitelVideoMode) -> bool:
         # change the hardware to the specific mode
-        pass
+        return True
 
 
     def change_mode(self, mode: MinitelVideoMode):
@@ -43,7 +43,7 @@ class Terminal:
 
         # notify the hardware
         # video_changed_mode()
-        self.set_mode(mode)
+        self.set_new_video_mode(mode)
 
 
     def position(self, x, y):

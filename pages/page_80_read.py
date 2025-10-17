@@ -26,6 +26,8 @@ class Page80Read(Page):
 
 
     def Initial(self):
+        # Get and set the new content BEFORE calling super().Initial()
+        # This ensures the component has the new content before it's drawn
         pageInput: dict|None = self.get_page_input_once()
         if pageInput is not None and "content" in pageInput:
             content = pageInput.get("content", None)
