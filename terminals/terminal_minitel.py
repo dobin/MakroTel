@@ -6,6 +6,7 @@
 from config import DEBUG
 from serial import Serial      # Physical link with the Minitel
 from threading import Thread   # Threads for sending/receiving
+import threading
 from queue import Queue, Empty # Character queues for sending/receiving
 import copy
 import time
@@ -110,6 +111,10 @@ class Minitel(Terminal):
         # Initializes the list of Minitel capabilities
         self.capabilities = BASIC_CAPABILITIES
 
+        # Connection status tracking
+        self.is_connected = False
+        self.connection_lock = threading.Lock()
+
         # Creates the two input/output queues
         self.input_queue = Queue()
         self.output_queue = Queue()
@@ -152,7 +157,18 @@ class Minitel(Terminal):
                 self.close()
 
 
+    def is_terminal_connected(self) -> bool:
+        """Check if the terminal is currently connected"""
+        with self.connection_lock:
+            return self.is_connected
+
+
     def get_input_key(self) -> Sequence|None:
+        # Don't try to receive if not connected
+        with self.connection_lock:
+            if not self.is_connected:
+                return None
+        
         try:
             sequence = self.receive_sequence(blocking=False)
             myLogger.log(f"Terminal: Input Key: {sequence}")
@@ -162,6 +178,11 @@ class Minitel(Terminal):
 
 
     def draw_buffer(self):
+        # Don't try to draw if not connected
+        with self.connection_lock:
+            if not self.is_connected:
+                return
+        
         # find all changes. copy them
         self.framebuffer.screen_lock.acquire()
         changed_cells = []
@@ -288,7 +309,34 @@ class Minitel(Terminal):
             character = self._minitel.read()
 
             if len(character) == 1:
-                self.input_queue.put(character)
+                byte_value = character[0]
+                
+                # Check for 0x00 byte which indicates terminal power on/off
+                if byte_value == 0x00:
+                    with self.connection_lock:
+                        if not self.is_connected:
+                            # Terminal turned ON
+                            myLogger.log("Terminal: Minitel connected (power on detected)")
+                            self.is_connected = True
+                            # Re-initialize the terminal
+                            try:
+                                self.terminal_init_videotex()
+                                myLogger.log("Terminal: Re-initialized videotex mode")
+                            except Exception as e:
+                                myLogger.log(f"Terminal: Error during re-initialization: {e}")
+                            # clear buffer so redraw is forced
+                            self.framebuffer.reset_buffer()
+                        else:
+                            # Terminal turned OFF
+                            myLogger.log("Terminal: Minitel disconnected (power off detected)")
+                            self.is_connected = False
+                    # Don't put 0x00 bytes in the input queue
+                    continue
+                
+                # Only queue normal characters if connected
+                with self.connection_lock:
+                    if self.is_connected:
+                        self.input_queue.put(character)
 
     def _manage_output(self):
         """Manages character sequences sent to the Minitel

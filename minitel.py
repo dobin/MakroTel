@@ -62,6 +62,11 @@ def main():
     #terminal.identify_mode()  # check in which video mode the terminal is
     # just assume videotex mode for now
     terminal.terminal_init_videotex()
+    
+    # Mark terminal as connected at startup
+    with terminal.connection_lock:
+        terminal.is_connected = True
+    
     engine = Engine(framebuffer, terminal)
 
     pagea: Page = PageA(framebuffer, "PageA")
