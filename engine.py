@@ -51,7 +51,7 @@ class Engine:
                     self.current_mode = current_page.mode
                     self.terminal.change_mode(self.current_mode)
 
-                    # Minitel terminal will clear screan itself
+                    # Minitel terminal will clear screen itself
                     self.framebuffer.reset_buffer()
 
                 if DEBUG:

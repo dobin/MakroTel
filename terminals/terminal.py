@@ -36,9 +36,13 @@ class Terminal:
         myLogger.log(f"Terminal: Change mode to {mode}")
 
         # notify framebuffer about the size change
-        self.framebuffer.set_mode(mode)
+        if mode == MinitelVideoMode.VIDEOTEX:
+            self.framebuffer.set_width(40)
+        elif mode == MinitelVideoMode.TELEMATIC:
+            self.framebuffer.set_width(80)
 
         # notify the hardware
+        # video_changed_mode()
         self.set_mode(mode)
 
 

@@ -113,14 +113,9 @@ class FrameBuffer():
         self.draw_event = threading.Event()  # Event to signal when drawing is needed
         self.width = 40  # Default on Minitel1b init
 
+    def set_width(self, width: int):
+        self.width = width
     
-    def set_mode(self, mode: MinitelVideoMode):
-        if mode == MinitelVideoMode.VIDEOTEX:
-            self.width = 40
-        elif mode == MinitelVideoMode.TELEMATIC:
-            self.width = 80
-
-
     def set_char(self, x: int, y: int, char: str, attr: CharacterAttributes = CharacterAttributes()):
         if 0 <= x < self.width and 0 <= y < HEIGHT:
             self.screen[y][x].b_char.Set(char, attr=attr)

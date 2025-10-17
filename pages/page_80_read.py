@@ -26,11 +26,14 @@ class Page80Read(Page):
 
 
     def Initial(self):
-        super().Initial()
-
         pageInput: dict|None = self.get_page_input_once()
         if pageInput is not None and "content" in pageInput:
             content = pageInput.get("content", None)
             if not isinstance(content, str):
                 myLogger.log("Page80Read: Error: content is not a string, using as is.")
+            myLogger.log(f"Page80Read: Initialize with len {len(content)}")
             self.textarea.set_text(content)
+        else: 
+            myLogger.log("Page80Read: No data")
+
+        super().Initial()
