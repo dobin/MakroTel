@@ -48,6 +48,11 @@ def main(stdscr):
     engine.pageManager.add_page(page80read)
     engine.pageManager.add_page(pagefilebrowser)
     
+    # Configure page rotation
+    rotation_pages = ["Overview", "RSS_BBC", "RSS_ARS", "Meditations", "80Read", "FileBrowser"]
+    engine.pageManager.set_rotation_pages(rotation_pages)
+    engine.pageManager.enable_rotation()
+    
     engine.pageManager.set_current_page("Overview")
 
     while True:

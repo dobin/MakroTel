@@ -17,6 +17,7 @@ class Engine:
         self.terminal: Terminal = terminal
         self.pageManager: PageManager = PageManager()
         self.current_mode: MinitelVideoMode = MinitelVideoMode.VIDEOTEX
+        self.last_rotation_time: float = time.time()  # Track time for page rotation
         threading.Thread(target=self.draw_loop, daemon=True).start()
 
 
@@ -25,9 +26,26 @@ class Engine:
         if current_page is None:
             return
         
+        # Check for keyboard input
         keySequence = self.terminal.get_input_key()
         if keySequence is not None:
+            # Reset rotation timer on any keyboard input
+            self.last_rotation_time = time.time()
+            if DEBUG:
+                myLogger.log("Engine: Keyboard input detected, resetting rotation timer")
             current_page.KeyPressed(keySequence)
+        
+        # Check if it's time to rotate to the next page
+        if PAGE_ROTATION_INTERVAL > 0 and self.pageManager.is_rotation_enabled():
+            current_time = time.time()
+            elapsed_time = current_time - self.last_rotation_time
+            
+            if elapsed_time >= PAGE_ROTATION_INTERVAL:
+                if DEBUG:
+                    myLogger.log(f"Engine: Rotation interval reached ({elapsed_time:.1f}s), rotating to next page")
+                self.pageManager.rotate_to_next_page()
+                self.last_rotation_time = current_time
+        
         current_page.Tick()
 
 

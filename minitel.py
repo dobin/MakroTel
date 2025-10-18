@@ -93,6 +93,11 @@ def main():
 
     engine.pageManager.set_current_page("Overview")
 
+    # Configure page rotation
+    rotation_pages = ["Overview", "RSS_BBC", "RSS_ARS", "Meditations", "80Read", "FileBrowser"]
+    engine.pageManager.set_rotation_pages(rotation_pages)
+    engine.pageManager.enable_rotation()
+
     # Start the stdin reader thread
     stdin_thread = threading.Thread(target=stdin_reader_thread, args=(terminal,), daemon=True)
     stdin_thread.start()

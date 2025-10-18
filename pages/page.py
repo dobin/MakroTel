@@ -13,6 +13,9 @@ class PageManager():
         self.pages = {}
         self.has_page_changed = False
         self.page_stack = []  # Stack to track page navigation history
+        self.rotation_enabled = False
+        self.rotation_pages = []  # List of page names to rotate through
+        self.rotation_index = 0  # Current index in rotation_pages
 
     def add_page(self, page: Page):
         pageName = page.name
@@ -75,6 +78,52 @@ class PageManager():
 
     def set_page_changed(self, b):
         self.has_page_changed = b
+
+    # Page rotation methods
+    def set_rotation_pages(self, page_names: list[str]):
+        """Set the list of pages to rotate through.
+        
+        Args:
+            page_names: List of page names in the order they should be displayed
+        """
+        # Validate that all pages exist
+        valid_pages = [name for name in page_names if name in self.pages]
+        if len(valid_pages) != len(page_names):
+            invalid = set(page_names) - set(valid_pages)
+            myLogger.log(f"PageManager: Warning - invalid page names in rotation list: {invalid}")
+        
+        self.rotation_pages = valid_pages
+        self.rotation_index = 0
+        myLogger.log(f"PageManager: Set rotation pages: {valid_pages}")
+
+    def enable_rotation(self):
+        """Enable automatic page rotation"""
+        self.rotation_enabled = True
+        myLogger.log("PageManager: Page rotation enabled")
+
+    def disable_rotation(self):
+        """Disable automatic page rotation"""
+        self.rotation_enabled = False
+        myLogger.log("PageManager: Page rotation disabled")
+
+    def is_rotation_enabled(self) -> bool:
+        """Check if rotation is enabled"""
+        return self.rotation_enabled
+
+    def rotate_to_next_page(self):
+        """Rotate to the next page in the rotation list"""
+        if not self.rotation_enabled or not self.rotation_pages:
+            return
+        
+        self.rotation_index = (self.rotation_index + 1) % len(self.rotation_pages)
+        next_page_name = self.rotation_pages[self.rotation_index]
+        
+        myLogger.log(f"PageManager: Auto-rotating to page: {next_page_name} (index {self.rotation_index})")
+        
+        # Use internal navigation without adding to page stack for auto-rotation
+        self.current_page = self.pages[next_page_name]
+        self.current_page.set_page_input(None)
+        self.set_page_changed(True)
 
 
 class Page:
