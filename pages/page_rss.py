@@ -71,6 +71,7 @@ class PageRss(Page):
         # Left-right navigation is now handled by the pageable_textarea component
         
         if keys.egale(Sequence('r')):
+            myLogger.log("PageRss: Reloading RSS feed")
             self._load_rss_feed()
             self._update_screen()
         else:
@@ -86,7 +87,8 @@ class PageRss(Page):
                         "title": entry.title,
                         "content": entry.text,
                     }
-                    self.pageManager.set_current_page("80Read", pageReadInput)
+                    if self.pageManager is not None:
+                        self.pageManager.set_current_page("80Read", pageReadInput)
         
         # Let parent handle other keys (like page switching)
         super().KeyPressed(keys)
