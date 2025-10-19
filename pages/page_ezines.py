@@ -4,6 +4,7 @@ from typing import List, Dict, Optional
 from framebuffer import FrameBuffer
 from pages.page import Page
 from components.component_label import ComponentLabel
+from components.component_textarea import ComponentTextArea
 from components.component_pageable_textarea import ComponentTextAreaPageable
 from components.component_tabs import ComponentTabs
 from components.sequence import Sequence
@@ -119,14 +120,13 @@ class PageEzines(Page):
             entries_per_page=1  # Show 1 article per page
         )
         
-        self.textarea_detail = ComponentTextAreaPageable(
+        self.textarea_detail = ComponentTextArea(
             framebuffer,
             0,
             2,
             self.framebuffer.width,
             HEIGHT - 2,
-            "",
-            entries_per_page=1  # Show 1 detail page
+            ""
         )
         
         # Add textareas as tabs
@@ -232,9 +232,6 @@ class PageEzines(Page):
         
         self.current_article = self.articles[abs_id]
         myLogger.log(f"Selected article: {self.current_article.metadata.get('title', 'Unknown')}")
-        
-        # Reset page number when selecting a new article
-        self.textarea_detail.page_current_page = 0
         
         self.tabs.set_active_tab(self.TAB_ARTICLE_DETAIL)
         self._update_screen()
@@ -556,8 +553,7 @@ class PageEzines(Page):
             lines.append("")
         
         content = "\n".join(lines)
-        # For detail view, show all content as a single page
-        self.textarea_detail.set_page_contents([content])
+        self.textarea_detail.set_text(content)
     
     def _wrap_text(self, text: str, width: int, prefix: str = "") -> List[str]:
         """Wrap text to fit within width"""
