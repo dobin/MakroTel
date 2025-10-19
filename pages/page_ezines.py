@@ -5,6 +5,7 @@ from framebuffer import FrameBuffer
 from pages.page import Page
 from components.component_label import ComponentLabel
 from components.component_pageable_textarea import ComponentTextAreaPageable
+from components.component_tabs import ComponentTabs
 from components.sequence import Sequence
 from config import HEIGHT
 from mylogger import myLogger
@@ -41,21 +42,24 @@ class ArticleEntry:
 class PageEzines(Page):
     """Multi-level ezine browser: Zines -> Issues -> Articles -> Article Detail -> Read"""
     
-    # Navigation levels
-    LEVEL_ZINES = 0
-    LEVEL_ISSUES = 1
-    LEVEL_ARTICLES = 2
-    LEVEL_ARTICLE_DETAIL = 3
+    # Navigation levels (tab names)
+    TAB_ZINES = "zines"
+    TAB_ISSUES = "issues"
+    TAB_ARTICLES = "articles"
+    TAB_ARTICLE_DETAIL = "article_detail"
     
     def __init__(self, framebuffer: FrameBuffer, name: str):
         super().__init__(framebuffer, name)
         
         # Configuration
         self.base_directory = os.path.join("data", "ezines-augmented", "zines")
-        self.entries_per_page = 9
+
+        self.zines_per_page = 3 # Show 3 zines per page for better readability
+        self.issues_per_page = 20
+        self.articles_per_page = 1
+        self.article_details_per_page = 1
         
         # Navigation state
-        self.current_level = self.LEVEL_ZINES
         self.current_zine: Optional[ZineEntry] = None
         self.current_issue: Optional[IssueEntry] = None
         self.current_article: Optional[ArticleEntry] = None
@@ -75,22 +79,68 @@ class PageEzines(Page):
             center=True
         )
         
-        self.pageable_textarea = ComponentTextAreaPageable(
+        # Create tabs component
+        self.tabs = ComponentTabs(
+            framebuffer,
+            0,
+            2,
+            self.framebuffer.width,
+            HEIGHT - 2
+        )
+        
+        # Create a ComponentTextAreaPageable for each tab
+        self.textarea_zines = ComponentTextAreaPageable(
             framebuffer,
             0,
             2,
             self.framebuffer.width,
             HEIGHT - 2,
             "",
-            entries_per_page=self.entries_per_page
+            entries_per_page=self.zines_per_page
         )
         
+        self.textarea_issues = ComponentTextAreaPageable(
+            framebuffer,
+            0,
+            2,
+            self.framebuffer.width,
+            HEIGHT - 2,
+            "",
+            entries_per_page=self.issues_per_page
+        )
+        
+        self.textarea_articles = ComponentTextAreaPageable(
+            framebuffer,
+            0,
+            2,
+            self.framebuffer.width,
+            HEIGHT - 2,
+            "",
+            entries_per_page=1  # Show 1 article per page
+        )
+        
+        self.textarea_detail = ComponentTextAreaPageable(
+            framebuffer,
+            0,
+            2,
+            self.framebuffer.width,
+            HEIGHT - 2,
+            "",
+            entries_per_page=1  # Show 1 detail page
+        )
+        
+        # Add textareas as tabs
+        self.tabs.add_tab(self.TAB_ZINES, self.textarea_zines)
+        self.tabs.add_tab(self.TAB_ISSUES, self.textarea_issues)
+        self.tabs.add_tab(self.TAB_ARTICLES, self.textarea_articles)
+        self.tabs.add_tab(self.TAB_ARTICLE_DETAIL, self.textarea_detail)
+        
         self.components.append(self.c_title)
-        self.components.append(self.pageable_textarea)
+        self.components.append(self.tabs)
     
     def Initial(self):
         """Initialize the ezine browser"""
-        self.current_level = self.LEVEL_ZINES
+        self.tabs.set_active_tab(self.TAB_ZINES)
         self._load_zines()
         self._update_screen()
     
@@ -130,13 +180,15 @@ class PageEzines(Page):
     
     def _handle_selection(self, rel_id: int):
         """Handle selection based on current level"""
-        if self.current_level == self.LEVEL_ZINES:
+        current_tab = self.tabs.get_active_tab()
+        
+        if current_tab == self.TAB_ZINES:
             self._select_zine(rel_id)
-        elif self.current_level == self.LEVEL_ISSUES:
+        elif current_tab == self.TAB_ISSUES:
             self._select_issue(rel_id)
-        elif self.current_level == self.LEVEL_ARTICLES:
+        elif current_tab == self.TAB_ARTICLES:
             self._select_article(rel_id)
-        elif self.current_level == self.LEVEL_ARTICLE_DETAIL:
+        elif current_tab == self.TAB_ARTICLE_DETAIL:
             # In detail view, any key goes to reading
             self._read_article()
     
@@ -149,7 +201,10 @@ class PageEzines(Page):
         self.current_zine = self.zines[abs_id]
         myLogger.log(f"Selected zine: {self.current_zine.name}")
         
-        self.current_level = self.LEVEL_ISSUES
+        # Reset page number when selecting a new zine
+        self.textarea_issues.page_current_page = 0
+        
+        self.tabs.set_active_tab(self.TAB_ISSUES)
         self._load_issues()
         self._update_screen()
     
@@ -162,7 +217,10 @@ class PageEzines(Page):
         self.current_issue = self.issues[abs_id]
         myLogger.log(f"Selected issue: {self.current_issue.issue_num}")
         
-        self.current_level = self.LEVEL_ARTICLES
+        # Reset page number when selecting a new issue
+        self.textarea_articles.page_current_page = 0
+        
+        self.tabs.set_active_tab(self.TAB_ARTICLES)
         self._load_articles()
         self._update_screen()
     
@@ -175,7 +233,10 @@ class PageEzines(Page):
         self.current_article = self.articles[abs_id]
         myLogger.log(f"Selected article: {self.current_article.metadata.get('title', 'Unknown')}")
         
-        self.current_level = self.LEVEL_ARTICLE_DETAIL
+        # Reset page number when selecting a new article
+        self.textarea_detail.page_current_page = 0
+        
+        self.tabs.set_active_tab(self.TAB_ARTICLE_DETAIL)
         self._update_screen()
     
     def _read_article(self):
@@ -198,14 +259,16 @@ class PageEzines(Page):
     
     def _go_back(self):
         """Navigate back one level"""
-        if self.current_level == self.LEVEL_ARTICLE_DETAIL:
-            self.current_level = self.LEVEL_ARTICLES
+        current_tab = self.tabs.get_active_tab()
+        
+        if current_tab == self.TAB_ARTICLE_DETAIL:
+            self.tabs.set_active_tab(self.TAB_ARTICLES)
             self.current_article = None
-        elif self.current_level == self.LEVEL_ARTICLES:
-            self.current_level = self.LEVEL_ISSUES
+        elif current_tab == self.TAB_ARTICLES:
+            self.tabs.set_active_tab(self.TAB_ISSUES)
             self.current_issue = None
-        elif self.current_level == self.LEVEL_ISSUES:
-            self.current_level = self.LEVEL_ZINES
+        elif current_tab == self.TAB_ISSUES:
+            self.tabs.set_active_tab(self.TAB_ZINES)
             self.current_zine = None
         else:
             # Already at top level, go back to previous page
@@ -216,11 +279,13 @@ class PageEzines(Page):
     
     def _refresh_current_level(self):
         """Reload data for current level"""
-        if self.current_level == self.LEVEL_ZINES:
+        current_tab = self.tabs.get_active_tab()
+        
+        if current_tab == self.TAB_ZINES:
             self._load_zines()
-        elif self.current_level == self.LEVEL_ISSUES:
+        elif current_tab == self.TAB_ISSUES:
             self._load_issues()
-        elif self.current_level == self.LEVEL_ARTICLES:
+        elif current_tab == self.TAB_ARTICLES:
             self._load_articles()
         
         self._update_screen()
@@ -332,13 +397,15 @@ class PageEzines(Page):
     
     def _update_screen(self):
         """Update screen based on current level"""
-        if self.current_level == self.LEVEL_ZINES:
+        current_tab = self.tabs.get_active_tab()
+        
+        if current_tab == self.TAB_ZINES:
             self._display_zines()
-        elif self.current_level == self.LEVEL_ISSUES:
+        elif current_tab == self.TAB_ISSUES:
             self._display_issues()
-        elif self.current_level == self.LEVEL_ARTICLES:
+        elif current_tab == self.TAB_ARTICLES:
             self._display_articles()
-        elif self.current_level == self.LEVEL_ARTICLE_DETAIL:
+        elif current_tab == self.TAB_ARTICLE_DETAIL:
             self._display_article_detail()
     
     def _display_zines(self):
@@ -377,7 +444,7 @@ class PageEzines(Page):
             content = "\n".join(lines)
             all_pages.append(content)
         
-        self.pageable_textarea.set_page_contents(all_pages)
+        self.textarea_zines.set_page_contents(all_pages)
     
     def _display_issues(self):
         """Display issues for current zine"""
@@ -389,12 +456,12 @@ class PageEzines(Page):
         
         # Generate all pages
         total_issues = len(self.issues)
-        total_pages = max(1, (total_issues + self.entries_per_page - 1) // self.entries_per_page)
+        total_pages = max(1, (total_issues + self.issues_per_page - 1) // self.issues_per_page)
         all_pages = []
         
         for page_num in range(total_pages):
-            start_idx = page_num * self.entries_per_page
-            end_idx = min(start_idx + self.entries_per_page, total_issues)
+            start_idx = page_num * self.issues_per_page
+            end_idx = min(start_idx + self.issues_per_page, total_issues)
             
             lines = []
             page_rel_id = 1
@@ -407,7 +474,7 @@ class PageEzines(Page):
             content = "\n".join(lines)
             all_pages.append(content)
         
-        self.pageable_textarea.set_page_contents(all_pages)
+        self.textarea_issues.set_page_contents(all_pages)
     
     def _display_articles(self):
         """Display articles for current issue"""
@@ -418,54 +485,51 @@ class PageEzines(Page):
         title = f"{zine_name} #{self.current_issue.issue_num}"
         self.c_title.set_text(title)
         
-        # Generate all pages
+        # Generate all pages (1 article per page)
         total_articles = len(self.articles)
-        total_pages = max(1, (total_articles + self.entries_per_page - 1) // self.entries_per_page)
         all_pages = []
         
-        for page_num in range(total_pages):
-            start_idx = page_num * self.entries_per_page
-            end_idx = min(start_idx + self.entries_per_page, total_articles)
+        for i in range(total_articles):
+            article = self.articles[i]
+            key = self._get_selection_key(1)  # Always use key "1" since only 1 article per page
             
             lines = []
-            page_rel_id = 1
-            for i in range(start_idx, end_idx):
-                article = self.articles[i]
-                key = self._get_selection_key(page_rel_id)
-                
-                # Display: [key] Article#: Title
-                #          Authors - Date
-                #          Short summary
-                title_text = article.metadata.get('title', 'Unknown')
-                authors = article.metadata.get('authors', 'Unknown')
-                date = article.metadata.get('date', 'Unknown')
-                short_summary = article.metadata.get('short_summary', '')
-                historical_context = article.metadata.get('historical_context', '')
+            
+            # Display: [key] Article#: Title
+            #          Authors - Date
+            #          Short summary
+            title_text = article.metadata.get('title', 'Unknown')
+            authors = article.metadata.get('authors', 'Unknown')
+            date = article.metadata.get('date', 'Unknown')
+            short_summary = article.metadata.get('short_summary', '')
+            historical_context = article.metadata.get('historical_context', '')
 
-                lines.append(f"[{key}] #{article.article_num}: {title_text[:self.framebuffer.width - 10]}")
-                if date:
-                    lines.append(f"   {date}")
-                if authors:
-                    lines.append(f"   {authors}")
+            title_wrapped = self._wrap_text(f"[{key}] {title_text}", self.framebuffer.width - 10)
+            lines.extend(title_wrapped)
+            if date:
+                lines.append(f"   #{article.article_num} - {date}")
+            else: 
+                lines.append(f"   #{article.article_num}")
 
+            if authors:
+                lines.append(f"   {authors}")
+
+            lines.append(f"")
+            if short_summary:
+                summary_lines = self._wrap_text(short_summary, self.framebuffer.width, "")
+                lines.extend(summary_lines)
+            if historical_context:
+                hist_lines = self._wrap_text(historical_context, self.framebuffer.width, "")
                 lines.append(f"")
-                if short_summary:
-                    summary_lines = self._wrap_text(short_summary, self.framebuffer.width, "")
-                    lines.extend(summary_lines)
-                if historical_context:
-                    hist_lines = self._wrap_text(historical_context, self.framebuffer.width, "")
-                    lines.append(f"")
-                    lines.append("Historical Context:")
-                    lines.extend(hist_lines)
-                
-                lines.append("")
-                
-                page_rel_id += 1
+                lines.append("Historical Context:")
+                lines.extend(hist_lines)
+            
+            lines.append("")
             
             content = "\n".join(lines)
             all_pages.append(content)
         
-        self.pageable_textarea.set_page_contents(all_pages)
+        self.textarea_articles.set_page_contents(all_pages)
     
     def _display_article_detail(self):
         """Display detailed information about selected article"""
@@ -473,48 +537,27 @@ class PageEzines(Page):
             return
         
         metadata = self.current_article.metadata
-        
-        # Title
-        title = metadata.get('title', 'Unknown')
-        self.c_title.set_text(f"Article #{self.current_article.article_num}")
-        
         lines = []
+        self.c_title.set_text(f"Article #{self.current_article.article_num}")
+
+        title = metadata.get('title', 'Unknown')
+        lines.append(f"TITLE: {title}")
         
-        # Title (wrapped)
-        lines.append("TITLE:")
-        lines.extend(self._wrap_text(title, self.framebuffer.width))
-        lines.append("")
-        
-        # Authors
         authors = metadata.get('authors', 'Unknown')
         lines.append(f"AUTHORS: {authors}")
-        lines.append("")
         
-        # Date
         date = metadata.get('date', 'Unknown')
         lines.append(f"DATE: {date}")
-        lines.append("")
         
-        # Historical context
-        historical = metadata.get('historical_context', '')
-        if historical:
-            lines.append("HISTORICAL CONTEXT:")
-            lines.extend(self._wrap_text(historical, self.framebuffer.width))
-            lines.append("")
-        
-        # Summary
         summary = metadata.get('summary', '')
         if summary:
-            lines.append("SUMMARY:")
+            lines.append("")
             lines.extend(self._wrap_text(summary, self.framebuffer.width))
             lines.append("")
         
-        lines.append("")
-        lines.append("Press any key to read the full article...")
-        
         content = "\n".join(lines)
         # For detail view, show all content as a single page
-        self.pageable_textarea.set_page_contents([content])
+        self.textarea_detail.set_page_contents([content])
     
     def _wrap_text(self, text: str, width: int, prefix: str = "") -> List[str]:
         """Wrap text to fit within width"""
@@ -538,13 +581,23 @@ class PageEzines(Page):
     
     def _rel_to_abs_id(self, rel_id: int, total_items: int) -> int:
         """Convert relative page ID to absolute ID"""
-        current_page = self.pageable_textarea.get_current_page()
+        current_tab = self.tabs.get_active_tab()
         
-        # Use the correct items-per-page based on current level
-        if self.current_level == self.LEVEL_ZINES:
-            items_per_page = 3  # Zines show 3 per page
+        # Get the current page from the appropriate textarea
+        if current_tab == self.TAB_ZINES:
+            current_page = self.textarea_zines.get_current_page()
+            items_per_page = self.zines_per_page
+        elif current_tab == self.TAB_ISSUES:
+            current_page = self.textarea_issues.get_current_page()
+            items_per_page = self.issues_per_page
+        elif current_tab == self.TAB_ARTICLES:
+            current_page = self.textarea_articles.get_current_page()
+            items_per_page = self.articles_per_page
+        elif current_tab == self.TAB_ARTICLE_DETAIL:
+            items_per_page = self.article_details_per_page
         else:
-            items_per_page = self.entries_per_page  # Other levels use default
+            # For detail view, no pagination
+            return 0
         
         abs_id = current_page * items_per_page + (rel_id - 1)
         if 0 <= abs_id < total_items:
