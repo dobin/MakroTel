@@ -75,7 +75,7 @@ class PageRss(Page):
             # Number keys for selecting entries
             if keys.length() == 1 and keys.valeurs[0] in range(ord('1'), ord('1') + self.entries_per_page):
                 rel_id = keys.valeurs[0] - ord('0')  # Convert ASCII to int (1-based)
-                abs_id = self._rel_page_offset_to_abs_id(rel_id)
+                abs_id = self.pageable_textarea.rel_page_offset_to_abs_id(rel_id, len(self.feed_entries))
                 if abs_id != -1 and abs_id < len(self.feed_entries):
                     entry = self.feed_entries[abs_id]
                     myLogger.log(f"Selected Entry {entry.id}: {entry.title}")
@@ -224,15 +224,6 @@ class PageRss(Page):
         
         return lines
 
-
-    def _rel_page_offset_to_abs_id(self, rel_id: int) -> int:
-        """Convert relative page entry ID to absolute entry ID"""
-        current_page = self.pageable_textarea.get_current_page()
-        abs_id = current_page * self.entries_per_page + (rel_id - 1)
-        if 0 <= abs_id < len(self.feed_entries):
-            return abs_id
-        return -1
-    
 
     def _strip_html_tags(self, html_content: str) -> str:
         """Remove HTML tags and decode common HTML entities"""

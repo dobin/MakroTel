@@ -194,7 +194,7 @@ class PageEzines(Page):
     
     def _select_zine(self, rel_id: int):
         """Select a zine and navigate to issues"""
-        abs_id = self._rel_to_abs_id(rel_id, len(self.zines))
+        abs_id = self.textarea_zines.rel_page_offset_to_abs_id(rel_id, len(self.zines))
         if abs_id == -1:
             return
         
@@ -210,7 +210,7 @@ class PageEzines(Page):
     
     def _select_issue(self, rel_id: int):
         """Select an issue and navigate to articles"""
-        abs_id = self._rel_to_abs_id(rel_id, len(self.issues))
+        abs_id = self.textarea_issues.rel_page_offset_to_abs_id(rel_id, len(self.issues))
         if abs_id == -1:
             return
         
@@ -226,7 +226,7 @@ class PageEzines(Page):
     
     def _select_article(self, rel_id: int):
         """Select an article and show detail view"""
-        abs_id = self._rel_to_abs_id(rel_id, len(self.articles))
+        abs_id = self.textarea_articles.rel_page_offset_to_abs_id(rel_id, len(self.articles))
         if abs_id == -1:
             return
         
@@ -574,31 +574,6 @@ class PageEzines(Page):
             lines.append(current_line)
         
         return lines
-    
-    def _rel_to_abs_id(self, rel_id: int, total_items: int) -> int:
-        """Convert relative page ID to absolute ID"""
-        current_tab = self.tabs.get_active_tab()
-        
-        # Get the current page from the appropriate textarea
-        if current_tab == self.TAB_ZINES:
-            current_page = self.textarea_zines.get_current_page()
-            items_per_page = self.zines_per_page
-        elif current_tab == self.TAB_ISSUES:
-            current_page = self.textarea_issues.get_current_page()
-            items_per_page = self.issues_per_page
-        elif current_tab == self.TAB_ARTICLES:
-            current_page = self.textarea_articles.get_current_page()
-            items_per_page = self.articles_per_page
-        elif current_tab == self.TAB_ARTICLE_DETAIL:
-            items_per_page = self.article_details_per_page
-        else:
-            # For detail view, no pagination
-            return 0
-        
-        abs_id = current_page * items_per_page + (rel_id - 1)
-        if 0 <= abs_id < total_items:
-            return abs_id
-        return -1
     
     def _get_selection_key(self, rel_id: int) -> str:
         """Get selection key string for relative ID"""

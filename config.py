@@ -3,11 +3,12 @@ HEIGHT = 25
 
 PROG_MODE = "minitel"
 
+PAGE_ROTATION_INTERVAL = 300  # seconds
 DEBUG = False
 
 # Timing settings
 REFRESH_TIME = 0.20 # seconds
-CURSES_WAIT_TIME = 0.01 # seconds
+CURSES_WAIT_TIME = 0.00 # seconds
 
 def config_set_mode(mode: str):
     global PROG_MODE

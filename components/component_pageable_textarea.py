@@ -147,3 +147,21 @@ class ComponentTextAreaPageable(ComponentTextArea):
         The callback will receive the new page number (0-based) as an argument.
         """
         self.on_page_change_callback = callback
+    
+    def rel_page_offset_to_abs_id(self, rel_id: int, total_entries: int) -> int:
+        """Convert relative page entry ID to absolute entry ID.
+        
+        Args:
+            rel_id: Relative entry ID on the current page (1-based)
+            total_entries: Total number of entries across all pages
+            
+        Returns:
+            Absolute entry ID (0-based), or -1 if invalid
+        """
+        if rel_id > self.entries_per_page or rel_id < 1:
+            return -1
+
+        abs_id = self.page_current_page * self.entries_per_page + (rel_id - 1)
+        if 0 <= abs_id < total_entries:
+            return abs_id
+        return -1
