@@ -52,9 +52,6 @@ class PageRss(Page):
             entries_per_page=self.entries_per_page
         )
         
-        # Set callback to handle page changes
-        self.pageable_textarea.set_on_page_change_callback(self._on_page_changed)
-        
         self.components.append(self.c_title)
         self.components.append(self.pageable_textarea)
         # Note: info_label is now part of pageable_textarea, no need to add separately
@@ -163,44 +160,41 @@ class PageRss(Page):
         # Calculate pagination
         total_entries = len(self.feed_entries)
         
-        # Get current page from the pageable component
-        current_page = self.pageable_textarea.get_current_page()
+        # Generate all pages
+        all_pages = []
+        total_pages = max(1, (total_entries + self.entries_per_page - 1) // self.entries_per_page)
         
-        # Calculate entry range for current page
-        start_idx = current_page * self.entries_per_page
-        end_idx = min(start_idx + self.entries_per_page, total_entries)
-        
-        # Format the entries for the current page
-        formatted_lines = []
-        
-        page_rel_id = 1
-        for i in range(start_idx, end_idx):
-            entry = self.feed_entries[i]
-
-            # wrap title into lines
-            title_lines = self._wrap_text(entry.title, self.framebuffer.width - 2)
+        for page_num in range(total_pages):
+            # Calculate entry range for this page
+            start_idx = page_num * self.entries_per_page
+            end_idx = min(start_idx + self.entries_per_page, total_entries)
             
-            # first
-            formatted_lines.append(f"{page_rel_id} {title_lines[0]}")
-            # remaining
-            for line in title_lines[1:]:
-                formatted_lines.append(f"  {line}")
-            formatted_lines.append("")  # Empty line between entries
+            # Format the entries for this page
+            formatted_lines = []
+            
+            page_rel_id = 1
+            for i in range(start_idx, end_idx):
+                entry = self.feed_entries[i]
 
-            page_rel_id += 1
-        
-        formatted_text = "\n".join(formatted_lines)
-        
-        # Update the pageable textarea with content and total items count
-        self.pageable_textarea.set_page_content(formatted_text, total_entries)
-    
-    
-    def _on_page_changed(self, new_page: int):
-        """Callback when the page changes in the pageable textarea component"""
-        # Update the display with content for the new page
-        self._update_screen()
-    
+                # wrap title into lines
+                title_lines = self._wrap_text(entry.title, self.framebuffer.width - 2)
+                
+                # first
+                formatted_lines.append(f"{page_rel_id} {title_lines[0]}")
+                # remaining
+                for line in title_lines[1:]:
+                    formatted_lines.append(f"  {line}")
+                formatted_lines.append("")  # Empty line between entries
 
+                page_rel_id += 1
+            
+            formatted_text = "\n".join(formatted_lines)
+            all_pages.append(formatted_text)
+        
+        # Update the pageable textarea with all page contents
+        self.pageable_textarea.set_page_contents(all_pages)
+    
+    
     def _wrap_text(self, text, width):
         """Simple text wrapping function"""
         if len(text) <= width:

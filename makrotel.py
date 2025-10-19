@@ -19,6 +19,7 @@ from pages.page_meditations import PageMeditations
 from pages.page_rss import PageRss
 from pages.page_80_read import Page80Read
 from pages.page_filebrowser import PageFileBrowser
+from pages.page_ezines import PageEzines
 
 
 def main(stdscr):
@@ -34,6 +35,7 @@ def main(stdscr):
     pageRssArs: Page = PageRss(framebuffer, "RSS_ARS", "https://feeds.arstechnica.com/arstechnica/index/")
     page80read: Page = Page80Read(framebuffer, "80Read")
     pagefilebrowser: Page = PageFileBrowser(framebuffer, "FileBrowser", "data")
+    pageezines: Page = PageEzines(framebuffer, "Ezines")
 
     #pageZinesList: Page = PageZinesList(framebuffer, "ZinesList", dir="data/zines")
     #pageZine: Page = PageZine(framebuffer, "Zine")
@@ -47,9 +49,10 @@ def main(stdscr):
     engine.pageManager.add_page(pageRssBbc)
     engine.pageManager.add_page(page80read)
     engine.pageManager.add_page(pagefilebrowser)
+    engine.pageManager.add_page(pageezines)
     
     # Configure page rotation
-    rotation_pages = ["Overview", "RSS_BBC", "RSS_ARS", "Meditations", "80Read", "FileBrowser"]
+    rotation_pages = ["Overview", "RSS_BBC", "RSS_ARS", "Meditations", "80Read", "FileBrowser", "Ezines"]
     engine.pageManager.set_rotation_pages(rotation_pages)
     engine.pageManager.enable_rotation()
     

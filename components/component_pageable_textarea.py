@@ -47,6 +47,7 @@ class ComponentTextAreaPageable(ComponentTextArea):
         self.page_current_page = 0  # Use different name to avoid confusion with parent's current_page
         self.page_total_pages = 0
         self.info_text = info_text
+        self.page_contents = []  # Array of page content strings
         
         # Create info label on the last line
         self.info_label = ComponentLabel(
@@ -80,6 +81,7 @@ class ComponentTextAreaPageable(ComponentTextArea):
         if keys.egale(KEY_LEFT):
             if self.page_current_page > 0:
                 self.page_current_page -= 1
+                self._update_current_page_display()
                 self._update_page_info()
                 # Notify parent that page changed
                 if self.on_page_change_callback:
@@ -87,6 +89,7 @@ class ComponentTextAreaPageable(ComponentTextArea):
         elif keys.egale(KEY_RIGHT):
             if self.page_current_page < self.page_total_pages - 1:
                 self.page_current_page += 1
+                self._update_current_page_display()
                 self._update_page_info()
                 # Notify parent that page changed
                 if self.on_page_change_callback:
@@ -95,25 +98,29 @@ class ComponentTextAreaPageable(ComponentTextArea):
             # Let parent handle other keys (UP/DOWN for scrolling within page)
             super().KeyPressed(keys)
             
-    def set_page_content(self, content_text: str, total_items: int):
-        """Set the content for the current page and update pagination info.
+    def set_page_contents(self, page_contents_array: list):
+        """Set all page contents at once.
         
         Args:
-            content_text: The formatted text content to display
-            total_items: Total number of items across all pages
+            page_contents_array: List of strings, one per page
         """
-        # Update the textarea content
-        self.set_text(content_text)
-        
-        # Calculate total pages based on total items
-        self.page_total_pages = max(1, (total_items + self.entries_per_page - 1) // self.entries_per_page)
+        self.page_contents = page_contents_array
+        self.page_total_pages = max(1, len(page_contents_array))
         
         # Ensure current page is valid
         if self.page_current_page >= self.page_total_pages:
             self.page_current_page = max(0, self.page_total_pages - 1)
-            
-        # Update the info label
+        
+        # Display the current page
+        self._update_current_page_display()
         self._update_page_info()
+    
+    def _update_current_page_display(self):
+        """Update the textarea with the content of the current page"""
+        if 0 <= self.page_current_page < len(self.page_contents):
+            self.set_text(self.page_contents[self.page_current_page])
+        else:
+            self.set_text("")
         
     def set_current_page(self, page_num: int):
         """Set the current page number (0-based)"""
