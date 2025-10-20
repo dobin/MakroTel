@@ -5,6 +5,7 @@ from framebuffer import FrameBuffer
 from terminals.minitel_model import MinitelVideoMode
 from config import HEIGHT, DEBUG
 from mylogger import myLogger
+from constants.keys import CTRL_2, CTRL_4
 
 
 class PageManager():
@@ -170,14 +171,9 @@ class Page:
 
     def KeyPressed(self, keys: Sequence):
         if self.pageManager is not None:
-            # ESC key for back navigation
-            if keys.egale(Sequence([0x43])):
+            if keys.egale(Sequence(CTRL_2)):
                 self.pageManager.go_back()
-            elif keys.egale(Sequence([0x41])):
-                self.pageManager.set_current_page("PageA")
-            elif keys.egale(Sequence([0x42])):
-                self.pageManager.set_current_page("PageB")
-            elif keys.egale(Sequence([ord('O')])) or keys.egale(Sequence([ord('o')])):
+            elif keys.egale(Sequence(CTRL_4)):
                 self.pageManager.set_current_page("Overview")
 
         for component in self.components:

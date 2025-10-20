@@ -164,7 +164,7 @@ class Sequence:
             A string containing the hexadecimal representation of all values
             in the sequence, separated by spaces
         """
-        return ' '.join(f'{value:02X}' for value in self.valeurs)
+        return ' '.join(f'0x{value:02X}' for value in self.valeurs)
 
     def egale(self, sequence):
         """Tests the equality of 2 sequences

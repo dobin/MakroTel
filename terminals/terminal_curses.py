@@ -22,6 +22,7 @@ class TerminalCurses(Terminal):
 
         curses.curs_set(0)       # Hide cursor
         stdscr.nodelay(True)     # Non-blocking input
+        curses.mousemask(0)      # Disable all mouse input
         stdscr.clear()
         
         # Initialize colors if available
@@ -46,6 +47,13 @@ class TerminalCurses(Terminal):
     def get_input_key(self) -> Sequence|None:
         key = self.stdscr.getch()
         if key != -1:
+            # Filter out KEY_MOUSE events (typically 409/0x199)
+            if key == curses.KEY_MOUSE or key == 0x199:
+                # When KEY_MOUSE is received, there might be additional chars in buffer
+                # Flush the input buffer to consume any remaining mouse data
+                curses.flushinp()
+                return None
+            
             # Convert single key to Sequence
             key_sequence = Sequence(key)
             return key_sequence

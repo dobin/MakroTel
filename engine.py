@@ -29,6 +29,7 @@ class Engine:
         # Check for keyboard input
         keySequence = self.terminal.get_input_key()
         if keySequence is not None:
+            myLogger.log(f"Engine: Key pressed: {keySequence}")
             # Reset rotation timer on any keyboard input
             self.last_rotation_time = time.time()
             if DEBUG:

@@ -40,7 +40,7 @@ if PROG_MODE == "minitel":
         BS, 
         SEND, CANCEL, GUIDE, SUMMARY, CORRECTION, NEXT,
         SHIFT_UP, SHIFT_DOWN, SHIFT_LEFT, SHIFT_RIGHT,
-        CTRL_LEFT
+        CTRL_LEFT, REPEAT, ESC
     )
     
     # Map minitel constants to unified names
@@ -60,6 +60,15 @@ if PROG_MODE == "minitel":
     LINE_HORIZONTAL_CENTER = "\x60"
     LINE_HORIZONTAL_BOTTOM = "\x5F"
 
+    CTRL_1 = [ ESC, 0x4f, 0x4d]        # envoyer (send)
+    CTRL_2 = [ ESC, 0x4f, 0x52]        # retourner (return)
+    CTRL_3 = [ ESC, 0x4f, 0x53]        # répéter (repeat)
+    CTRL_4 = [ ESC, 0x4f, 0x6d]        # guide (guide)
+    CTRL_5 = [ ESC, 0x4f, 0x51]        # annuler (cancel)
+    CTRL_6 = [ ESC, 0x4f, 0x50]        # résumé / sommaire (summary)
+    CTRL_7 = [ ESC, 0x4f, 0x6c]        # correction (correction)
+    CTRL_8 = [ ESC, 0x4f, 0x6e]        # suivant / suite (next)
+
 
 else:
     import curses
@@ -72,6 +81,16 @@ else:
     KEY_ENTER = 10  # ASCII code for Enter
     KEY_BACKSPACE = curses.KEY_BACKSPACE
     KEY_CORRECTION = curses.KEY_BACKSPACE
+
+    CTRL_1 = curses.KEY_F1
+    CTRL_2 = curses.KEY_F2
+    CTRL_3 = curses.KEY_F3
+    CTRL_4 = curses.KEY_F4
+    CTRL_5 = curses.KEY_F5
+    CTRL_6 = curses.KEY_F6
+    CTRL_7 = curses.KEY_F7
+    CTRL_8 = curses.KEY_F8
+    CTRL_ESC = 27  # ASCII code for ESC key (curses doesn't have KEY_ESC)
 
     LINE_HORIZONTAL_TOP = '-'
     LINE_HORIZONTAL_CENTER = '-'
