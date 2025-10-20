@@ -13,6 +13,7 @@ from constants.keys import KEY_LEFT, KEY_RIGHT
 from framebuffer import FrameBuffer
 from config import HEIGHT
 from mylogger import myLogger
+from utils import parse_selection_key
 
 
 class RssEntry():
@@ -73,19 +74,20 @@ class PageRss(Page):
             self._update_screen()
         else:
             # Number keys for selecting entries
-            if keys.length() == 1 and keys.valeurs[0] in range(ord('1'), ord('1') + self.entries_per_page):
-                rel_id = keys.valeurs[0] - ord('0')  # Convert ASCII to int (1-based)
-                abs_id = self.pageable_textarea.rel_page_offset_to_abs_id(rel_id, len(self.feed_entries))
-                if abs_id != -1 and abs_id < len(self.feed_entries):
-                    entry = self.feed_entries[abs_id]
-                    myLogger.log(f"Selected Entry {entry.id}: {entry.title}")
-                    pageReadInput = {
-                        "id": entry.id,
-                        "title": entry.title,
-                        "content": entry.text,
-                    }
-                    if self.pageManager is not None:
-                        self.pageManager.set_current_page("80Read", pageReadInput)
+            if keys.length() == 1:
+                rel_id = parse_selection_key(keys.valeurs[0])
+                if rel_id is not None and rel_id <= self.entries_per_page:
+                    abs_id = self.pageable_textarea.rel_page_offset_to_abs_id(rel_id, len(self.feed_entries))
+                    if abs_id != -1 and abs_id < len(self.feed_entries):
+                        entry = self.feed_entries[abs_id]
+                        myLogger.log(f"Selected Entry {entry.id}: {entry.title}")
+                        pageReadInput = {
+                            "id": entry.id,
+                            "title": entry.title,
+                            "content": entry.text,
+                        }
+                        if self.pageManager is not None:
+                            self.pageManager.set_current_page("80Read", pageReadInput)
         
         # Let parent handle other keys (like page switching)
         super().KeyPressed(keys)

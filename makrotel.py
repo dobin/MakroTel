@@ -19,7 +19,10 @@ from pages.page_meditations import PageMeditations
 from pages.page_rss import PageRss
 from pages.page_80_read import Page80Read
 from pages.page_filebrowser import PageFileBrowser
-from pages.page_ezines import PageEzines
+from pages.page_ezines_list import PageEzinesList
+from pages.page_ezines_issues import PageEzinesIssues
+from pages.page_ezines_articles import PageEzinesArticles
+from pages.page_ezines_article_detail import PageEzinesArticleDetail
 
 
 def main(stdscr):
@@ -35,7 +38,10 @@ def main(stdscr):
     pageRssArs: Page = PageRss(framebuffer, "RSS_ARS", "https://feeds.arstechnica.com/arstechnica/index/")
     page80read: Page = Page80Read(framebuffer, "80Read")
     pagefilebrowser: Page = PageFileBrowser(framebuffer, "FileBrowser", "data")
-    pageezines: Page = PageEzines(framebuffer, "Ezines")
+    pageEzinesList: Page = PageEzinesList(framebuffer, "EzinesList")
+    pageEzinesIssues: Page = PageEzinesIssues(framebuffer, "EzinesIssues")
+    pageEzinesArticles: Page = PageEzinesArticles(framebuffer, "EzinesArticles")
+    pageEzinesArticleDetail: Page = PageEzinesArticleDetail(framebuffer, "EzinesArticleDetail")
 
     #pageZinesList: Page = PageZinesList(framebuffer, "ZinesList", dir="data/zines")
     #pageZine: Page = PageZine(framebuffer, "Zine")
@@ -49,10 +55,13 @@ def main(stdscr):
     engine.pageManager.add_page(pageRssBbc)
     engine.pageManager.add_page(page80read)
     engine.pageManager.add_page(pagefilebrowser)
-    engine.pageManager.add_page(pageezines)
+    engine.pageManager.add_page(pageEzinesList)
+    engine.pageManager.add_page(pageEzinesIssues)
+    engine.pageManager.add_page(pageEzinesArticles)
+    engine.pageManager.add_page(pageEzinesArticleDetail)
     
     # Configure page rotation
-    rotation_pages = ["Overview", "RSS_BBC", "RSS_ARS", "Meditations", "80Read", "FileBrowser", "Ezines"]
+    rotation_pages = ["Overview", "RSS_BBC", "RSS_ARS", "Meditations", "EzinesList"]
     engine.pageManager.set_rotation_pages(rotation_pages)
     engine.pageManager.enable_rotation()
     

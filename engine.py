@@ -53,7 +53,6 @@ class Engine:
         while self.running:
             # handle page changes
             # - before draw_event.wait() 
-            # - pageManager.Initial() will notify us
             if self.pageManager.get_page_changed():
                 if DEBUG:
                     myLogger.log("Engine: got new page")
