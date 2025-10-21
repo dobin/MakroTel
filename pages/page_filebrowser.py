@@ -219,8 +219,32 @@ class PageFileBrowser(Page):
         
         formatted_text = "\n".join(formatted_lines)
         
-        # Update the pageable textarea with content and total items count
-        self.pageable_textarea.set_page_content(formatted_text, total_entries)
+        # Calculate total pages based on total entries
+        total_pages = (total_entries + self.entries_per_page - 1) // self.entries_per_page
+        
+        # Create page contents array (only need to set content for pages we can generate)
+        page_contents = []
+        for page_idx in range(total_pages):
+            page_start = page_idx * self.entries_per_page
+            page_end = min(page_start + self.entries_per_page, total_entries)
+            
+            page_lines = []
+            page_rel_id = 1
+            for i in range(page_start, page_end):
+                entry = self.entries[i]
+                selection_key = self._get_selection_key(page_rel_id)
+                
+                if entry.is_dir:
+                    page_lines.append(f"{selection_key} [{entry.name}]/")
+                else:
+                    page_lines.append(f"{selection_key} {entry.name}")
+                
+                page_rel_id += 1
+            
+            page_contents.append("\n".join(page_lines))
+        
+        # Update the pageable textarea with all page contents
+        self.pageable_textarea.set_page_contents(page_contents)
 
     
     def _on_page_changed(self, new_page: int):
