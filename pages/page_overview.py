@@ -22,14 +22,18 @@ class PageOverview(Page):
                                            CharacterAttributes(char_color=MINITEL_COLOR.GREY_3)))
         
         # Create numbered list of available pages
-        self.components.append(ComponentText(framebuffer, 5, 6, "1. PageA - Demo Page A"))
-        self.components.append(ComponentText(framebuffer, 5, 7, "2. PageB - Demo Page B"))
-        self.components.append(ComponentText(framebuffer, 5, 8, "3. Meditations - Philosophy"))
-        self.components.append(ComponentText(framebuffer, 5, 9, "4. RSS - BBC News"))
-        self.components.append(ComponentText(framebuffer, 5, 10, "5. RSS - Ars Technica"))
-        self.components.append(ComponentText(framebuffer, 5, 11, "6. 80-Column - Text Reader"))
-        self.components.append(ComponentText(framebuffer, 5, 12, "7. File Browser - Browse data/"))
-        self.components.append(ComponentText(framebuffer, 5, 13, "8. E-Zines - Hacking Zines"))
+        self.components.append(ComponentText(framebuffer, 5,  6, "1. Security News"))
+        self.components.append(ComponentText(framebuffer, 5,  7, "2. BBC News"))
+        self.components.append(ComponentText(framebuffer, 5,  8, "3. Ars Technica"))
+        self.components.append(ComponentText(framebuffer, 5,  9, "4. Marcus Aurelius "))
+
+        self.components.append(ComponentText(framebuffer, 5, 11, "6. E-Zines - Hacking Zines"))
+
+        self.components.append(ComponentText(framebuffer, 5, 13, "a. Demo Page A"))
+        self.components.append(ComponentText(framebuffer, 5, 14, "b. Demo Page B"))
+        self.components.append(ComponentText(framebuffer, 5, 15, "c. Demo Telematic"))
+        self.components.append(ComponentText(framebuffer, 5, 16, "d. File Browser"))
+        
 
         # Instructions
         #self.components.append(ComponentText(framebuffer, 5, 13, "Press a number (1-5) to navigate", 
@@ -44,25 +48,30 @@ class PageOverview(Page):
         # Handle number key navigation
         if self.pageManager is not None:
             if keys.egale(Sequence([ord('1')])):
-                self.pageManager.set_current_page("PageA")
+                self.pageManager.set_current_page("RSS_SEC")
             elif keys.egale(Sequence([ord('2')])):
-                self.pageManager.set_current_page("PageB")
-            elif keys.egale(Sequence([ord('3')])):
-                self.pageManager.set_current_page("Meditations")
-            elif keys.egale(Sequence([ord('4')])):
                 self.pageManager.set_current_page("RSS_BBC")
-            elif keys.egale(Sequence([ord('5')])):
+            elif keys.egale(Sequence([ord('3')])):
                 self.pageManager.set_current_page("RSS_ARS")
+            elif keys.egale(Sequence([ord('4')])):
+                self.pageManager.set_current_page("Meditations")
+            elif keys.egale(Sequence([ord('5')])):
+                pass
             elif keys.egale(Sequence([ord('6')])):
-                self.pageManager.set_current_page("80Read", {
+                self.pageManager.set_current_page("EzinesList", {
                     "id": 0,
                     "title": "",
                     "content": "AAAA " * 8 + "BBBB " * 8,
                 })
-            elif keys.egale(Sequence([ord('7')])):
+            elif keys.egale(Sequence([ord('a')])):
+                self.pageManager.set_current_page("PageA")
+            elif keys.egale(Sequence([ord('b')])):
+                self.pageManager.set_current_page("PageB")
+            elif keys.egale(Sequence([ord('c')])):
+                self.pageManager.set_current_page("80Read")
+            elif keys.egale(Sequence([ord('d')])):
                 self.pageManager.set_current_page("FileBrowser")
-            elif keys.egale(Sequence([ord('8')])):
-                self.pageManager.set_current_page("EzinesList")
+
 
         # Call parent to handle other keys and components
         return super().KeyPressed(keys)
