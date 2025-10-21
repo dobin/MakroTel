@@ -48,6 +48,10 @@ PRO2 = [ESC, 0x3a] # protocol 2
 PRO3 = [ESC, 0x3b] # protocol 3
 CSI  = [ESC, 0x5b] # CSI
 
+# Function key thingy for telematic
+FUNC_PRE = 0x4F
+ESC_PRE = [ ESC, FUNC_PRE ]
+
 # PRO1 commands
 DISCONNECT = 0x67
 CONNECT = 0x68

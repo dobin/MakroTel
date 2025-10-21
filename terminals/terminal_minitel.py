@@ -613,7 +613,11 @@ class Minitel(Terminal):
                         # The sequence ESC, 0x5b, 0x32/0x34 calls for a last
                         # character
                         sequence.ajoute(self.receive(blocking = True))
+                elif sequence.valeurs == ESC_PRE:
+                    # in telematic mode, receive key for menu keys
+                    sequence.ajoute(self.receive(blocking = True))
             except Empty:
+                myLogger.log("Warning: Expected char not received")
                 # If no character has occurred after 1/10s, we continue
                 pass
 
@@ -700,9 +704,8 @@ class Minitel(Terminal):
             if not self._set_mode(MinitelVideoMode.TELEMATIC):
                 myLogger.log("Error changing videomode 1")
             self.video = self.video_telematic
-
-            #self.video.echo(False)
-            #self.video.cursor(False)
+            self.video.echo(False)
+            self.video.cursor(False)
         return True
 
 

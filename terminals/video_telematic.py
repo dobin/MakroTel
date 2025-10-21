@@ -336,13 +336,12 @@ class VideoTelematic(VideoTerminal):
     def echo(self, active):
         """Activates or deactivates the keyboard echo using VT100 sequences
 
-        VT100 does not have a native echo control sequence.
-        This function is left empty for compatibility.
-
         :param active:
             indicates whether to activate (True) or deactivate (False) the echo
         :type active:
             a boolean
         """
-        # VT100 does not support echo control - function left empty
-        pass
+        if active: 
+            self.terminal.send("\x1B[12h")
+        else: 
+            self.terminal.send("\x1B[12l")

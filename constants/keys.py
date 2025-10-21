@@ -32,12 +32,11 @@ class MINITEL_SIZE(enum.Enum):
     DOUBLE_SIZE = 3
 
 
-
 if PROG_MODE == "minitel":
     from terminals.minitel_constants import (
         UP, DOWN, LEFT, RIGHT, 
         RETURN, ENTER, 
-        BS, 
+        BS, DC3, FUNC_PRE,
         SEND, CANCEL, GUIDE, SUMMARY, CORRECTION, NEXT,
         SHIFT_UP, SHIFT_DOWN, SHIFT_LEFT, SHIFT_RIGHT,
         CTRL_LEFT, REPEAT, ESC
@@ -60,14 +59,33 @@ if PROG_MODE == "minitel":
     LINE_HORIZONTAL_CENTER = "\x60"
     LINE_HORIZONTAL_BOTTOM = "\x5F"
 
-    CTRL_1 = [ ESC, 0x4f, 0x4d]        # envoyer (send)
-    CTRL_2 = [ ESC, 0x4f, 0x52]        # retourner (return)
-    CTRL_3 = [ ESC, 0x4f, 0x53]        # répéter (repeat)
-    CTRL_4 = [ ESC, 0x4f, 0x6d]        # guide (guide)
-    CTRL_5 = [ ESC, 0x4f, 0x51]        # annuler (cancel)
-    CTRL_6 = [ ESC, 0x4f, 0x50]        # résumé / sommaire (summary)
-    CTRL_7 = [ ESC, 0x4f, 0x6c]        # correction (correction)
-    CTRL_8 = [ ESC, 0x4f, 0x6e]        # suivant / suite (next)
+    CTRL_1 = SEND        # envoyer (send)
+    CTRL_2 = RETURN        # retourner (return)
+    CTRL_3 = REPEAT        # répéter (repeat)
+    CTRL_4 = GUIDE        # guide (guide)
+    CTRL_5 = CANCEL        # annuler (cancel)
+    CTRL_6 = SUMMARY        # résumé / sommaire (summary)
+    CTRL_7 = CORRECTION        # correction (correction)
+    CTRL_8 = NEXT        # suivant / suite (next)
+
+    CTRL_ASCII_1 = [ ESC, FUNC_PRE, 0x4D ]
+    CTRL_ASCII_2 = [ ESC, FUNC_PRE, 0x52 ]
+    CTRL_ASCII_3 = [ ESC, FUNC_PRE, 0x53 ]
+    CTRL_ASCII_4 = [ ESC, FUNC_PRE, 0x6D ]
+    CTRL_ASCII_5 = [ ESC, FUNC_PRE, 0x51 ]
+    CTRL_ASCII_6 = [ ESC, FUNC_PRE, 0x50 ]
+    CTRL_ASCII_7 = [ ESC, FUNC_PRE, 0x6C ]
+    CTRL_ASCII_8 = [ ESC, FUNC_PRE, 0x6E ]
+
+
+    #CTRL_1 = [ ESC, 0x4f, 0x4d]        # envoyer (send)
+    #CTRL_2 = [ ESC, 0x4f, 0x52]        # retourner (return)
+    #CTRL_3 = [ ESC, 0x4f, 0x53]        # répéter (repeat)
+    #CTRL_4 = [ ESC, 0x4f, 0x6d]        # guide (guide)
+    #CTRL_5 = [ ESC, 0x4f, 0x51]        # annuler (cancel)
+    #CTRL_6 = [ ESC, 0x4f, 0x50]        # résumé / sommaire (summary)
+    #CTRL_7 = [ ESC, 0x4f, 0x6c]        # correction (correction)
+    #CTRL_8 = [ ESC, 0x4f, 0x6e]        # suivant / suite (next)
 
 
 else:
@@ -99,6 +117,15 @@ else:
     LINE_VERTICAL_LEFT = '|'
     LINE_VERTICAL_CENTER = '|'
     LINE_VERTICAL_RIGHT = '|'
+
+    CTRL_ASCII_1 = ''
+    CTRL_ASCII_2 = 'b'
+    CTRL_ASCII_3 = ''
+    CTRL_ASCII_4 = 'o'
+    CTRL_ASCII_5 = ''
+    CTRL_ASCII_6 = ''
+    CTRL_ASCII_7 = ''
+    CTRL_ASCII_8 = ''
 
 
 # Export all unified key constants
