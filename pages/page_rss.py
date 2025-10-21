@@ -57,12 +57,11 @@ class PageRss(Page):
         self.components.append(self.pageable_textarea)
         # Note: info_label is now part of pageable_textarea, no need to add separately
 
-        self._load_rss_feed()
-
 
     def Initial(self):
+        self._load_rss_feed()
         self._update_screen()
-
+        
 
     def KeyPressed(self, keys: Sequence):
         """Handle key presses for RSS page"""
