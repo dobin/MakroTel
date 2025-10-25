@@ -26,6 +26,7 @@ class PageOverview(Page):
         self.components.append(ComponentText(framebuffer, 5,  7, "2. 0day News"))
         self.components.append(ComponentText(framebuffer, 5,  8, "3. Ars Technica"))
         self.components.append(ComponentText(framebuffer, 5,  9, "4. BBC News"))
+        self.components.append(ComponentText(framebuffer, 5, 10, "5. Weather"))
         self.components.append(ComponentText(framebuffer, 5, 12, "8. Marcus Aurelius "))
         self.components.append(ComponentText(framebuffer, 5, 13, "9. E-Zines - Hacking Zines"))
 
@@ -55,6 +56,8 @@ class PageOverview(Page):
                 self.pageManager.set_current_page("RSS_ARS")
             elif keys.egale(Sequence([ord('4')])):
                 self.pageManager.set_current_page("RSS_BBC")
+            elif keys.egale(Sequence([ord('5')])):
+                self.pageManager.set_current_page("Weather")
             elif keys.egale(Sequence([ord('8')])):
                 self.pageManager.set_current_page("Meditations")
             elif keys.egale(Sequence([ord('9')])):
