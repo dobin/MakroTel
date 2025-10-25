@@ -36,6 +36,9 @@ def main(stdscr):
     pagemeditations: Page = PageMeditations(framebuffer, "Meditations")
     pageRssBbc: Page = PageRss(framebuffer, "RSS_BBC", "https://feeds.bbci.co.uk/news/rss.xml")
     pageRssArs: Page = PageRss(framebuffer, "RSS_ARS", "https://feeds.arstechnica.com/arstechnica/index/")
+    pageRss0day: Page = PageRss(framebuffer, "RSS_0DAY", "https://0dayfans.com/feed.rss")
+    pageRssTalk: Page = PageRss(framebuffer, "RSS_TALK", "https://talkback.sh/resources/feed/")
+    
     page80read: Page = Page80Read(framebuffer, "80Read")
     pagefilebrowser: Page = PageFileBrowser(framebuffer, "FileBrowser", "data")
     pageEzinesList: Page = PageEzinesList(framebuffer, "EzinesList")
@@ -53,6 +56,9 @@ def main(stdscr):
     engine.pageManager.add_page(pagemeditations)
     engine.pageManager.add_page(pageRssArs)
     engine.pageManager.add_page(pageRssBbc)
+    engine.pageManager.add_page(pageRss0day)
+    engine.pageManager.add_page(pageRssTalk)
+
     engine.pageManager.add_page(page80read)
     engine.pageManager.add_page(pagefilebrowser)
     engine.pageManager.add_page(pageEzinesList)
@@ -61,7 +67,7 @@ def main(stdscr):
     engine.pageManager.add_page(pageEzinesArticleDetail)
     
     # Configure page rotation
-    rotation_pages = ["Overview", "RSS_BBC", "RSS_ARS", "Meditations", "EzinesList"]
+    rotation_pages = ["Overview", "RSS_BBC", "RSS_ARS", "RSS_0DAY", "RSS_TALK", "Meditations", "EzinesList"]
     engine.pageManager.set_rotation_pages(rotation_pages)
     engine.pageManager.enable_rotation()
     
