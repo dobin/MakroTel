@@ -6,6 +6,7 @@ import urllib.request
 import urllib.error
 from typing import List
 
+from components.component_textarea import ComponentTextArea
 from pages.page import Page
 from components.component_clock import ComponentClock
 from components.component_label import ComponentLabel
@@ -27,14 +28,13 @@ class PageWeather(Page):
         self.entries_per_page = 1  # Not really used for weather, but required by component
 
         # Line 1-25: Pageable RSS content text area (includes info label on last line)
-        self.pageable_textarea = ComponentTextAreaPageable(
+        self.pageable_textarea = ComponentTextArea(
             framebuffer, 
             0, 
             1, 
-            self.framebuffer.width, 
+            80, 
             HEIGHT - 1,
             "",
-            entries_per_page=self.entries_per_page
         )
         
         self.components.append(self.pageable_textarea)
@@ -94,7 +94,12 @@ class PageWeather(Page):
         """Clean and format weather data for terminal display"""
         lines = weather_data.split('\n')
         cleaned_lines = []
-        
+
+        if len(lines) >= 18:
+            del lines[18]
+        if len(lines) >= 8:
+            del lines[8]
+
         for line in lines:
             # Remove ANSI escape sequences (color codes)
             clean_line = re.sub(r'\x1b\[[0-9;]*m', '', line)
@@ -106,9 +111,9 @@ class PageWeather(Page):
         
         # Join lines and remove excessive empty lines
         result = '\n'.join(cleaned_lines)
-        result = re.sub(r'\n\n\n+', '\n\n', result)
-        
-        return result.strip()
+        #result = re.sub(r'\n\n\n+', '\n\n', result)
+
+        return result #.strip()
 
     def _update_screen(self):
         self.pageable_textarea.set_text(self.weather)
