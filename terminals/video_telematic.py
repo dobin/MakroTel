@@ -182,14 +182,14 @@ class VideoTelematic(VideoTerminal):
             a string
         """
         scopes = {
-            'all': "\x1b[2J",              # Clear entire screen
-            'endline': "\x1b[K",           # Clear from cursor to end of line
-            'endscreen': "\x1b[J",         # Clear from cursor to end of screen  
-            'startscreen': "\x1b[1J",      # Clear from beginning of screen to cursor
-            'start_line': "\x1b[1K",       # Clear from beginning of line to cursor
-            'line': "\x1b[2K",             # Clear entire line
-            'status': "",                  # Status line not supported in VT100
-            'reallyall': "\x1b[2J"         # Clear entire screen (same as 'all')
+            'all': b"\x1b[2J",              # Clear entire screen
+            'endline': b"\x1b[K",           # Clear from cursor to end of line
+            'endscreen': b"\x1b[J",         # Clear from cursor to end of screen  
+            'startscreen': b"\x1b[1J",      # Clear from beginning of screen to cursor
+            'start_line': b"\x1b[1K",       # Clear from beginning of line to cursor
+            'line': b"\x1b[2K",             # Clear entire line
+            'status': b"",                  # Status line not supported in VT100
+            'reallyall': b"\x1b[2J"         # Clear entire screen (same as 'all')
         }
 
         assert scope in scopes
