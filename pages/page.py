@@ -171,7 +171,7 @@ class Page:
 
     def KeyPressed(self, keys: Sequence):
         if self.pageManager is not None:
-            if keys.egale(Sequence(CTRL_2) or keys.egale(Sequence(CTRL_ASCII_2))):
+            if keys.egale(Sequence(CTRL_2)) or keys.egale(Sequence(CTRL_ASCII_2)):
                 self.pageManager.go_back()
             elif keys.egale(Sequence(CTRL_4)) or keys.egale(Sequence(CTRL_ASCII_4)):
                 self.pageManager.set_current_page("Overview")
